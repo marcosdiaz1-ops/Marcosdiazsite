@@ -252,6 +252,7 @@
             <label class="choice"><input type="radio" name="Looking to" value="Buy and sell"><span><strong>Buy &amp; sell</strong><small>Move from one home to the next</small></span></label>
             <label class="choice"><input type="radio" name="Looking to" value="Off-market search"><span><strong>Off-market search</strong><small>Find a home that isn't listed</small></span></label>
           </div>
+          <div class="nav-btns"><span></span><button type="button" class="btn btn-gold next" disabled>Continue</button></div>
         </fieldset>
 
         <!-- STEP 2 -->
@@ -263,7 +264,7 @@
             <label class="choice"><input type="radio" name="Timeline" value="3-6 months"><span><strong>3–6 months</strong><small>Getting prepared</small></span></label>
             <label class="choice"><input type="radio" name="Timeline" value="Just exploring"><span><strong>Just exploring</strong><small>Seeing what's possible</small></span></label>
           </div>
-          <div class="nav-btns"><button type="button" class="btn-back back">← Back</button><span></span></div>
+          <div class="nav-btns"><button type="button" class="btn-back back">← Back</button><button type="button" class="btn btn-gold next" disabled>Continue</button></div>
         </fieldset>
 
         <!-- STEP 3 -->
@@ -320,7 +321,7 @@
     btn.setAttribute('aria-expanded', open);
   });
   links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { links.classList.remove('open'); header.classList.remove('menu-open'); }));
-  // Lead form: one question per step, auto-advance
+  // Lead form: one question per step, Continue after selecting
   (function () {
     const form = document.getElementById('leadForm');
     if (!form) return;
@@ -337,8 +338,12 @@
       i = n;
       if (n === 2) setTimeout(() => form.querySelector('[name="Name"]').focus({ preventScroll: true }), 450);
     };
-    steps.forEach((step, k) => step.querySelectorAll('input[type=radio]').forEach(r =>
-      r.addEventListener('change', () => setTimeout(() => show(k + 1), 250))));
+    steps.forEach((step, k) => {
+      const next = step.querySelector('.next');
+      if (!next) return;
+      step.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => { next.disabled = false; }));
+      next.addEventListener('click', () => { if (step.querySelector('input:checked')) show(k + 1); });
+    });
     form.querySelectorAll('.back').forEach(b => b.addEventListener('click', () => show(i - 1)));
     form.addEventListener('submit', async e => {
       e.preventDefault();
