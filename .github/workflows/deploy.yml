@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Force browsers to load the latest design files
-        run: sed -i "s/?v=BUILD/?v=${GITHUB_SHA::7}/g" index.html thank-you.html
+        run: find . -name "*.html" -not -path "./.git/*" -exec sed -i "s/?v=BUILD/?v=${GITHUB_SHA::7}/g" {} +
       - uses: actions/configure-pages@v5
         with:
           enablement: true

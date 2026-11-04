@@ -5,7 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marcos Diaz | REALTOR® in Sioux Falls, SD | Keller Williams Realty Sioux Falls</title>
 <meta name="description" content="Marcos Diaz, REALTOR® with Keller Williams Realty Sioux Falls. Bilingual (English &amp; Spanish) guidance for buying and selling homes across Sioux Falls and the surrounding areas. Call 605-838-9140.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Marcos Diaz Real Estate">
+<meta property="og:title" content="Marcos Diaz | REALTOR® in Sioux Falls, SD">
+<meta property="og:description" content="Buying or selling in Sioux Falls? Bilingual (English &amp; Español) guidance from Marcos Diaz, Keller Williams Realty Sioux Falls. 5.0★ on Google.">
+<meta property="og:url" content="https://605homesearch.com/">
+<meta property="og:image" content="https://605homesearch.com/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Marcos Diaz, REALTOR® with Keller Williams Realty Sioux Falls">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Marcos Diaz | REALTOR® in Sioux Falls, SD">
+<meta name="twitter:description" content="Bilingual real estate guidance in Sioux Falls. 5.0★ on Google.">
+<meta name="twitter:image" content="https://605homesearch.com/images/og-image.jpg">
+<link rel="apple-touch-icon" href="images/og-image.jpg">
 <link rel="canonical" href="https://605homesearch.com/">
+<link rel="alternate" hreflang="en" href="https://605homesearch.com/">
+<link rel="alternate" hreflang="es" href="https://605homesearch.com/es/">
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="fonts/fonts.css?v=BUILD">
 <link rel="stylesheet" href="styles.css?v=BUILD">
@@ -21,13 +37,13 @@
     <button class="menu-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
     <nav class="links">
       <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#off-market">Off-Market</a>
       <a href="#results">Results</a>
       <a href="#reviews">Reviews</a>
       <a href="#guide">Buyers</a>
       <a href="#sellers">Sellers</a>
+      <a href="#areas">Areas</a>
       <a href="https://marcos.kw.com/search/sale?viewport=43.5123477544219%2C-96.73235438067628%2C43.46346435534284%2C-96.80573961932375">Search Homes</a>
+      <a href="es/" class="lang" lang="es" hreflang="es" aria-label="Ver en español">ES</a>
       <a href="#contact" class="nav-cta">Contact</a>
     </nav>
   </div>
@@ -176,8 +192,8 @@
         <div>
           <h3 class="sub">Neighborhoods served</h3>
           <ul class="areas">
-            <li>Southwest Sioux Falls</li>
-            <li>Southeast Sioux Falls</li>
+            <li><a href="areas/southwest-sioux-falls.html">Southwest Sioux Falls</a></li>
+            <li><a href="areas/southeast-sioux-falls.html">Southeast Sioux Falls</a></li>
             <li>Whittier</li>
             <li>East Side</li>
             <li>Pepper Ridge</li>
@@ -304,6 +320,48 @@
     </div>
   </section>
 
+  <!-- MORTGAGE CALCULATOR -->
+  <section id="calculator" class="calculator">
+    <div class="wrap calc-grid" id="mortgageCalc">
+      <div class="calc-inputs">
+        <p class="eyebrow">Mortgage Calculator</p>
+        <h2>Estimate your monthly payment.</h2>
+        <div class="two">
+          <label>Home price ($)<input type="text" inputmode="numeric" name="price" value="300,000"></label>
+          <label>Down payment (%)<input type="number" name="down" value="5" min="0" max="100" step="0.5"></label>
+        </div>
+        <div class="two">
+          <label>Interest rate (%)<input type="number" name="rate" value="6.5" min="0" max="20" step="0.125"></label>
+          <label>Loan term
+            <select name="term"><option value="30" selected>30 years</option><option value="20">20 years</option><option value="15">15 years</option><option value="10">10 years</option></select>
+          </label>
+        </div>
+        <div class="two three">
+          <label>Property tax (%/yr)<input type="number" name="tax" value="1.2" min="0" max="5" step="0.05"></label>
+          <label>Insurance ($/yr)<input type="text" inputmode="numeric" name="insurance" value="1,800"></label>
+          <label>HOA ($/mo)<input type="text" inputmode="numeric" name="hoa" value="0"></label>
+        </div>
+        <p class="calc-note">Example numbers only. Use the rate from your lender's quote and check property taxes for the specific home. This estimate doesn't include mortgage insurance (PMI) and isn't a loan offer.</p>
+      </div>
+      <div class="calc-result">
+        <p class="calc-label">Estimated monthly payment</p>
+        <p class="calc-total" data-out="total">$0</p>
+        <div class="calc-bar" aria-hidden="true"><span class="c1"></span><span class="c2"></span><span class="c3"></span><span class="c4"></span></div>
+        <dl class="calc-lines">
+          <div><dt><i class="c1"></i>Principal &amp; interest</dt><dd data-out="pi">$0</dd></div>
+          <div><dt><i class="c2"></i>Property tax</dt><dd data-out="tax">$0</dd></div>
+          <div><dt><i class="c3"></i>Homeowner's insurance</dt><dd data-out="ins">$0</dd></div>
+          <div><dt><i class="c4"></i>HOA</dt><dd data-out="hoa">$0</dd></div>
+        </dl>
+        <dl class="calc-lines small">
+          <div><dt>Down payment</dt><dd data-out="downAmt">$0</dd></div>
+          <div><dt>Loan amount</dt><dd data-out="loan">$0</dd></div>
+        </dl>
+        <a href="#contact" class="btn btn-gold">Get Pre-Approval Help</a>
+      </div>
+    </div>
+  </section>
+
   <!-- SELLER GUIDE -->
   <section id="sellers" class="guide seller">
     <div class="wrap guide-grid">
@@ -329,6 +387,24 @@
         <details><summary><span class="step-n">5</span>Offers &amp; negotiation</summary><p>I review every offer with you, including price, terms, contingencies, and timelines, and negotiate to get you the strongest deal.</p></details>
         <details><summary><span class="step-n">6</span>Under contract</summary><p>The buyer completes inspections and the lender orders an appraisal. I'll handle any repair requests or negotiations that come up.</p></details>
         <details><summary><span class="step-n">7</span>Closing day</summary><p>You sign the final documents, hand over the keys, and receive your sale proceeds. Congratulations!</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section id="areas" class="areas-sec">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Areas I Serve</p>
+        <h2>Find your place in the Sioux Empire.</h2>
+      </div>
+      <div class="area-grid">
+        <a href="areas/sioux-falls.html" class="area-card"><span>Sioux Falls</span><small>South Dakota's largest city</small></a>
+        <a href="areas/southwest-sioux-falls.html" class="area-card"><span>Southwest Sioux Falls</span><small>Newer neighborhoods near I-29</small></a>
+        <a href="areas/southeast-sioux-falls.html" class="area-card"><span>Southeast Sioux Falls</span><small>Established and growing areas</small></a>
+        <a href="areas/tea.html" class="area-card"><span>Tea</span><small>Small-town feel, minutes away</small></a>
+        <a href="areas/harrisburg.html" class="area-card"><span>Harrisburg</span><small>Fast-growing community to the south</small></a>
+        <a href="areas/brandon.html" class="area-card"><span>Brandon</span><small>East of Sioux Falls</small></a>
       </div>
     </div>
   </section>
@@ -403,6 +479,7 @@
           </div>
           <p class="error" role="alert"></p>
           <div class="nav-btns"><button type="button" class="btn-back back">← Back</button><button type="submit" class="btn btn-gold">Send to Marcos</button></div>
+          <p class="fine">Your information goes only to me and is never sold. <a href="privacy.html">Privacy notice</a></p>
         </fieldset>
 
         <!-- THANK YOU -->
@@ -431,111 +508,10 @@
   </div>
   <div class="wrap legal">
     <p>Marcos Diaz, REALTOR®, Keller Williams Realty Sioux Falls. Each office is independently owned and operated. Equal Housing Opportunity.</p>
-    <p>&copy; <span id="year">2026</span> Marcos Diaz</p>
+    <p>&copy; <span class="year">2026</span> Marcos Diaz · <a href="privacy.html">Privacy</a> · <a href="es/">Español</a></p>
   </div>
 </footer>
 
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-  const header = document.getElementById('header');
-  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 40);
-  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
-  const btn = document.querySelector('.menu-btn'), links = document.querySelector('.links');
-  btn.addEventListener('click', () => {
-    const open = links.classList.toggle('open');
-    header.classList.toggle('menu-open', open);
-    btn.setAttribute('aria-expanded', open);
-  });
-  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { links.classList.remove('open'); header.classList.remove('menu-open'); }));
-  // Lead form: one question per step, Continue after selecting
-  (function () {
-    const form = document.getElementById('leadForm');
-    if (!form) return;
-    const steps = [...form.querySelectorAll('fieldset.step')];
-    const sent = form.querySelector('.sent');
-    const bar = form.querySelector('.progress span');
-    const count = form.querySelector('.step-count');
-    let i = 0;
-    const show = n => {
-      form.classList.toggle('going-back', n < i);
-      steps.forEach((s, k) => s.classList.toggle('active', k === n));
-      bar.style.width = ((n + 1) / steps.length * 100) + '%';
-      count.innerHTML = 'Step <b>' + (n + 1) + '</b> of ' + steps.length;
-      i = n;
-      if (n === 2) setTimeout(() => form.querySelector('[name="Name"]').focus({ preventScroll: true }), 450);
-    };
-    steps.forEach((step, k) => {
-      const next = step.querySelector('.next');
-      if (!next) return;
-      step.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => { next.disabled = false; }));
-      next.addEventListener('click', () => { if (step.querySelector('input:checked')) show(k + 1); });
-    });
-    form.querySelectorAll('.back').forEach(b => b.addEventListener('click', () => show(i - 1)));
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const err = steps[2].querySelector('.error');
-      for (const el of steps[2].querySelectorAll('[required]')) {
-        if (!el.checkValidity()) { err.textContent = 'Please add your ' + el.closest('label').firstChild.textContent.trim().toLowerCase() + '.'; el.focus(); return; }
-      }
-      err.textContent = '';
-      const btn = steps[2].querySelector('button[type=submit]');
-      btn.disabled = true; btn.textContent = 'Sending…';
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 15000);
-      try {
-        const res = await fetch(form.action, {
-          method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form), signal: ctrl.signal
-        });
-        clearTimeout(timer);
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || data.success !== true) throw new Error(data.message || 'send failed');
-        const first = form.querySelector('[name="Name"]').value.trim().split(' ')[0];
-        sent.querySelector('.sent-name').textContent = first ? ', ' + first : '';
-        steps.forEach(s => s.classList.remove('active'));
-        bar.style.width = '100%'; count.textContent = 'Sent';
-        sent.classList.add('active');
-      } catch (e2) {
-        clearTimeout(timer);
-        btn.disabled = false; btn.textContent = 'Try Again';
-        const why = e2 && e2.name === 'AbortError' ? 'timed out' : (e2 && e2.message ? e2.message : 'unknown');
-        console.warn('Lead form error:', why);
-        err.innerHTML = 'Sorry, your message didn\'t go through. Please try again, or call/text <a href="tel:+16058389140">605-838-9140</a>.<br><small class="why">(' + why.replace(/</g, '') + ')</small>';
-      }
-    });
-    show(0);
-  })();
-  // Reviews slider: one at a time, auto-advance
-  (function () {
-    const slider = document.querySelector('.review-slider');
-    if (!slider) return;
-    const slides = [...slider.querySelectorAll('.review')];
-    const dotsBox = slider.querySelector('.dots');
-    let i = 0, timer = null;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const dots = slides.map((_, k) => {
-      const d = document.createElement('button');
-      d.type = 'button'; d.className = 'dot'; d.setAttribute('aria-label', 'Show review ' + (k + 1));
-      d.addEventListener('click', () => { go(k); restart(); });
-      dotsBox.appendChild(d); return d;
-    });
-    function go(n) {
-      i = (n + slides.length) % slides.length;
-      slides.forEach((s, k) => { s.classList.toggle('active', k === i); s.setAttribute('aria-hidden', k !== i); });
-      dots.forEach((d, k) => d.classList.toggle('active', k === i));
-    }
-    function restart() { clearInterval(timer); if (!reduce) timer = setInterval(() => go(i + 1), 7000); }
-    slider.querySelector('.prev').addEventListener('click', () => { go(i - 1); restart(); });
-    slider.querySelector('.next').addEventListener('click', () => { go(i + 1); restart(); });
-    slider.addEventListener('mouseenter', () => clearInterval(timer));
-    slider.addEventListener('mouseleave', restart);
-    let x0 = null;
-    slider.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
-    slider.addEventListener('touchend', e => {
-      if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
-      if (Math.abs(dx) > 40) { go(i + (dx < 0 ? 1 : -1)); restart(); }
-    });
-    go(0); restart();
-  })();
-</script>
+<script src="site.js?v=BUILD" defer></script>
 </body>
 </html>
