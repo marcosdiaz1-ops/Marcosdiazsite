@@ -149,10 +149,12 @@ h2 { font-size: clamp(2.2rem, 4.2vw, 3.4rem); margin-bottom: 26px; }
 .rating-num { font-family: var(--serif); font-size: 4rem; color: var(--ink); line-height: 1; }
 .rating p { font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-top: 4px; }
 .stars { color: var(--gold); letter-spacing: .18em; font-size: 1.1rem; }
-.review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 26px; }
-.review { background: #fff; border: 1px solid var(--line); padding: 40px 38px 34px; display: flex; flex-direction: column; margin: 0; position: relative; }
+.review-grid { columns: 3 320px; column-gap: 26px; }
+.review { background: #fff; border: 1px solid var(--line); padding: 36px 34px 30px; display: flex; flex-direction: column; margin: 0 0 26px; position: relative; break-inside: avoid; }
 .review::before { content: "“"; position: absolute; top: 6px; right: 26px; font-family: var(--serif); font-size: 6rem; color: rgba(185,139,92,.18); line-height: 1; }
-.review blockquote { font-family: var(--serif); font-size: 1.55rem; line-height: 1.35; color: var(--ink); margin: 18px 0 28px; flex: 1; }
+.review blockquote { font-family: var(--sans); font-weight: 400; font-size: 1rem; line-height: 1.7; color: #343b4f; margin: 16px 0 24px; flex: 1; }
+.review.short blockquote { font-family: var(--serif); font-weight: 400; font-size: 1.55rem; line-height: 1.35; color: var(--ink); }
+.reviews-cta { text-align: center; margin-top: 24px; }
 .review figcaption { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 2px; }
 .review figcaption strong { font-weight: 500; color: var(--ink); }
 .review figcaption span { font-size: .78rem; letter-spacing: .08em; color: #8a8579; }
