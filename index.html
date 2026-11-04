@@ -392,17 +392,21 @@
       err.textContent = '';
       const btn = steps[2].querySelector('button[type=submit]');
       btn.disabled = true; btn.textContent = 'Sending…';
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 10000);
       try {
         const res = await fetch(form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), {
-          method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form)
+          method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form), signal: ctrl.signal
         });
-        if (!res.ok) throw new Error('send failed');
+        clearTimeout(timer);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'send failed');
         const first = form.querySelector('[name="Name"]').value.trim().split(' ')[0];
         sent.querySelector('.sent-name').textContent = first ? ', ' + first : '';
         steps.forEach(s => s.classList.remove('active'));
         bar.style.width = '100%'; count.textContent = 'Sent';
         sent.classList.add('active');
-      } catch (_) { form.submit(); }
+      } catch (_) { clearTimeout(timer); btn.textContent = 'Sending…'; HTMLFormElement.prototype.submit.call(form); }
     });
     show(0);
   })();

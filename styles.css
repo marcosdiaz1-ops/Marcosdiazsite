@@ -189,15 +189,18 @@ details:has(.step-n) p { padding-left: 34px; }
 .progress span { display: block; height: 100%; width: 33%; background: var(--gold-soft); transition: width .4s ease; }
 .step-count { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; color: #a9a397; margin: 14px 0 26px; }
 .step-count b { color: var(--gold-soft); font-weight: 500; }
-.step { display: none; border: 0; gap: 20px; }
-.step.active { display: grid; animation: slideIn .45s cubic-bezier(.2,.7,.2,1); }
+.step { display: none; border: 0; min-width: 0; margin: 0; padding: 0; }
+.step > * + * { margin-top: 20px; }
+.step.active { display: block; animation: slideIn .45s cubic-bezier(.2,.7,.2,1); }
 .going-back .step.active { animation-name: slideBack; }
 @keyframes slideIn { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: none; } }
 @keyframes slideBack { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: none; } }
 .wizard { overflow: hidden; }
 .wizard button[disabled] { opacity: .35; cursor: not-allowed; }
 .wizard button[type=submit][disabled] { opacity: .7; cursor: wait; }
-.sent { text-align: center; padding: 30px 0 10px; justify-items: center; }
+.sent { text-align: center; padding: 30px 0 10px; }
+.sent .check svg { margin: 0 auto; }
+.sent p { margin-left: auto; margin-right: auto; }
 .sent h3 { color: #fff; font-size: 2.2rem; }
 .sent p { max-width: 380px; }
 .sent a { color: var(--gold-soft); }
@@ -206,7 +209,8 @@ details:has(.step-n) p { padding-left: 34px; }
 .check path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw .4s .6s ease forwards; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) { .step.active, .check circle, .check path { animation: none; stroke-dashoffset: 0; } }
-.step legend { font-family: var(--serif); font-size: 2rem; color: #fff; margin-bottom: 22px; line-height: 1.1; }
+.step legend { display: block; float: left; width: 100%; padding: 0; font-family: var(--serif); font-size: 2rem; color: #fff; margin-bottom: 22px; line-height: 1.1; }
+.step legend + * { clear: both; margin-top: 0; }
 .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .choice { cursor: pointer; text-transform: none !important; letter-spacing: 0 !important; }
 .choice input, .pill input { position: absolute; opacity: 0; pointer-events: none; }
