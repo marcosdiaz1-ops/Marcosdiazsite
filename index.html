@@ -4,32 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marcos Diaz | REALTOR® in Sioux Falls, SD | Keller Williams Realty Sioux Falls</title>
-<meta name="description" content="Marcos Diaz, REALTOR® with Keller Williams Realty Sioux Falls. Bilingual (English &amp; Spanish) help buying and selling homes across Sioux Falls and the surrounding areas. Call 605-838-9140.">
+<meta name="description" content="Marcos Diaz, REALTOR® with Keller Williams Realty Sioux Falls. Bilingual (English &amp; Spanish) guidance for buying and selling homes across Sioux Falls and the surrounding areas. Call 605-838-9140.">
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header class="site-header">
-  <div class="container nav">
+<header class="site-header" id="header">
+  <div class="nav">
     <a href="#top" class="brand" aria-label="Marcos Diaz Real Estate home">
-      <img src="images/logo.svg" alt="" width="38" height="38">
-      <span>
-        <span class="brand-name">Marcos Diaz</span>
-        <span class="brand-sub">Real Estate</span>
-      </span>
+      <img src="images/logo.svg" alt="" width="34" height="34">
+      <span class="brand-text">Marcos Diaz<small>Real Estate</small></span>
     </a>
-    <button class="menu-btn" aria-label="Open menu" aria-expanded="false">☰</button>
+    <button class="menu-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
     <nav class="links">
       <a href="#about">About</a>
+      <a href="#services">Services</a>
       <a href="#off-market">Off-Market</a>
-      <a href="#buyers">Buyers</a>
-      <a href="#closing">Closing</a>
-      <a href="#moving">Moving</a>
-      <a href="#contact" class="btn btn-small">Contact</a>
+      <a href="#guide">Buyer Guide</a>
+      <a href="#contact" class="nav-cta">Contact</a>
     </nav>
   </div>
 </header>
@@ -38,306 +32,199 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-head container center">
-      <img src="images/logo.svg" alt="" class="logo-lg" width="72" height="72">
-      <p class="brand-name lg">Marcos Diaz</p>
-      <p class="brand-sub lg">Real Estate</p>
-      <h1>Your Home Starts Here</h1>
-      <p class="tagline">Your Home. Your Journey. Our Commitment.</p>
+    <div class="hero-bg" role="img" aria-label="Bright modern kitchen"></div>
+    <div class="hero-content">
+      <p class="kicker">REALTOR® &nbsp;·&nbsp; Keller Williams Realty Sioux Falls</p>
+      <h1>Marcos Diaz</h1>
+      <p class="hero-line">Your home. Your journey. Our commitment.</p>
       <div class="hero-cta">
-        <a href="#contact" class="btn">Let's Talk</a>
-        <a href="tel:+16058389140" class="btn btn-outline">Call 605-838-9140</a>
+        <a href="#contact" class="btn btn-gold">Start the Conversation</a>
+        <a href="tel:+16058389140" class="btn btn-ghost">605-838-9140</a>
       </div>
-      <p class="spanish">Se habla español</p>
     </div>
-    <div class="hero-img" role="img" aria-label="Bright modern kitchen with white cabinets and wood island"></div>
-    <div class="icon-band">
-      <div class="container icon-row">
-        <div class="icon-item">
-          <svg viewBox="0 0 48 48"><path d="M8 12h32v20H22l-8 7v-7H8z"/><circle cx="18" cy="22" r="1.5"/><circle cx="24" cy="22" r="1.5"/><circle cx="30" cy="22" r="1.5"/></svg>
-          <span>Communication First</span>
-        </div>
-        <div class="icon-item">
-          <svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h24V21"/><path d="M20 38V28h8v10"/></svg>
-          <span>Local Market Expertise</span>
-        </div>
-        <div class="icon-item">
-          <svg viewBox="0 0 48 48"><circle cx="20" cy="16" r="7"/><path d="M7 39c1-8 6-12 13-12 3 0 5 .6 7 2"/><path d="m35 26 2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z"/></svg>
-          <span>Client-Focused Approach</span>
-        </div>
-        <div class="icon-item">
-          <svg viewBox="0 0 48 48"><path d="M6 25l9-9 8 4 7-4 12 9-6 6M15 16l-9 9 13 13c2 2 4 0 3-1l3 3c2 1 4-1 3-2l2 2c2 1 4-1 3-3l2 1c2 0 3-2 2-3"/></svg>
-          <span>Trusted Partnership</span>
-        </div>
-      </div>
+    <p class="hero-note">English &amp; Español</p>
+  </section>
+
+  <!-- INTRO -->
+  <section class="intro">
+    <div class="wrap narrow">
+      <p class="lead-serif">Helping individuals and families across Sioux Falls buy, sell, and build long-term wealth through real estate, with honest guidance and strong advocacy every step of the way.</p>
     </div>
   </section>
 
   <!-- ABOUT -->
   <section id="about" class="about">
-    <div class="about-grid">
+    <div class="wrap about-grid">
+      <figure class="about-photo">
+        <img src="images/marcos-about.jpg" alt="Marcos Diaz, REALTOR® with Keller Williams Realty Sioux Falls" width="818" height="1630" loading="lazy">
+      </figure>
       <div class="about-text">
-        <img src="images/logo.svg" alt="" class="logo-md" width="64" height="64">
-        <p class="brand-name light">Marcos Diaz</p>
-        <p class="gold-caps">REALTOR® | Keller Williams Realty</p>
-        <div class="divider"><span></span></div>
-        <h2 class="display">About Me</h2>
+        <p class="eyebrow">About Me</p>
+        <h2>Discipline, honesty, and a commitment to serving others.</h2>
         <p>I'm Marcos Diaz, a Realtor with Keller Williams Realty dedicated to serving individuals and families across Sioux Falls and the surrounding areas.</p>
         <p>My background in military service has shaped my discipline, work ethic, and commitment to serving others.</p>
         <p>I'm passionate about helping clients build wealth through real estate while providing honest guidance and strong advocacy every step of the way.</p>
         <p>Fluent in both English and Spanish, I'm proud to help a diverse community achieve homeownership and long term financial growth.</p>
-      </div>
-      <div class="about-photo">
-        <img src="images/marcos-about.jpg" alt="Marcos Diaz, REALTOR® with Keller Williams Realty Sioux Falls" width="818" height="1630" loading="lazy">
+        <ul class="values">
+          <li><strong>Communication first.</strong> You'll always know where things stand, and I respond quickly.</li>
+          <li><strong>Local market expertise.</strong> Current on trends, pricing, and opportunities across Sioux Falls.</li>
+          <li><strong>Client-focused.</strong> Your goals guide every recommendation and decision.</li>
+        </ul>
+        <a href="#contact" class="link-arrow">Work with me</a>
       </div>
     </div>
-    <div class="pillars">
-      <div class="container pillar-row">
-        <div class="pillar">
-          <svg viewBox="0 0 48 48"><path d="M8 12h32v20H22l-8 7v-7H8z"/><circle cx="18" cy="22" r="1.5"/><circle cx="24" cy="22" r="1.5"/><circle cx="30" cy="22" r="1.5"/></svg>
-          <h3>Communication First</h3>
-          <p>I keep you informed every step of the way and respond quickly to your questions and concerns.</p>
-        </div>
-        <div class="pillar">
-          <svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h24V21"/><path d="M20 38V28h8v10"/></svg>
-          <h3>Local Market Expertise</h3>
-          <p>I stay up to date on market trends, pricing strategies, and opportunities throughout the Sioux Falls area.</p>
-        </div>
-        <div class="pillar">
-          <svg viewBox="0 0 48 48"><circle cx="20" cy="16" r="7"/><path d="M7 39c1-8 6-12 13-12 3 0 5 .6 7 2"/><path d="m35 26 2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z"/></svg>
-          <h3>Client-Focused Approach</h3>
-          <p>Your goals guide every recommendation, strategy, and decision I make.</p>
-        </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="services">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">How I Help</p>
+        <h2>More than finding a house.</h2>
+      </div>
+      <div class="service-grid">
+        <a href="#guide" class="service">
+          <img src="images/office.jpg" alt="" loading="lazy">
+          <div class="service-body">
+            <span class="num">01</span>
+            <h3>Buying a Home</h3>
+            <p>A clear plan from pre-approval to keys, with someone in your corner at every step.</p>
+          </div>
+        </a>
+        <a href="#off-market" class="service">
+          <img src="images/off-market.jpg" alt="" loading="lazy">
+          <div class="service-body">
+            <span class="num">02</span>
+            <h3>Off-Market Search</h3>
+            <p>When the MLS doesn't have the right home, I go beyond it and reach homeowners directly.</p>
+          </div>
+        </a>
+        <a href="#moving" class="service">
+          <img src="images/trailer.jpg" alt="" loading="lazy">
+          <div class="service-body">
+            <span class="num">03</span>
+            <h3>Moving Made Easy</h3>
+            <p>Free use of our moving trailer for my buyers, on your schedule.</p>
+          </div>
+        </a>
       </div>
     </div>
   </section>
 
   <!-- OFF-MARKET -->
-  <section id="off-market" class="section ivory">
-    <div class="container center">
-      <p class="caps-lead">The home you want may not be on the market.</p>
-      <h2 class="display">Off-Market Home Search</h2>
-      <div class="divider"><span></span></div>
-      <p class="caps-lead">When the MLS doesn't have the right home, I go beyond the MLS.</p>
-    </div>
-    <div class="wide-img" style="background-image:url('images/off-market.jpg')" role="img" aria-label="Agent knocking on a front door"></div>
-    <div class="container">
-      <p class="rule-heading"><span>My Approach</span></p>
-      <div class="steps4">
-        <div class="step">
-          <span class="num">01</span>
-          <svg viewBox="0 0 48 48"><circle cx="22" cy="26" r="14"/><circle cx="22" cy="26" r="8"/><circle cx="22" cy="26" r="2"/><path d="M22 26 38 10m-6 0h6v6"/></svg>
-          <h3>Identify Your Must-Haves</h3>
-          <p>I get clear on the location, price, layout, features, and lifestyle you're looking for.</p>
-        </div>
-        <div class="step">
-          <span class="num">02</span>
-          <svg viewBox="0 0 48 48"><path d="M14 8l6 8-4 4c2 5 6 9 11 11l4-4 8 6-4 6C21 38 10 27 8 13z"/><path d="M30 8a10 10 0 0 1 10 10M30 14a4 4 0 0 1 4 4"/></svg>
-          <h3>Search Beyond the MLS</h3>
-          <p>If the right home isn't listed, I can reach out directly to homeowners and explore potential opportunities that may not be publicly marketed.</p>
-        </div>
-        <div class="step">
-          <span class="num">03</span>
-          <svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h24V21"/><path d="M20 38V28h8v10"/></svg>
-          <h3>Create Opportunities</h3>
-          <p>Through targeted outreach and direct conversations, my goal is to find homes that fit your needs, even when they aren't currently for sale.</p>
-        </div>
-        <div class="step">
-          <span class="num">04</span>
-          <svg viewBox="0 0 48 48"><path d="M6 25l9-9 8 4 7-4 12 9-6 6M15 16l-9 9 13 13c2 2 4 0 3-1l3 3c2 1 4-1 3-2l2 2c2 1 4-1 3-3l2 1c2 0 3-2 2-3"/></svg>
-          <h3>Negotiate &amp; Guide You</h3>
-          <p>If we uncover an opportunity, I help you evaluate the property, understand the terms, and navigate the process from initial conversation to closing.</p>
-        </div>
+  <section id="off-market" class="feature">
+    <div class="feature-bg" style="background-image:url('images/off-market.jpg')"></div>
+    <div class="wrap feature-inner">
+      <div class="feature-head">
+        <p class="eyebrow light">Off-Market Home Search</p>
+        <h2>The home you want may not be on the market.</h2>
+        <p>If we can't find it, we'll go look for it.</p>
       </div>
-      <div class="center statement">
-        <p class="display-sm">If we can't find it,<br><strong>we'll go look for it.</strong></p>
-        <p class="tagline">Your Home. Your Search. My Commitment to Find It.</p>
-        <a href="#contact" class="btn">Start My Search</a>
-      </div>
+      <ol class="process">
+        <li><span>01</span><h3>Identify your must-haves</h3><p>Location, price, layout, features, and the lifestyle you're after.</p></li>
+        <li><span>02</span><h3>Search beyond the MLS</h3><p>I reach out directly to homeowners and explore opportunities that aren't publicly marketed.</p></li>
+        <li><span>03</span><h3>Create opportunities</h3><p>Targeted outreach and direct conversations to find homes that fit, even when they aren't for sale.</p></li>
+        <li><span>04</span><h3>Negotiate &amp; guide you</h3><p>I help you evaluate the property, understand the terms, and get from first conversation to closing.</p></li>
+      </ol>
+      <a href="#contact" class="btn btn-gold">Start My Off-Market Search</a>
     </div>
   </section>
 
   <!-- TEAM -->
   <section class="team">
-    <img src="images/team.jpg" alt="The Matthew Fisher Homes team, including Marcos Diaz" width="1500" height="1210" loading="lazy" class="team-img">
-    <div class="team-stats">
-      <div class="container">
-        <p class="boxed-label">Proven Results. Local Experts.</p>
-        <p class="team-intro">I'm proud to be part of <strong>Matthew Fisher Homes</strong> at Keller Williams Realty Sioux Falls.</p>
-        <div class="stats-grid">
-          <div class="stats-col">
-            <h3>Matthew Fisher</h3>
-            <dl>
-              <div><dt>$123,252,861</dt><dd>Volume Sold</dd></div>
-              <div><dt>$19,950,643</dt><dd>Volume Sold in 2024</dd></div>
-              <div><dt>97%</dt><dd>List to Sold Price Ratio</dd></div>
-              <div><dt>6</dt><dd>Years in Business</dd></div>
-              <div><dt>301</dt><dd>Happy Families Helped</dd></div>
-              <div><dt>50</dt><dd>Five-Star Reviews</dd></div>
-            </dl>
-          </div>
-          <div class="stats-mid" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h24V21"/><path d="M20 38V28h8v10"/></svg>
-          </div>
-          <div class="stats-col">
-            <h3>Matthew Fisher Homes Team</h3>
-            <dl>
-              <div><dt>$150,177,721</dt><dd>Volume Sold</dd></div>
-              <div><dt>$32,995,492</dt><dd>Volume Sold in 2024</dd></div>
-              <div><dt>97%</dt><dd>List to Sold Price Ratio</dd></div>
-              <div><dt>4</dt><dd>Years in Business</dd></div>
-              <div><dt>489</dt><dd>Happy Families Helped</dd></div>
-              <div><dt>50</dt><dd>Five-Star Reviews</dd></div>
-            </dl>
-          </div>
-        </div>
+    <div class="wrap team-grid">
+      <div class="team-text">
+        <p class="eyebrow">Proven Results. Local Experts.</p>
+        <h2>Part of Matthew Fisher Homes</h2>
+        <p>When you work with me, you also have the support of the Matthew Fisher Homes team at Keller Williams Realty Sioux Falls.</p>
+        <dl class="stats">
+          <div><dt>$150M+</dt><dd>Team volume sold</dd></div>
+          <div><dt>489</dt><dd>Families helped</dd></div>
+          <div><dt>97%</dt><dd>List-to-sold price ratio</dd></div>
+          <div><dt>50</dt><dd>Five-star reviews</dd></div>
+        </dl>
       </div>
+      <figure class="team-photo">
+        <img src="images/team.jpg" alt="The Matthew Fisher Homes team, including Marcos Diaz" loading="lazy">
+      </figure>
     </div>
   </section>
 
-  <!-- BUYERS -->
-  <section id="buyers" class="section ivory">
-    <div class="container">
-      <div class="title-block">
-        <h2 class="display">Considerations for Buyers</h2>
-        <div class="divider"><span></span></div>
-        <p class="tagline">Your Home. Your Journey. Our Commitment.</p>
+  <!-- BUYER GUIDE -->
+  <section id="guide" class="guide">
+    <div class="wrap guide-grid">
+      <div class="guide-head">
+        <p class="eyebrow">Buyer Guide</p>
+        <h2>What to know before you buy.</h2>
+        <p>Buying a home is a big decision. Here's what I walk every client through before we start, and what to expect once you're under contract.</p>
+        <a href="#contact" class="btn btn-navy">Ask Me Anything</a>
       </div>
-      <div class="consider-grid">
-        <div class="consider-img"><img src="images/office.jpg" alt="Bright home office with a view" width="591" height="1464" loading="lazy"></div>
-        <ul class="consider-list">
-          <li>
-            <span class="circle"><svg viewBox="0 0 48 48"><rect x="8" y="16" width="32" height="22" rx="2"/><path d="M18 16v-4h12v4M8 25h32M22 25v4h4v-4"/></svg></span>
-            <div><h3>Job &amp; Income</h3><p>Do I have a stable job and income? Am I staying in this line of work? What are my expenses, savings, and debts?</p></div>
-          </li>
-          <li>
-            <span class="circle"><svg viewBox="0 0 48 48"><path d="M8 32a16 16 0 1 1 32 0"/><path d="M24 32l7-11"/><circle cx="24" cy="32" r="2"/></svg></span>
-            <div><h3>Credit Score</h3><p>A credit score of 620 is typically required for conventional loans, while FHA loans have more flexibility depending on down payment.</p></div>
-          </li>
-          <li>
-            <span class="circle"><svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h14"/><circle cx="33" cy="32" r="7"/><path d="M33 28v8M31 30h3a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 0 0 3h3"/></svg></span>
-            <div><h3>Down Payment</h3><p>Depending on loan type, your down payment can range from 0%–20% of the purchase price.</p></div>
-          </li>
-          <li>
-            <span class="circle"><svg viewBox="0 0 48 48"><path d="M12 6h18l6 6v16M12 6v34h16M30 6v6h6M17 17h12M17 23h12M17 29h6"/><circle cx="34" cy="35" r="6"/><path d="M34 32v6"/></svg></span>
-            <div><h3>Closing Costs</h3><p>Closing costs range from 2–6% of the loan amount. Other fees include inspection and appraisal costs.</p></div>
-          </li>
-          <li>
-            <span class="circle"><svg viewBox="0 0 48 48"><rect x="8" y="10" width="32" height="30" rx="2"/><path d="M8 18h32M16 6v8M32 6v8M15 25h4M22 25h4M29 25h4M15 32h4M22 32h4"/></svg></span>
-            <div><h3>Long Term Planning</h3><p>Do I plan to stay in this location? Do I foresee major life changes? Consider how your career, family, and lifestyle might evolve over time.</p></div>
-          </li>
-          <li>
-            <span class="circle"><svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h24V21"/></svg></span>
-            <div><h3>Ongoing Costs</h3><p>As a homeowner, your budget should factor in your monthly mortgage payments, property taxes, homeowner's insurance, &amp; maintenance costs (roughly 1%–2% of purchase price per year).</p></div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
+      <div class="accordions">
+        <h3 class="acc-title">Considerations for buyers</h3>
+        <details><summary>Job &amp; income</summary><p>Do I have a stable job and income? Am I staying in this line of work? What are my expenses, savings, and debts?</p></details>
+        <details><summary>Credit score</summary><p>A credit score of 620 is typically required for conventional loans, while FHA loans have more flexibility depending on down payment.</p></details>
+        <details><summary>Down payment</summary><p>Depending on loan type, your down payment can range from 0%–20% of the purchase price.</p></details>
+        <details><summary>Closing costs</summary><p>Closing costs range from 2–6% of the loan amount. Other fees include inspection and appraisal costs.</p></details>
+        <details><summary>Long term planning</summary><p>Do I plan to stay in this location? Do I foresee major life changes? Consider how your career, family, and lifestyle might evolve over time.</p></details>
+        <details><summary>Ongoing costs</summary><p>Your budget should factor in monthly mortgage payments, property taxes, homeowner's insurance, and maintenance costs (roughly 1%–2% of purchase price per year).</p></details>
 
-  <!-- CLOSING -->
-  <section id="closing" class="section cream">
-    <div class="container">
-      <div class="title-block">
-        <h2 class="display">Closing Process</h2>
-        <div class="divider"><span></span></div>
-        <p class="tagline">Your Home. Your Journey. Our Commitment.</p>
+        <h3 class="acc-title">The closing process</h3>
+        <details><summary><span class="step-n">1</span>Escrow</summary><p>Buyer deposits earnest money into a neutral escrow account, which holds funds until the transaction is complete.</p></details>
+        <details><summary><span class="step-n">2</span>Inspections</summary><p>Buyer orders an inspection to ensure the property's condition is clear of major issues.</p></details>
+        <details><summary><span class="step-n">3</span>Loan approval &amp; appraisal</summary><p>The lender orders an appraisal to confirm the home's value meets or exceeds the purchase price, then approves the buyer for the mortgage.</p></details>
+        <details><summary><span class="step-n">4</span>Final walkthrough</summary><p>Before closing, the buyer conducts a final walkthrough to confirm the property's condition is as expected.</p></details>
+        <details><summary><span class="step-n">5</span>Closing day</summary><p>Buyer and seller sign documents. Buyer pays closing costs, receives keys, and takes possession, while the seller receives the sale proceeds.</p></details>
+        <details><summary><span class="step-n">6</span>Packing &amp; moving</summary><p>Start packing up and planning the move. Congratulations!</p></details>
       </div>
-      <div class="intro-box">
-        <span class="circle"><svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h10"/><circle cx="31" cy="30" r="5"/><path d="M31 35v6"/></svg></span>
-        <p>The closing process begins once the buyer and seller agree to terms on a purchase agreement and/or counter offer. These are the major milestones to expect:</p>
-      </div>
-      <ol class="timeline">
-        <li><span class="num dark">01</span><div><h3>Escrow</h3><p>Buyer deposits earnest money into a neutral escrow account, which holds funds until the transaction is complete.</p></div></li>
-        <li><span class="num dark">02</span><div><h3>Inspections</h3><p>Buyer orders an inspection to ensure the property's condition is clear of major issues.</p></div></li>
-        <li><span class="num dark">03</span><div><h3>Loan Approval &amp; Appraisal</h3><p>The lender orders an appraisal to confirm the home's value meets or exceeds the purchase price. The lender approves the buyer for the mortgage.</p></div></li>
-        <li><span class="num dark">04</span><div><h3>Final Walkthrough</h3><p>Before closing, the buyer conducts a final walkthrough to confirm the property's condition is as-expected.</p></div></li>
-        <li><span class="num dark">05</span><div><h3>Closing Day</h3><p>Buyer &amp; seller sign documents. Buyer pays closing costs, receives keys, and takes possession, while the seller receives the sale proceeds.</p></div></li>
-        <li><span class="num dark">06</span><div><h3>Packing &amp; Moving</h3><p>The owner can start packing up their belongings and planning to move! Congratulations!</p></div></li>
-      </ol>
     </div>
   </section>
 
   <!-- MOVING -->
-  <section id="moving" class="section ivory moving">
-    <div class="container center">
-      <h2 class="display">Moving Made Easy</h2>
-      <div class="divider"><span></span></div>
-      <p class="caps-lead">We understand that moving into a new home can be stressful, but we're here to help make the process a little easier.</p>
-      <p class="narrow-p">To assist with your transition, we offer free access to our trusted trailer, perfect for hauling your belongings, furniture, or anything else you need to move.</p>
-    </div>
-    <div class="wide-img tall" style="background-image:url('images/trailer.jpg')" role="img" aria-label="Enclosed moving trailer parked in a driveway"></div>
-    <div class="container">
-      <p class="rule-heading"><span>How It Works</span></p>
-      <div class="steps4">
-        <div class="step">
-          <span class="circle"><svg viewBox="0 0 48 48"><path d="M8 24 24 10l16 14M12 21v17h24V21"/><path d="M20 38V28h8v10"/></svg></span>
-          <h3>Free for Homebuyers</h3>
-          <p>As part of our commitment to making your home buying experience as smooth as possible, you can use our trailer at no cost.</p>
-        </div>
-        <div class="step">
-          <span class="circle"><svg viewBox="0 0 48 48"><path d="M8 16 24 8l16 8v18l-16 8-16-8z"/><path d="M8 16l16 8 16-8M24 24v18M16 12l16 8"/></svg></span>
-          <h3>Convenient &amp; Spacious</h3>
-          <p>Our trailer is designed to accommodate a variety of moving needs, from boxes and furniture to larger items like appliances or outdoor equipment.</p>
-        </div>
-        <div class="step">
-          <span class="circle"><svg viewBox="0 0 48 48"><rect x="8" y="10" width="32" height="30" rx="2"/><path d="M8 18h32M16 6v8M32 6v8M15 25h4M22 25h4M29 25h4M15 32h4M22 32h4"/></svg></span>
-          <h3>Flexible Scheduling</h3>
-          <p>You can reserve the trailer for the time that works best for you. Whether you need it for a day, weekend, or more, we'll work with you to find a time that fits your schedule.</p>
-        </div>
-        <div class="step">
-          <span class="circle"><svg viewBox="0 0 48 48"><path d="M6 25l9-9 8 4 7-4 12 9-6 6M15 16l-9 9 13 13c2 2 4 0 3-1l3 3c2 1 4-1 3-2l2 2c2 1 4-1 3-3l2 1c2 0 3-2 2-3"/></svg></span>
-          <h3>Extra Support</h3>
-          <p>Moving is just one more way I'm here for you, before, during and after closing.</p>
-        </div>
+  <section id="moving" class="moving">
+    <div class="wrap moving-grid">
+      <figure class="moving-photo"><img src="images/trailer.jpg" alt="Enclosed moving trailer in a driveway" loading="lazy"></figure>
+      <div class="moving-text">
+        <p class="eyebrow">Moving Made Easy</p>
+        <h2>Your next chapter, made easier.</h2>
+        <p>Moving can be stressful. To help with your transition, my buyers get free access to our trusted enclosed trailer, perfect for boxes, furniture, appliances, or outdoor equipment.</p>
+        <ul class="checks">
+          <li>Free for homebuyers</li>
+          <li>Reserve it for a day, a weekend, or longer</li>
+          <li>One more way I'm here for you, before, during, and after closing</li>
+        </ul>
       </div>
-    </div>
-  </section>
-
-  <section class="navy-band">
-    <div class="container center">
-      <p class="display-sm light">Your Next Chapter, Made Easier.</p>
-      <p class="rule-heading light"><span>Your Home. Your Move. My Commitment.</span></p>
     </div>
   </section>
 
   <!-- CONTACT -->
-  <section id="contact" class="section ivory">
-    <div class="container contact-grid">
-      <div>
-        <h2 class="display">Let's Get Started</h2>
-        <div class="divider left"><span></span></div>
-        <p>Buying, selling, or just exploring your options? Send me a message, call, or text. I'll get back to you quickly. Se habla español.</p>
-        <ul class="contact-list">
-          <li><span class="circle sm"><svg viewBox="0 0 48 48"><path d="M14 8l6 8-4 4c2 5 6 9 11 11l4-4 8 6-4 6C21 38 10 27 8 13z"/></svg></span><a href="tel:+16058389140">605-838-9140</a></li>
-          <li><span class="circle sm"><svg viewBox="0 0 48 48"><rect x="6" y="12" width="36" height="24" rx="2"/><path d="m6 14 18 13 18-13"/></svg></span><a href="mailto:marcosdiaz1@kw.com">marcosdiaz1@kw.com</a></li>
-        </ul>
+  <section id="contact" class="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-text">
+        <p class="eyebrow light">Let's Talk</p>
+        <h2>Ready when you are.</h2>
+        <p>Buying, selling, or just exploring your options? Send a message, call, or text. Se habla español.</p>
+        <p class="contact-big"><a href="tel:+16058389140">605-838-9140</a></p>
+        <p><a href="mailto:marcosdiaz1@kw.com" class="contact-mail">marcosdiaz1@kw.com</a></p>
       </div>
       <form name="contact" method="POST" action="thank-you.html" data-netlify="true" netlify-honeypot="bot-field" class="form">
         <input type="hidden" name="form-name" value="contact">
         <p class="hidden"><label>Don't fill this out: <input name="bot-field"></label></p>
-        <div class="form-head">
-          <h3>Client Information</h3>
-        </div>
         <div class="two">
           <label>Name<input type="text" name="name" required></label>
           <label>Phone<input type="tel" name="phone"></label>
         </div>
         <label>Email<input type="email" name="email" required></label>
-        <div class="two">
-          <label>I'm interested in
-            <select name="interest">
-              <option>Buying a home</option>
-              <option>Selling a home</option>
-              <option>Buying and selling</option>
-              <option>Off-market home search</option>
-              <option>Just have a question</option>
-            </select>
-          </label>
-          <label>Ideal timeline<input type="text" name="timeline" placeholder="e.g. Spring 2027"></label>
-        </div>
-        <label>Notes &amp; additional information<textarea name="message" rows="4"></textarea></label>
-        <button type="submit" class="btn">Send Message</button>
+        <label>I'm interested in
+          <select name="interest">
+            <option>Buying a home</option>
+            <option>Selling a home</option>
+            <option>Off-market home search</option>
+            <option>Buying and selling</option>
+            <option>Just have a question</option>
+          </select>
+        </label>
+        <label>Message<textarea name="message" rows="4"></textarea></label>
+        <button type="submit" class="btn btn-gold">Send Message</button>
       </form>
     </div>
   </section>
@@ -345,33 +232,34 @@
 </main>
 
 <footer class="site-footer">
-  <div class="container footer-inner">
+  <div class="wrap footer-inner">
     <div class="footer-brand">
-      <img src="images/logo.svg" alt="" width="44" height="44">
-      <div>
-        <p class="brand-name light">Marcos Diaz</p>
-        <p class="gold-caps">REALTOR® | Keller Williams Realty Sioux Falls</p>
-      </div>
+      <img src="images/logo.svg" alt="" width="40" height="40">
+      <span class="brand-text light">Marcos Diaz<small>REALTOR® · Keller Williams Realty Sioux Falls</small></span>
     </div>
-    <div class="footer-contact">
+    <div class="footer-links">
       <a href="tel:+16058389140">605-838-9140</a>
       <a href="mailto:marcosdiaz1@kw.com">marcosdiaz1@kw.com</a>
     </div>
   </div>
-  <div class="container legal">
-    <p>Marcos Diaz is a member of Matthew Fisher Homes at Keller Williams Realty Sioux Falls. Each office is independently owned and operated.</p>
-    <p>Equal Housing Opportunity. &copy; <span id="year">2026</span> Marcos Diaz. All rights reserved.</p>
+  <div class="wrap legal">
+    <p>Marcos Diaz is a member of Matthew Fisher Homes at Keller Williams Realty Sioux Falls. Each office is independently owned and operated. Equal Housing Opportunity.</p>
+    <p>&copy; <span id="year">2026</span> Marcos Diaz</p>
   </div>
 </footer>
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+  const header = document.getElementById('header');
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 40);
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
   const btn = document.querySelector('.menu-btn'), links = document.querySelector('.links');
   btn.addEventListener('click', () => {
     const open = links.classList.toggle('open');
+    header.classList.toggle('menu-open', open);
     btn.setAttribute('aria-expanded', open);
   });
-  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { links.classList.remove('open'); header.classList.remove('menu-open'); }));
 </script>
 </body>
 </html>
