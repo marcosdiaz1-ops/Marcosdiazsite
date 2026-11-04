@@ -229,32 +229,116 @@
       <div class="contact-text">
         <p class="eyebrow light">Let's Talk</p>
         <h2>Ready when you are.</h2>
-        <p>Buying, selling, or just exploring your options? Send a message, call, or text. Se habla español.</p>
+        <p>Answer a few quick questions and I'll reach out personally, usually the same day. Prefer to talk now? Call or text. Se habla español.</p>
         <p class="contact-big"><a href="tel:+16058389140">605-838-9140</a></p>
         <p><a href="mailto:marcosdiaz1@kw.com" class="contact-mail">marcosdiaz1@kw.com</a></p>
       </div>
-      <form action="https://formsubmit.co/marcosdiaz1@kw.com" method="POST" class="form">
+      <form action="https://formsubmit.co/marcosdiaz1@kw.com" method="POST" class="form wizard" id="leadForm" novalidate>
         <input type="hidden" name="_subject" value="New website lead from marcosdiaz site">
         <input type="hidden" name="_next" value="https://marcosdiaz1-ops.github.io/Marcosdiazsite/thank-you.html">
         <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_captcha" value="false">
         <input type="text" name="_honey" class="hidden" tabindex="-1" autocomplete="off">
-        <div class="two">
-          <label>Name<input type="text" name="name" required></label>
-          <label>Phone<input type="tel" name="phone"></label>
-        </div>
-        <label>Email<input type="email" name="email" required></label>
-        <label>I'm interested in
-          <select name="interest">
-            <option>Buying a home</option>
-            <option>Selling a home</option>
-            <option>Off-market home search</option>
-            <option>Buying and selling</option>
-            <option>Just have a question</option>
-          </select>
-        </label>
-        <label>Message<textarea name="message" rows="4"></textarea></label>
-        <button type="submit" class="btn btn-gold">Send Message</button>
+
+        <div class="progress" aria-hidden="true"><span></span></div>
+        <p class="step-count">Step <b>1</b> of 3</p>
+
+        <!-- STEP 1 -->
+        <fieldset class="step active" data-step="1">
+          <legend>How can I help?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="Looking to" value="Buy a home" required><span><strong>Buy a home</strong><small>Find the right home and get the keys</small></span></label>
+            <label class="choice"><input type="radio" name="Looking to" value="Sell my home"><span><strong>Sell my home</strong><small>Price it right and sell with confidence</small></span></label>
+            <label class="choice"><input type="radio" name="Looking to" value="Buy and sell"><span><strong>Buy &amp; sell</strong><small>Move from one home to the next</small></span></label>
+            <label class="choice"><input type="radio" name="Looking to" value="Off-market search"><span><strong>Off-market search</strong><small>Find a home that isn't listed</small></span></label>
+          </div>
+          <label class="full">Or just have a question?
+            <input type="text" name="Quick question" placeholder="Ask me anything (optional)">
+          </label>
+          <p class="error" role="alert"></p>
+          <div class="nav-btns"><span></span><button type="button" class="btn btn-gold next">Continue</button></div>
+        </fieldset>
+
+        <!-- STEP 2 -->
+        <fieldset class="step" data-step="2">
+          <legend>Tell me a little more</legend>
+          <div class="buy-fields">
+            <div class="two">
+              <label>Price range
+                <select name="Price range">
+                  <option value="">Select…</option>
+                  <option>Under $250K</option><option>$250K – $350K</option><option>$350K – $500K</option><option>$500K – $750K</option><option>$750K+</option><option>Not sure yet</option>
+                </select>
+              </label>
+              <label>Bedrooms
+                <select name="Bedrooms">
+                  <option value="">Select…</option><option>1+</option><option>2+</option><option>3+</option><option>4+</option><option>5+</option>
+                </select>
+              </label>
+            </div>
+            <p class="q">Are you pre-approved for a loan?</p>
+            <div class="pills">
+              <label class="pill"><input type="radio" name="Pre-approved" value="Yes"><span>Yes</span></label>
+              <label class="pill"><input type="radio" name="Pre-approved" value="Not yet"><span>Not yet</span></label>
+              <label class="pill"><input type="radio" name="Pre-approved" value="Paying cash"><span>Paying cash</span></label>
+            </div>
+            <p class="q">First-time homebuyer?</p>
+            <div class="pills">
+              <label class="pill"><input type="radio" name="First-time buyer" value="Yes"><span>Yes</span></label>
+              <label class="pill"><input type="radio" name="First-time buyer" value="No"><span>No</span></label>
+            </div>
+            <label class="full">Areas you're interested in
+              <input type="text" name="Areas" placeholder="e.g. Southwest Sioux Falls, Tea, Brandon">
+            </label>
+          </div>
+          <div class="sell-fields">
+            <label class="full">Property address
+              <input type="text" name="Property address" placeholder="Street, city">
+            </label>
+          </div>
+          <p class="q">When are you hoping to move?</p>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="Timeline" value="ASAP"><span>ASAP</span></label>
+            <label class="pill"><input type="radio" name="Timeline" value="1-3 months"><span>1–3 months</span></label>
+            <label class="pill"><input type="radio" name="Timeline" value="3-6 months"><span>3–6 months</span></label>
+            <label class="pill"><input type="radio" name="Timeline" value="6+ months"><span>6+ months</span></label>
+            <label class="pill"><input type="radio" name="Timeline" value="Just exploring"><span>Just exploring</span></label>
+          </div>
+          <label class="full">Must-haves or anything else I should know
+            <textarea name="Notes" rows="3" placeholder="Garage, yard, school district, layout…"></textarea>
+          </label>
+          <div class="nav-btns"><button type="button" class="btn-back back">← Back</button><button type="button" class="btn btn-gold next">Continue</button></div>
+        </fieldset>
+
+        <!-- STEP 3 -->
+        <fieldset class="step" data-step="3">
+          <legend>How can I reach you?</legend>
+          <div class="two">
+            <label>First &amp; last name<input type="text" name="Name" autocomplete="name" required></label>
+            <label>Phone<input type="tel" name="Phone" autocomplete="tel" required></label>
+          </div>
+          <label class="full">Email<input type="email" name="email" autocomplete="email" required></label>
+          <div class="two">
+            <div>
+              <p class="q">Best way to reach you</p>
+              <div class="pills">
+                <label class="pill"><input type="radio" name="Preferred contact" value="Call" checked><span>Call</span></label>
+                <label class="pill"><input type="radio" name="Preferred contact" value="Text"><span>Text</span></label>
+                <label class="pill"><input type="radio" name="Preferred contact" value="Email"><span>Email</span></label>
+              </div>
+            </div>
+            <div>
+              <p class="q">Language</p>
+              <div class="pills">
+                <label class="pill"><input type="radio" name="Language" value="English" checked><span>English</span></label>
+                <label class="pill"><input type="radio" name="Language" value="Español"><span>Español</span></label>
+              </div>
+            </div>
+          </div>
+          <p class="error" role="alert"></p>
+          <div class="nav-btns"><button type="button" class="btn-back back">← Back</button><button type="submit" class="btn btn-gold">Send to Marcos</button></div>
+          <p class="fine">I'll reach out personally, usually the same day. Your information is never shared or sold.</p>
+        </fieldset>
       </form>
     </div>
   </section>
@@ -290,6 +374,55 @@
     btn.setAttribute('aria-expanded', open);
   });
   links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { links.classList.remove('open'); header.classList.remove('menu-open'); }));
+  // Lead form wizard
+  (function () {
+    const form = document.getElementById('leadForm');
+    if (!form) return;
+    const steps = [...form.querySelectorAll('.step')];
+    const bar = form.querySelector('.progress span');
+    const count = form.querySelector('.step-count b');
+    let i = 0;
+    const show = n => {
+      steps.forEach((s, k) => s.classList.toggle('active', k === n));
+      bar.style.width = ((n + 1) / steps.length * 100) + '%';
+      count.textContent = n + 1; i = n;
+    };
+    const intent = () => (form.querySelector('input[name="Looking to"]:checked') || {}).value || '';
+    const setFields = () => {
+      const v = intent();
+      const buy = v === 'Sell my home' ? false : true;
+      const sell = v === 'Sell my home' || v === 'Buy and sell';
+      form.querySelector('.buy-fields').hidden = !buy;
+      form.querySelector('.sell-fields').hidden = !sell;
+      form.querySelectorAll('.buy-fields input, .buy-fields select').forEach(el => el.disabled = !buy);
+      form.querySelectorAll('.sell-fields input').forEach(el => el.disabled = !sell);
+    };
+    const valid = step => {
+      const err = step.querySelector('.error');
+      if (step.dataset.step === '1') {
+        const q = form.querySelector('input[name="Quick question"]').value.trim();
+        if (!intent() && !q) { err.textContent = 'Choose an option or type a question.'; return false; }
+      } else {
+        for (const el of step.querySelectorAll('[required]')) {
+          if (!el.checkValidity()) { err.textContent = 'Please add your ' + el.closest('label').firstChild.textContent.trim().toLowerCase() + '.'; el.focus(); return false; }
+        }
+      }
+      if (err) err.textContent = ''; return true;
+    };
+    form.querySelectorAll('input[name="Looking to"]').forEach(r => r.addEventListener('change', () => {
+      setFields(); if (valid(steps[0])) setTimeout(() => show(1), 180);
+    }));
+    form.querySelectorAll('.next').forEach(b => b.addEventListener('click', () => {
+      if (!valid(steps[i])) return;
+      if (i === 0) { setFields(); if (!intent()) return show(2); }
+      show(i + 1);
+    }));
+    form.querySelectorAll('.back').forEach(b => b.addEventListener('click', () => {
+      show(i === 2 && !intent() ? 0 : i - 1);
+    }));
+    form.addEventListener('submit', e => { if (!valid(steps[2])) e.preventDefault(); });
+    setFields(); show(0);
+  })();
 </script>
 </body>
 </html>
