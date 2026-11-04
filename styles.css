@@ -141,6 +141,22 @@ h2 { font-size: clamp(2.2rem, 4.2vw, 3.4rem); margin-bottom: 26px; }
 .source { margin-top: 40px; font-size: .8rem; color: #8a8579; }
 .source a { color: var(--gold); }
 
+/* Reviews */
+.reviews { background: var(--sand); padding: 120px 0; }
+.reviews-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; margin-bottom: 50px; flex-wrap: wrap; }
+.reviews-head h2 { margin-bottom: 0; }
+.rating { display: flex; align-items: center; gap: 18px; }
+.rating-num { font-family: var(--serif); font-size: 4rem; color: var(--ink); line-height: 1; }
+.rating p { font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-top: 4px; }
+.stars { color: var(--gold); letter-spacing: .18em; font-size: 1.1rem; }
+.review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 26px; }
+.review { background: #fff; border: 1px solid var(--line); padding: 40px 38px 34px; display: flex; flex-direction: column; margin: 0; position: relative; }
+.review::before { content: "“"; position: absolute; top: 6px; right: 26px; font-family: var(--serif); font-size: 6rem; color: rgba(185,139,92,.18); line-height: 1; }
+.review blockquote { font-family: var(--serif); font-size: 1.55rem; line-height: 1.35; color: var(--ink); margin: 18px 0 28px; flex: 1; }
+.review figcaption { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 2px; }
+.review figcaption strong { font-weight: 500; color: var(--ink); }
+.review figcaption span { font-size: .78rem; letter-spacing: .08em; color: #8a8579; }
+
 /* Search band */
 .search-band { background: var(--navy); padding: 90px 0; color: #d9d2c6; }
 .search-inner { display: flex; justify-content: space-between; align-items: center; gap: 50px; }
@@ -290,7 +306,7 @@ details:has(.step-n) p { padding-left: 34px; }
   .process li, .process li + li { padding: 30px 20px 24px 0; border-left: 0; }
   .guide-head { position: static; }
   .intro { padding: 90px 0 20px; }
-  .about, .services, .feature, .results, .guide, .seller, .moving, .contact { padding-top: 90px; padding-bottom: 90px; }
+  .about, .services, .feature, .results, .reviews, .guide, .seller, .moving, .contact { padding-top: 90px; padding-bottom: 90px; }
   .hero::before { background: linear-gradient(180deg, rgba(13,23,48,.55) 0%, rgba(13,23,48,.85) 100%); }
 }
 @media (max-width: 560px) {
