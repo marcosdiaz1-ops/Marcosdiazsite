@@ -271,12 +271,11 @@
         <p class="contact-big"><a href="tel:+16058389140">605-838-9140</a></p>
         <p><a href="mailto:marcosdiaz1@kw.com" class="contact-mail">marcosdiaz1@kw.com</a></p>
       </div>
-      <form action="https://formsubmit.co/marcosdiaz1@kw.com" method="POST" class="form wizard" id="leadForm" novalidate>
-        <input type="hidden" name="_subject" value="New website lead from marcosdiaz site">
-        <input type="hidden" name="_next" value="https://marcosdiaz1-ops.github.io/Marcosdiazsite/thank-you.html">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="text" name="_honey" class="hidden" tabindex="-1" autocomplete="off">
+      <form action="https://api.web3forms.com/submit" method="POST" class="form wizard" id="leadForm" novalidate>
+        <input type="hidden" name="access_key" value="WEB3FORMS_KEY">
+        <input type="hidden" name="subject" value="New website lead from marcosdiaz site">
+        <input type="hidden" name="from_name" value="Marcos Diaz Website">
+        <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off">
 
         <div class="progress" aria-hidden="true"><span></span></div>
         <p class="step-count">Step <b>1</b> of 3</p>
@@ -393,20 +392,24 @@
       const btn = steps[2].querySelector('button[type=submit]');
       btn.disabled = true; btn.textContent = 'Sending…';
       const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 10000);
+      const timer = setTimeout(() => ctrl.abort(), 15000);
       try {
-        const res = await fetch(form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), {
+        const res = await fetch(form.action, {
           method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form), signal: ctrl.signal
         });
         clearTimeout(timer);
         const data = await res.json().catch(() => ({}));
-        if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'send failed');
+        if (!res.ok || data.success !== true) throw new Error(data.message || 'send failed');
         const first = form.querySelector('[name="Name"]').value.trim().split(' ')[0];
         sent.querySelector('.sent-name').textContent = first ? ', ' + first : '';
         steps.forEach(s => s.classList.remove('active'));
         bar.style.width = '100%'; count.textContent = 'Sent';
         sent.classList.add('active');
-      } catch (_) { clearTimeout(timer); btn.textContent = 'Sending…'; HTMLFormElement.prototype.submit.call(form); }
+      } catch (_) {
+        clearTimeout(timer);
+        btn.disabled = false; btn.textContent = 'Try Again';
+        err.innerHTML = 'Sorry, your message didn\'t go through. Please try again, or call/text <a href="tel:+16058389140">605-838-9140</a>.';
+      }
     });
     show(0);
   })();
