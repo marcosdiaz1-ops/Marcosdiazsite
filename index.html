@@ -420,10 +420,12 @@
         steps.forEach(s => s.classList.remove('active'));
         bar.style.width = '100%'; count.textContent = 'Sent';
         sent.classList.add('active');
-      } catch (_) {
+      } catch (e2) {
         clearTimeout(timer);
         btn.disabled = false; btn.textContent = 'Try Again';
-        err.innerHTML = 'Sorry, your message didn\'t go through. Please try again, or call/text <a href="tel:+16058389140">605-838-9140</a>.';
+        const why = e2 && e2.name === 'AbortError' ? 'timed out' : (e2 && e2.message ? e2.message : 'unknown');
+        console.warn('Lead form error:', why);
+        err.innerHTML = 'Sorry, your message didn\'t go through. Please try again, or call/text <a href="tel:+16058389140">605-838-9140</a>.<br><small class="why">(' + why.replace(/</g, '') + ')</small>';
       }
     });
     show(0);
