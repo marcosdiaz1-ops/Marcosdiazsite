@@ -1,10 +1,13 @@
-# Marcos Díaz – Real Estate Website
+# Marcos Diaz – Real Estate Website
 
-Personal website for Marcos Díaz, Real Estate Agent at Keller Williams Realty Sioux Falls.
+Personal website for Marcos Diaz, REALTOR® at Keller Williams Realty Sioux Falls.
+
+Live at **https://605homesearch.com**
 
 - `index.html`: the main page
-- `thank-you.html`: the page shown after someone submits the contact form
-- `styles.css`: colors, fonts, layout (navy and copper theme)
-- `images/`: headshot and favicon
+- `thank-you.html`: fallback thank-you page for the contact form
+- `styles.css`: colors, fonts, and layout (ivory, navy, and gold theme)
+- `fonts/`: self-hosted Cormorant Garamond and Jost
+- `images/`: photos, logo, and favicon
 
-Hosted on Netlify, which publishes every change pushed to `main` automatically. The contact form uses Netlify Forms, so submissions show up in the Netlify dashboard under **Forms**.
+Hosted on GitHub Pages. Every change pushed to `main` is published automatically by `.github/workflows/deploy.yml`. The domain is managed in Cloudflare DNS (DNS only) and set under Settings → Pages → Custom domain.
