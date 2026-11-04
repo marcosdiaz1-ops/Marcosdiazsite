@@ -1,13 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://605homesearch.com/</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/es/</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/areas/sioux-falls.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/areas/southwest-sioux-falls.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/areas/southeast-sioux-falls.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/areas/tea.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/areas/harrisburg.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/areas/brandon.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/privacy.html</loc><lastmod>2026-11-04</lastmod></url>
-  <url><loc>https://605homesearch.com/es/privacidad.html</loc><lastmod>2026-11-04</lastmod></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://605homesearch.com/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/privacy.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/privacidad.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/privacidad.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/privacidad.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/sioux-falls.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/sioux-falls.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/sioux-falls.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/sioux-falls.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/sioux-falls.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/sioux-falls.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/southwest-sioux-falls.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/southwest-sioux-falls.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/southwest-sioux-falls.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/southwest-sioux-falls.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/southwest-sioux-falls.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/southwest-sioux-falls.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/southeast-sioux-falls.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/southeast-sioux-falls.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/southeast-sioux-falls.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/southeast-sioux-falls.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/southeast-sioux-falls.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/southeast-sioux-falls.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/tea.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/tea.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/tea.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/tea.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/tea.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/tea.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/harrisburg.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/harrisburg.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/harrisburg.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/harrisburg.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/harrisburg.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/harrisburg.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/brandon.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/brandon.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/brandon.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/brandon.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/brandon.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/brandon.html"/>
+  </url>
 </urlset>
