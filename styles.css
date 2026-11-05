@@ -509,3 +509,23 @@ details:has(.step-n) p { padding-left: 34px; }
   .links a { color: var(--ink); }
   .nav-cta { border-color: var(--gold); }
 }
+
+/* Lender card */
+.lender-sec { padding: 0 0 110px; background: var(--ivory); }
+.lender-card { display: grid; grid-template-columns: 120px 1fr; gap: 30px; align-items: start; background: #fff; border: 1px solid var(--line); padding: 36px 40px; max-width: 900px; margin: 0 auto; }
+.lender-card img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold); }
+.lender-info { display: grid; gap: 6px; }
+.lender-info h3 { font-size: 1.9rem; margin: 2px 0; }
+.lender-title { font-size: .92rem; color: #4a4a4a; }
+.lender-lang { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.lender-contact a { color: var(--ink); }
+.lender-info .btn { justify-self: start; margin-top: 12px; }
+.lender-fine { font-size: .75rem; color: #8a8579; margin-top: 10px; line-height: 1.5; }
+.lender-card.compact { grid-template-columns: 1fr; padding: 28px 28px; gap: 14px; text-align: left; }
+.lender-card.compact img { width: 84px; height: 84px; }
+.lender-card.compact h3 { font-size: 1.5rem; }
+.lender-card.compact .btn { justify-self: stretch; text-align: center; }
+.post-side { display: grid; gap: 24px; align-self: start; }
+.post-side .side-card { position: static; }
+@media (max-width: 960px) { .post-side { position: static; } }
+@media (max-width: 640px) { .lender-card { grid-template-columns: 1fr; padding: 28px 24px; } .lender-card img { width: 96px; height: 96px; } .lender-info .btn { justify-self: stretch; text-align: center; } }
