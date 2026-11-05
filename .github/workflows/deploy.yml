@@ -29,6 +29,14 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Clear any stuck earlier publish
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for sha in 59ab67315a3156bcf53d6025b23c66d39e59aae1 ${{ github.event.before }}; do
+            gh api -X POST "repos/${{ github.repository }}/pages/deployments/$sha/cancel" 2>&1 | head -2 || true
+          done
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
