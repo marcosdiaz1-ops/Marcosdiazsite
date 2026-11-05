@@ -77,9 +77,16 @@
       btn.disabled = true; btn.textContent = T.sending;
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 15000);
+      const fd = new FormData(form);
+      fd.set('Language', ES ? 'Español' : 'English');
+      // Lead tracker + instant alert + auto-reply (Google Apps Script), sent alongside the email
+      const sheetUrl = form.dataset.sheet;
+      if (sheetUrl) {
+        fetch(sheetUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(fd), keepalive: true }).catch(() => {});
+      }
       try {
         const res = await fetch(form.action, {
-          method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form), signal: ctrl.signal
+          method: 'POST', headers: { 'Accept': 'application/json' }, body: fd, signal: ctrl.signal
         });
         clearTimeout(timer);
         const data = await res.json().catch(() => ({}));

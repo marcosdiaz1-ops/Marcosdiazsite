@@ -16,3 +16,6 @@ Live at **https://605homesearch.com**
 - `images/`: photos, logo, and favicon
 
 Hosted on GitHub Pages. Every change pushed to `main` is published automatically by `.github/workflows/deploy.yml`. The domain is managed in Cloudflare DNS (DNS only) and set under Settings → Pages → Custom domain.
+
+## Lead automation
+`automation/lead-automation.gs` is a Google Apps Script attached to the "605homesearch.com – Website Leads" Google Sheet. The website form posts each lead to it (URL in the form's `data-sheet` attribute); it saves the lead to the sheet, emails Marcos an instant alert, sends the lead an auto-reply (English/Spanish), and emails a weekly summary on Mondays.
