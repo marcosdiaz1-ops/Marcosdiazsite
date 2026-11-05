@@ -61,8 +61,14 @@
     steps.forEach((step, k) => {
       const next = step.querySelector('.next');
       if (!next) return;
+      const texts = [...step.querySelectorAll('input[type=text]')];
+      const ready = () => step.querySelector('input:checked') || (texts.length && texts.every(t => t.value.trim().length > 3));
       step.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => { next.disabled = false; }));
-      next.addEventListener('click', () => { if (step.querySelector('input:checked')) show(k + 1); });
+      texts.forEach(t => {
+        t.addEventListener('input', () => { next.disabled = !ready(); });
+        t.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (ready()) show(k + 1); } });
+      });
+      next.addEventListener('click', () => { if (ready()) show(k + 1); });
     });
     form.querySelectorAll('.back').forEach(b => b.addEventListener('click', () => show(i - 1)));
     form.addEventListener('submit', async e => {
@@ -79,6 +85,7 @@
       const timer = setTimeout(() => ctrl.abort(), 15000);
       const fd = new FormData(form);
       fd.set('Language', ES ? 'Español' : 'English');
+      if (form.dataset.kind === 'home-value') fd.set('Looking to', 'Home value: ' + (fd.get('Address') || '').trim());
       // Lead tracker + instant alert + auto-reply (Google Apps Script), sent alongside the email
       const sheetUrl = form.dataset.sheet;
       if (sheetUrl) {
@@ -105,6 +112,20 @@
       }
     });
     show(0);
+  })();
+
+  // Mobile: sticky Text / Call bar
+  (function () {
+    const bar = document.createElement('div');
+    bar.className = 'mobile-cta';
+    bar.innerHTML = '<a href="sms:+16058389140" class="m-text">' +
+      '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>' +
+      (ES ? 'Enviar texto' : 'Text Marcos') + '</a>' +
+      '<a href="tel:+16058389140" class="m-call">' +
+      '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>' +
+      (ES ? 'Llamar' : 'Call') + '</a>';
+    document.body.appendChild(bar);
+    document.body.classList.add('has-mobile-cta');
   })();
 
   // Reviews slider: one at a time, auto-advance

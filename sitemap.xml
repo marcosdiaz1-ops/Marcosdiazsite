@@ -128,4 +128,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/market/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/mercado/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/home-value/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/home-value/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/valor-de-casa/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/valor-de-casa/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/home-value/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/valor-de-casa/"/>
+  </url>
 </urlset>
