@@ -4,6 +4,8 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 s = open(f'{ROOT}/index.html').read()
+import sys; sys.path.insert(0, HERE); import faq as _faq
+s = s.replace(_faq.section(False), _faq.section(True)).replace(_faq.ld(False), _faq.ld(True))
 
 # --- paths: assets and local pages one level up ---
 s = s.replace('<html lang="en">', '<html lang="es">')
@@ -19,6 +21,11 @@ s = s.replace('<a href="es/" class="lang" lang="es" hreflang="es" aria-label="Ve
 s = s.replace('<a href="es/">Español</a>', '<a href="../">English</a>')
 
 T = [
+('<small>The "City of Parks" to the northeast</small>', '<small>La "Ciudad de los Parques" al noreste</small>'),
+('<small>Northwest of Sioux Falls</small>', '<small>Al noroeste de Sioux Falls</small>'),
+('<small>Quiet town just north</small>', '<small>Pueblo tranquilo justo al norte</small>'),
+('<small>Southwest, off I-29</small>', '<small>Al suroeste, cerca de la I-29</small>'),
+('<small>Lincoln County seat to the south</small>', '<small>Sede del condado de Lincoln, al sur</small>'),
 ('      <div class="lender-card">\n        <img src="../images/lender-gisselle-perez.jpg" alt="Gisselle Perez, CharterWest Bank" width="96" height="96" loading="lazy">\n        <div class="lender-info">\n          <p class="eyebrow">Get Pre-Approved</p>\n          <h3>Gisselle Perez</h3>\n          <p class="lender-title">Mortgage Loan Advisor · CharterWest Bank Mortgage Center · NMLS #2840295</p>\n          <p class="lender-lang">Bilingual: English &amp; Español</p>\n          <p class="lender-contact"><a href="tel:+16052507967">605-250-7967</a> · <a href="mailto:gperez@charterwest.com">gperez@charterwest.com</a></p>\n          <a href="https://homeloan.charterwest.com/homehub/signup/gperez@charterwest.com" target="_blank" rel="noopener" class="btn btn-gold">Apply / Pre-Qualify Online</a>\n          <p class="lender-fine">Marcos Diaz and Keller Williams are not lenders. You are free to choose any lender. Loans offered by CharterWest Bank, NMLS #466077, Equal Housing Lender. Subject to credit approval.</p>\n        </div>\n      </div>', '      <div class="lender-card">\n        <img src="../images/lender-gisselle-perez.jpg" alt="Gisselle Perez, CharterWest Bank" width="96" height="96" loading="lazy">\n        <div class="lender-info">\n          <p class="eyebrow">Obtenga su preaprobación</p>\n          <h3>Gisselle Perez</h3>\n          <p class="lender-title">Asesora de préstamos hipotecarios · CharterWest Bank Mortgage Center · NMLS #2840295</p>\n          <p class="lender-lang">Bilingüe: español e inglés</p>\n          <p class="lender-contact"><a href="tel:+16052507967">605-250-7967</a> · <a href="mailto:gperez@charterwest.com">gperez@charterwest.com</a></p>\n          <a href="https://homeloan.charterwest.com/homehub/signup/gperez@charterwest.com" target="_blank" rel="noopener" class="btn btn-gold">Solicitar en línea</a>\n          <p class="lender-fine">Marcos Diaz y Keller Williams no son prestamistas. Usted puede escoger cualquier prestamista. Préstamos ofrecidos por CharterWest Bank, NMLS #466077, Prestamista de Igualdad de Vivienda. Sujeto a aprobación de crédito.</p>\n        </div>\n      </div>'),
 ('<span class="meta">Represented buyer &amp; seller</span>', '<span class="meta">Representé al comprador y al vendedor</span>'),
 ('<span class="meta">Represented seller</span>', '<span class="meta">Representé al vendedor</span>'),
@@ -46,7 +53,6 @@ T = [
 ('<meta name="twitter:description" content="Bilingual real estate guidance in Sioux Falls. 5.0★ on Google.">', '<meta name="twitter:description" content="Asesoría de bienes raíces en español en Sioux Falls. 5.0★ en Google.">'),
 ('<link rel="canonical" href="https://605homesearch.com/">', '<link rel="canonical" href="https://605homesearch.com/es/">'),
 # nav
-('aria-label="Marcos Diaz Real Estate home"', 'aria-label="Inicio Marcos Diaz Bienes Raíces"'),
 ('<span class="brand-text">Marcos Diaz<small>Real Estate</small></span>', '<span class="brand-text">Marcos Diaz<small>Bienes Raíces</small></span>'),
 ('aria-label="Open menu"', 'aria-label="Abrir menú"'),
 ('<a href="#about">About</a>', '<a href="#about">Sobre mí</a>'),

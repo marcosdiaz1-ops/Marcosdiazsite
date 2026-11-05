@@ -198,4 +198,39 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/first-time-home-buyer-guide-sioux-falls/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/guia-comprar-primera-casa-sioux-falls/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/areas/garretson.html</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/garretson.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/garretson.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/hartford.html</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/hartford.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/hartford.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/crooks.html</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/crooks.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/crooks.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/lennox.html</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/lennox.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/lennox.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/areas/canton.html</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/canton.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/canton.html"/>
+  </url>
 </urlset>

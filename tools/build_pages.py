@@ -57,7 +57,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
 
 <header class="site-header" id="header">
   <div class="nav">
-    <a href="{home}" class="brand" aria-label="Marcos Diaz Real Estate">
+    <a href="{home}" class="brand">
       <img src="{p}images/logo.svg" alt="" width="34" height="34">
       <span class="brand-text">Marcos Diaz<small>{'Bienes Raíces' if es else 'Real Estate'}</small></span>
     </a>
@@ -176,6 +176,11 @@ AREAS = [
     ('tea', 'Tea'),
     ('harrisburg', 'Harrisburg'),
     ('brandon', 'Brandon'),
+    ('garretson', 'Garretson'),
+    ('hartford', 'Hartford'),
+    ('crooks', 'Crooks'),
+    ('lennox', 'Lennox'),
+    ('canton', 'Canton'),
 ]
 
 AREA_CONTENT = {
@@ -247,6 +252,64 @@ AREA_CONTENT = {
  ),
 }
 
+
+AREA_CONTENT.update({
+ 'garretson': dict(
+   title='Garretson, SD Homes for Sale & Real Estate',
+   lead='The "City of Parks," northeast of Sioux Falls near the Minnesota border.',
+   about=["Garretson is a small city in Minnehaha County, northeast of Sioux Falls near the Minnesota border. It's known as the \"City of Parks\" for its beautiful red quartzite scenery along Split Rock Creek.",
+          "Buyers who want a quieter small-town lifestyle, more space, and nature right out the door often look at Garretson, while still being within driving distance of Sioux Falls jobs and shopping. I've helped buyers purchase in Garretson and know the area well."],
+   why=["Small-town living with a close-knit community",
+        "Devil's Gulch and Split Rock Park right in town",
+        "Palisades State Park just south of town, with hiking, climbing, and camping",
+        "More space and a slower pace, within reach of Sioux Falls"],
+   schools="Garretson is served by the Garretson School District, which covers Garretson and Sherman. Always confirm the school district for a specific address.",
+ ),
+ 'hartford': dict(
+   title='Hartford, SD Homes for Sale & Real Estate',
+   lead='A suburban community a few miles northwest of Sioux Falls.',
+   about=["Hartford is a suburban city in Minnehaha County, just a few miles northwest of Sioux Falls. It offers a small-town community feel with an easy drive into the city for work, shopping, and entertainment.",
+          "It's a popular choice for buyers who want a smaller community and good value while staying close to Sioux Falls. I can help you compare Hartford with other communities around the city."],
+   why=["Small-town community close to Sioux Falls",
+        "A quick drive into the city",
+        "A mix of established homes and newer construction",
+        "Room to spread out compared to the city"],
+   schools="Hartford is home to the West Central School District, which also serves Humboldt and surrounding areas. Always confirm the school district for a specific address.",
+ ),
+ 'crooks': dict(
+   title='Crooks, SD Homes for Sale & Real Estate',
+   lead='A small community just north of Sioux Falls.',
+   about=["Crooks is a small city in Minnehaha County just north of Sioux Falls. Many buyers like its quiet, small-town setting while being only minutes from the city.",
+          "If you want a little more space and a peaceful neighborhood without a long commute, Crooks is worth a look. I'll help you see what's available and how it compares to nearby areas."],
+   why=["Quiet small-town setting",
+        "Minutes from Sioux Falls",
+        "Homes with more room and bigger lots",
+        "A tight-knit community"],
+   schools="Crooks is in the Tri-Valley School District, which also serves Colton and parts of the surrounding area. Always confirm the school district for a specific address.",
+ ),
+ 'lennox': dict(
+   title='Lennox, SD Homes for Sale & Real Estate',
+   lead='A Lincoln County community southwest of Sioux Falls, just off I-29.',
+   about=["Lennox is a city in Lincoln County, about 20 miles southwest of Sioux Falls and a few miles off I-29. It offers a strong small-town community with parks, a community pool, and local events.",
+          "Buyers often choose Lennox for its community feel and value, with an easy drive to Sioux Falls, Tea, and Harrisburg. I can help you understand the Lennox market and find the right home."],
+   why=["Strong small-town community",
+        "Easy access to I-29",
+        "Parks, a community pool, and local events",
+        "Good value compared to homes closer to the city"],
+   schools="Lennox is served by the Lennox School District, which also includes Worthing and Chancellor. Always confirm the school district for a specific address.",
+ ),
+ 'canton': dict(
+   title='Canton, SD Homes for Sale & Real Estate',
+   lead='The Lincoln County seat, south of Sioux Falls in the rolling hills of the Sioux Valley.',
+   about=["Canton is the county seat of Lincoln County, south of Sioux Falls. It sits in the rolling hills of the Sioux Valley, with the Big Sioux River on its east side, Lake Alvin to the north, and Newton Hills State Park to the south.",
+          "Buyers who love the outdoors and a historic small-town downtown often look at Canton, with Sioux Falls about a 20-minute drive away."],
+   why=["Historic small-town downtown",
+        "Newton Hills State Park just south of town",
+        "Lake Alvin and the Big Sioux River nearby",
+        "Community pool, golf course, and parks"],
+   schools="Canton is served by the Canton School District. Always confirm the school district for a specific address.",
+ ),
+})
 
 import json
 
@@ -328,6 +391,67 @@ ES_CONTENT = {
    schools="Brandon pertenece al Distrito Escolar de Brandon Valley. Siempre confirme el distrito escolar de una dirección específica.",
  ),
 }
+
+
+ES_NAMES.update({'garretson': 'Garretson', 'hartford': 'Hartford', 'crooks': 'Crooks', 'lennox': 'Lennox', 'canton': 'Canton'})
+ES_SHORT.update({'garretson': 'Garretson', 'hartford': 'Hartford', 'crooks': 'Crooks', 'lennox': 'Lennox', 'canton': 'Canton'})
+ES_CONTENT.update({
+ 'garretson': dict(
+   title='Casas en venta en Garretson, SD',
+   lead='La "Ciudad de los Parques", al noreste de Sioux Falls cerca de la frontera con Minnesota.',
+   about=["Garretson es una pequeña ciudad del condado de Minnehaha, al noreste de Sioux Falls y cerca de la frontera con Minnesota. Se le conoce como la \"Ciudad de los Parques\" por sus hermosos paisajes de cuarcita roja a lo largo de Split Rock Creek.",
+          "Los compradores que buscan una vida tranquila de pueblo, más espacio y naturaleza cerca suelen considerar Garretson, sin dejar de estar a una distancia razonable de los empleos y tiendas de Sioux Falls. He ayudado a compradores a adquirir casa en Garretson y conozco bien el área."],
+   why=["Vida de pueblo con una comunidad unida",
+        "Devil's Gulch y Split Rock Park en el mismo pueblo",
+        "Palisades State Park justo al sur, con senderismo, escalada y campamento",
+        "Más espacio y un ritmo más tranquilo, cerca de Sioux Falls"],
+   schools="Garretson pertenece al Distrito Escolar de Garretson, que cubre Garretson y Sherman. Siempre confirme el distrito escolar de una dirección específica.",
+ ),
+ 'hartford': dict(
+   title='Casas en venta en Hartford, SD',
+   lead='Una comunidad suburbana a pocas millas al noroeste de Sioux Falls.',
+   about=["Hartford es una ciudad suburbana del condado de Minnehaha, a pocas millas al noroeste de Sioux Falls. Ofrece ambiente de pueblo con un trayecto corto a la ciudad para trabajar, comprar y divertirse.",
+          "Es una opción popular para quienes buscan una comunidad más pequeña y buen valor sin alejarse de Sioux Falls. Le ayudo a comparar Hartford con otras comunidades alrededor de la ciudad."],
+   why=["Ambiente de pueblo cerca de Sioux Falls",
+        "Trayecto corto a la ciudad",
+        "Casas establecidas y construcción nueva",
+        "Más espacio que en la ciudad"],
+   schools="En Hartford está el Distrito Escolar West Central, que también sirve a Humboldt y sus alrededores. Siempre confirme el distrito escolar de una dirección específica.",
+ ),
+ 'crooks': dict(
+   title='Casas en venta en Crooks, SD',
+   lead='Una pequeña comunidad justo al norte de Sioux Falls.',
+   about=["Crooks es una pequeña ciudad del condado de Minnehaha, justo al norte de Sioux Falls. A muchos compradores les gusta su ambiente tranquilo de pueblo, a solo minutos de la ciudad.",
+          "Si quiere un poco más de espacio y un vecindario tranquilo sin un trayecto largo, vale la pena considerar Crooks. Le muestro lo que hay disponible y cómo se compara con áreas cercanas."],
+   why=["Ambiente tranquilo de pueblo",
+        "A minutos de Sioux Falls",
+        "Casas con más espacio y terrenos más grandes",
+        "Una comunidad unida"],
+   schools="Crooks pertenece al Distrito Escolar Tri-Valley, que también sirve a Colton y partes de los alrededores. Siempre confirme el distrito escolar de una dirección específica.",
+ ),
+ 'lennox': dict(
+   title='Casas en venta en Lennox, SD',
+   lead='Una comunidad del condado de Lincoln al suroeste de Sioux Falls, cerca de la I-29.',
+   about=["Lennox es una ciudad del condado de Lincoln, a unas 20 millas al suroeste de Sioux Falls y a pocas millas de la I-29. Tiene una comunidad de pueblo muy unida, con parques, piscina comunitaria y eventos locales.",
+          "Muchos compradores eligen Lennox por su ambiente de comunidad y buen valor, con un trayecto fácil a Sioux Falls, Tea y Harrisburg. Le ayudo a entender el mercado de Lennox y encontrar la casa indicada."],
+   why=["Comunidad de pueblo muy unida",
+        "Fácil acceso a la I-29",
+        "Parques, piscina comunitaria y eventos locales",
+        "Buen valor comparado con casas más cerca de la ciudad"],
+   schools="Lennox pertenece al Distrito Escolar de Lennox, que también incluye Worthing y Chancellor. Siempre confirme el distrito escolar de una dirección específica.",
+ ),
+ 'canton': dict(
+   title='Casas en venta en Canton, SD',
+   lead='La sede del condado de Lincoln, al sur de Sioux Falls, entre las colinas del valle del Sioux.',
+   about=["Canton es la sede del condado de Lincoln, al sur de Sioux Falls. Está entre las colinas del valle del Sioux, con el río Big Sioux al este, el lago Alvin al norte y Newton Hills State Park al sur.",
+          "A los compradores que disfrutan la naturaleza y un centro histórico de pueblo les gusta Canton, a unos 20 minutos de Sioux Falls."],
+   why=["Centro histórico de pueblo",
+        "Newton Hills State Park justo al sur",
+        "El lago Alvin y el río Big Sioux cerca",
+        "Piscina comunitaria, campo de golf y parques"],
+   schools="Canton pertenece al Distrito Escolar de Canton. Siempre confirme el distrito escolar de una dirección específica.",
+ ),
+})
 
 def crumbs_ld(items):
     return {"@context": "https://schema.org", "@type": "BreadcrumbList",
