@@ -470,3 +470,14 @@ details:has(.step-n) p { padding-left: 34px; }
   .mobile-cta .m-call { background: var(--navy-deep); }
   body.has-mobile-cta { padding-bottom: 56px; }
 }
+
+/* Review request */
+.review-ask { margin-top: 18px; font-size: .95rem; color: var(--muted, #6b6b6b); }
+.review-ask a { color: var(--gold); }
+.review-page { text-align: center; padding-bottom: 90px; }
+.review-page h1 { margin-bottom: 14px; }
+.review-page h2 { color: #fff; font-family: var(--serif); font-weight: 400; font-size: clamp(1.8rem, 4vw, 2.4rem); margin: 0 0 12px; }
+.review-page .lead { margin: 0 auto 26px; max-width: 620px; }
+.btn-lg { font-size: .9rem; padding: 18px 34px; }
+.rv-rule { border: 0; border-top: 1px solid rgba(185,139,92,.35); width: 120px; margin: 50px auto; }
+.rv-sign { margin-top: 44px; }
