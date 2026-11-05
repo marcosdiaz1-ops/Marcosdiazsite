@@ -34,3 +34,53 @@ jobs:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  indexnow:
+    # Tell Bing (and other IndexNow search engines) which pages changed
+    needs: deploy
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Submit changed pages to IndexNow
+        env:
+          KEY: b53b2d172794472fa3604e6999f0cc64
+          EVENT: ${{ github.event_name }}
+        run: |
+          sleep 30
+          python3 - <<'PY'
+          import os, re, subprocess, json, urllib.request
+          site = "https://605homesearch.com"
+          skip = ("tools/", "automation/", "google", "thank-you", "review/")
+          sm = open("sitemap.xml").read()
+          all_urls = re.findall(r"<loc>([^<]+)</loc>", sm)
+          urls = []
+          if os.environ["EVENT"] == "push":
+              try:
+                  files = subprocess.check_output(["git", "diff", "--name-only", "HEAD~1", "HEAD"], text=True).split()
+              except Exception:
+                  files = []
+              for f in files:
+                  if not f.endswith(".html") or f.startswith(skip) or not os.path.exists(f):
+                      continue
+                  path = "/" + (f[:-10] if f.endswith("index.html") else f)
+                  urls.append(site + path)
+              if any(f in ("sitemap.xml",) for f in files):
+                  urls.append(site + "/sitemap.xml")
+          else:
+              urls = all_urls
+          urls = sorted(set(urls))[:10000]
+          print("Submitting", len(urls), "URLs"); print("\n".join(urls))
+          if not urls:
+              raise SystemExit(0)
+          body = json.dumps({"host": "605homesearch.com", "key": os.environ["KEY"],
+                             "keyLocation": f"{site}/{os.environ['KEY']}.txt", "urlList": urls}).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                                       headers={"Content-Type": "application/json; charset=utf-8"})
+          try:
+              r = urllib.request.urlopen(req, timeout=30); print("IndexNow status:", r.status)
+          except urllib.error.HTTPError as e:
+              print("IndexNow status:", e.code, e.read()[:300])
+          PY
