@@ -142,4 +142,60 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/home-value/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/valor-de-casa/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/blog/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/blog/give-me-five-down-payment-assistance/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/give-me-five-down-payment-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/give-me-five-ayuda-pago-inicial/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/give-me-five-ayuda-pago-inicial/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/give-me-five-down-payment-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/give-me-five-ayuda-pago-inicial/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/blog/va-home-loans-sioux-falls/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/va-home-loans-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/prestamos-va-sioux-falls/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/prestamos-va-sioux-falls/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/va-home-loans-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/prestamos-va-sioux-falls/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/blog/first-time-home-buyer-guide-sioux-falls/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/first-time-home-buyer-guide-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/guia-comprar-primera-casa-sioux-falls/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/guia-comprar-primera-casa-sioux-falls/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/first-time-home-buyer-guide-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/guia-comprar-primera-casa-sioux-falls/"/>
+  </url>
 </urlset>

@@ -483,3 +483,29 @@ details:has(.step-n) p { padding-left: 34px; }
 .rv-sign { margin-top: 44px; }
 .book-call { margin: 26px 0 8px; }
 .book-call .btn { display: inline-flex; align-items: center; gap: 10px; }
+
+/* Blog */
+.post-tag { display: inline-block; font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 14px; }
+.post-title { font-size: clamp(2.2rem, 4.6vw, 3.6rem) !important; max-width: 900px; line-height: 1.1; }
+.post-meta { font-size: .9rem; color: #b9b2a6; }
+.post-meta a { color: var(--gold-soft); }
+.post h2 { font-size: clamp(1.6rem, 2.8vw, 2.1rem); }
+.post a { color: var(--gold); }
+.post .note { margin-top: 40px; font-size: .85rem; color: #8a8579; border-top: 1px solid var(--line); padding-top: 18px; }
+.post-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.post-card { display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid var(--line); padding: 32px 30px; text-decoration: none; color: inherit; transition: border-color .25s, transform .25s; }
+.post-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+.post-card .post-tag { color: var(--gold); margin: 0; }
+.post-card h2 { font-size: 1.6rem; line-height: 1.2; color: var(--ink); }
+.post-card p { font-size: .95rem; color: #6b675f; flex: 1; }
+.post-more { font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+@media (max-width: 960px) { .post-list { grid-template-columns: 1fr; } }
+.links a, .brand-text { white-space: nowrap; }
+@media (max-width: 1380px) and (min-width: 961px) { .links { gap: 20px; } .links a { letter-spacing: .14em; } }
+@media (max-width: 1200px) and (min-width: 961px) {
+  .menu-btn { display: block; }
+  .links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 22px; padding: 28px 5% 34px; background: var(--ivory); border-bottom: 1px solid var(--line); }
+  .links.open { display: flex; }
+  .links a { color: var(--ink); }
+  .nav-cta { border-color: var(--gold); }
+}
