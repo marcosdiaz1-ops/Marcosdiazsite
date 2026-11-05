@@ -481,3 +481,5 @@ details:has(.step-n) p { padding-left: 34px; }
 .btn-lg { font-size: .9rem; padding: 18px 34px; }
 .rv-rule { border: 0; border-top: 1px solid rgba(185,139,92,.35); width: 120px; margin: 50px auto; }
 .rv-sign { margin-top: 44px; }
+.book-call { margin: 26px 0 8px; }
+.book-call .btn { display: inline-flex; align-items: center; gap: 10px; }
