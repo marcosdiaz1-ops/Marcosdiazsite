@@ -483,3 +483,20 @@ details:has(.step-n) p { padding-left: 34px; }
 .rv-sign { margin-top: 44px; }
 .book-call { margin: 26px 0 8px; }
 .book-call .btn { display: inline-flex; align-items: center; gap: 10px; }
+
+/* Recently sold cards */
+.results-grid { grid-template-columns: 1fr; gap: 60px; }
+.sold-cards { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.sold-card { background: #fff; border: 1px solid var(--line); display: flex; flex-direction: column; }
+.sold-img { position: relative; aspect-ratio: 16 / 10; background: var(--navy); display: grid; place-items: center; overflow: hidden; }
+.sold-img::before { content: ""; position: absolute; inset: 14px; border: 1px solid rgba(215,180,140,.35); }
+.sold-img img.photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.sold-mark { filter: brightness(0) invert(1); opacity: .5; }
+.sold-badge { position: absolute; top: 24px; left: 24px; background: var(--gold); color: #fff; font-size: .68rem; letter-spacing: .24em; text-transform: uppercase; padding: 6px 12px; }
+.sold-body { padding: 22px 22px 24px; display: grid; gap: 4px; }
+.sold-body .price { font-family: var(--serif); font-size: 1.7rem; color: var(--ink); line-height: 1.1; }
+.sold-body .addr { color: var(--ink); }
+.sold-body .city { color: #8a8579; font-size: .9rem; }
+.sold-body .meta { margin-top: 10px; font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+@media (max-width: 900px) { .sold-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .sold-cards { grid-template-columns: 1fr; } }
