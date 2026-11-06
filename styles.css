@@ -581,3 +581,15 @@ html, body { overflow-x: clip; }
 .guide-cta p { margin: 0; flex: 1 1 260px; }
 .hidden { display: none !important; }
 .guides-page [hidden] { display: none !important; }
+
+/* ---------- Client perks ---------- */
+.perks { background: var(--ivory); padding: 120px 0; }
+.perk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.perk { display: flex; flex-direction: column; padding: 32px 28px; background: #fff; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--text); transition: transform .25s, box-shadow .25s, border-color .25s; }
+.perk:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(19,32,59,.08); border-color: var(--gold-soft); }
+.perk svg { width: 40px; height: 40px; color: var(--gold-ink); margin-bottom: 18px; }
+.perk h3 { font-size: 1.6rem; margin-bottom: 10px; }
+.perk p { font-size: .97rem; line-height: 1.6; flex: 1; }
+.perk-link { margin-top: 18px; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-ink); font-weight: 500; }
+@media (max-width: 960px) { .perk-grid { grid-template-columns: repeat(2, 1fr); } .perks { padding: 90px 0; } }
+@media (max-width: 600px) { .perk-grid { grid-template-columns: 1fr; } }
