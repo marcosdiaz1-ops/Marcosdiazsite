@@ -554,3 +554,5 @@ details:has(.step-n) p { padding-left: 34px; }
 .tool-more { padding-top: 20px; }
 .tool-more h2 { margin-bottom: 14px; }
 .tool-more a { color: var(--gold-ink); }
+
+html, body { overflow-x: clip; }
