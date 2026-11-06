@@ -198,4 +198,64 @@
     calc.addEventListener('change', update);
     update();
   })();
+
+  // Affordability calculator
+  (function () {
+    const c = document.getElementById('affordCalc');
+    if (!c) return;
+    const $ = n => c.querySelector('[name="' + n + '"]');
+    const num = el => parseFloat(String(el.value).replace(/[^0-9.]/g, '')) || 0;
+    const money = v => '$' + Math.round(Math.max(v, 0)).toLocaleString(ES ? 'es-US' : 'en-US');
+    const out = k => c.querySelector('[data-out="' + k + '"]');
+    function update() {
+      const income = num($('income')), debts = num($('debts')), down = num($('down'));
+      const rate = num($('rate')), dti = num($('dti')) / 100, taxPct = num($('tax')) / 100, ins = num($('insurance'));
+      const maxPay = income / 12 * dti - debts;          // max total monthly housing payment
+      const r = rate / 100 / 12, n = 360;
+      const k = r === 0 ? 1 / n : r / (1 - Math.pow(1 + r, -n)); // P&I per $1 of loan
+      let price = 0, pmiRate = 0.005;
+      for (let i = 0; i < 3; i++) {                        // PMI depends on down %, iterate
+        const pmi = price > 0 && down / price >= 0.2 ? 0 : pmiRate;
+        price = (maxPay - ins / 12 + down * (k + pmi / 12)) / (k + taxPct / 12 + pmi / 12);
+        price = Math.max(price, 0);
+      }
+      const pmi = price > 0 && down / price >= 0.2 ? 0 : pmiRate;
+      const loan = Math.max(price - down, 0);
+      const pi = loan * k, tip = price * taxPct / 12 + ins / 12 + loan * pmi / 12;
+      const ok = maxPay > ins / 12 && price > down;
+      out('price').textContent = ok ? money(Math.floor(price / 1000) * 1000) : '$0';
+      out('payment').textContent = ok ? money(pi + tip) : '$0';
+      out('pi').textContent = ok ? money(pi) : '$0';
+      out('tip').textContent = ok ? money(tip) : '$0';
+      out('loan').textContent = ok ? money(loan) : '$0';
+      out('downPct').textContent = ok && price ? (down / price * 100).toFixed(1) + '%' : '0%';
+      out('warn').hidden = ok;
+    }
+    c.addEventListener('input', update); c.addEventListener('change', update); update();
+  })();
+
+  // Seller net sheet
+  (function () {
+    const c = document.getElementById('netSheet');
+    if (!c) return;
+    const $ = n => c.querySelector('[name="' + n + '"]');
+    const num = el => parseFloat(String(el.value).replace(/[^0-9.]/g, '')) || 0;
+    const money = v => (v < 0 ? '-$' : '$') + Math.abs(Math.round(v)).toLocaleString(ES ? 'es-US' : 'en-US');
+    const out = k => c.querySelector('[data-out="' + k + '"]');
+    function update() {
+      const price = num($('price')), payoff = num($('payoff'));
+      const comm = price * num($('commission')) / 100;
+      const transfer = Math.ceil(price / 500) * 0.5;       // SDCL 43-4-21: 50 cents per $500 or fraction
+      const other = num($('closing')) + num($('concessions')) + num($('repairs')) + num($('taxes'));
+      const net = price - payoff - comm - transfer - other;
+      out('net').textContent = money(net);
+      out('price').textContent = money(price);
+      out('payoff').textContent = '-' + money(payoff);
+      out('commission').textContent = '-' + money(comm);
+      out('transfer').textContent = '-' + money(transfer);
+      out('other').textContent = '-' + money(other);
+    }
+    c.addEventListener('input', update); c.addEventListener('change', update); update();
+  })();
+
 })();

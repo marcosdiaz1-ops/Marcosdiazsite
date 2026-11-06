@@ -21,6 +21,8 @@ s = s.replace('<a href="es/" class="lang" lang="es" hreflang="es" aria-label="Ve
 s = s.replace('<a href="es/">Español</a>', '<a href="../">English</a>')
 
 T = [
+('<a href="calculators/affordability/" class="calc-link">How much house can I afford? →</a>', '<a href="calculadoras/cuanto-puedo-comprar/" class="calc-link">¿Cuánta casa puedo comprar? →</a>'),
+('<a href="calculators/seller-net-sheet/" class="calc-link dark">Estimate my net proceeds →</a>', '<a href="calculadoras/hoja-neta-vendedor/" class="calc-link dark">Calcular cuánto me queda →</a>'),
 ('<small>The "City of Parks" to the northeast</small>', '<small>La "Ciudad de los Parques" al noreste</small>'),
 ('<small>Northwest of Sioux Falls</small>', '<small>Al noroeste de Sioux Falls</small>'),
 ('<small>Quiet town just north</small>', '<small>Pueblo tranquilo justo al norte</small>'),

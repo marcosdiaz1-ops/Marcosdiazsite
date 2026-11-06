@@ -503,7 +503,7 @@ details:has(.step-n) p { padding-left: 34px; }
 .post-card p { font-size: .95rem; color: #6b675f; flex: 1; }
 .post-more { font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-ink); }
 @media (max-width: 960px) { .post-list { grid-template-columns: 1fr; } }
-.links a, .brand-text { white-space: nowrap; }
+.links a, .nav .brand-text { white-space: nowrap; }
 @media (max-width: 1380px) and (min-width: 961px) { .links { gap: 20px; } .links a { letter-spacing: .14em; } }
 @media (max-width: 1200px) and (min-width: 961px) {
   .menu-btn { display: block; }
@@ -541,3 +541,16 @@ details:has(.step-n) p { padding-left: 34px; }
 /* Readable gold text: darker on light backgrounds, soft gold on navy */
 .page-hero .eyebrow, .contact .eyebrow, .market-band .eyebrow, .calc-result .eyebrow, .site-footer .eyebrow { color: var(--gold-soft); }
 .calc-result a, .page-hero a { color: var(--gold-soft); }
+
+/* Calculator tool pages */
+.calc-link { display: block; margin-top: 16px; font-size: .9rem; color: var(--gold-soft); text-decoration: none; }
+.calc-link:hover { text-decoration: underline; }
+.calc-link.dark { color: var(--gold-ink); margin-top: 18px; }
+.calc-hint { font-size: .82rem; color: #8a8579; margin: -6px 0 18px; }
+.calc-warn { font-size: .88rem; color: #f3d6b4; margin: 10px 0 16px; }
+.calc-result .btn + .calc-link { margin-top: 18px; }
+.tool-page { padding-top: 80px; }
+.tool-lender { padding-top: 0; }
+.tool-more { padding-top: 20px; }
+.tool-more h2 { margin-bottom: 14px; }
+.tool-more a { color: var(--gold-ink); }

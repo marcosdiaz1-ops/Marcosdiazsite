@@ -233,4 +233,32 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/canton.html"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/canton.html"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/calculators/affordability/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/calculators/affordability/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/calculadoras/cuanto-puedo-comprar/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/calculadoras/cuanto-puedo-comprar/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/calculators/affordability/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/calculadoras/cuanto-puedo-comprar/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/calculators/seller-net-sheet/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/calculators/seller-net-sheet/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/calculadoras/hoja-neta-vendedor/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/calculadoras/hoja-neta-vendedor/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/calculators/seller-net-sheet/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/calculadoras/hoja-neta-vendedor/"/>
+  </url>
 </urlset>
