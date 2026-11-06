@@ -627,3 +627,4 @@ html, body { overflow-x: clip; }
 .dpa-src { margin-top: 28px; font-size: .85rem; color: #5a5f6b; }
 .page-hero .hero-search .btn { background: var(--gold-soft); color: var(--navy); text-decoration: none; }
 .page-hero .hero-search .btn:hover { background: #e3c39e; }
+.faq-list { max-width: 820px; }
