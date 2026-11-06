@@ -21,6 +21,10 @@ s = s.replace('<a href="es/" class="lang" lang="es" hreflang="es" aria-label="Ve
 s = s.replace('<a href="es/">Español</a>', '<a href="../">English</a>')
 
 T = [
+('<a href="guides/" class="calc-link dark">Get my free Buyer\'s Guide (PDF) →</a>', '<a href="guias/" class="calc-link dark">Mi Guía para Compradores gratis (PDF) →</a>'),
+('<a href="guides/" class="calc-link dark">Get my free Seller\'s Guide (PDF) →</a>', '<a href="guias/" class="calc-link dark">Mi Guía para Vendedores gratis (PDF) →</a>'),
+('<p><strong>Moving to Sioux Falls?</strong> Get my free relocation guide: utilities, license and plates, schools, and the best of the city.</p>', '<p><strong>¿Se muda a Sioux Falls?</strong> Reciba mi guía gratis para mudarse: servicios, licencia y placas, escuelas y lo mejor de la ciudad.</p>'),
+('<a href="guides/" class="btn btn-navy">Get the Free Guide</a>', '<a href="guias/" class="btn btn-navy">Recibir la guía gratis</a>'),
 ('<a href="calculators/affordability/" class="calc-link">How much house can I afford? →</a>', '<a href="calculadoras/cuanto-puedo-comprar/" class="calc-link">¿Cuánta casa puedo comprar? →</a>'),
 ('<a href="calculators/seller-net-sheet/" class="calc-link dark">Estimate my net proceeds →</a>', '<a href="calculadoras/hoja-neta-vendedor/" class="calc-link dark">Calcular cuánto me queda →</a>'),
 ('<small>The "City of Parks" to the northeast</small>', '<small>La "Ciudad de los Parques" al noreste</small>'),

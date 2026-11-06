@@ -258,4 +258,54 @@
     c.addEventListener('input', update); c.addEventListener('change', update); update();
   })();
 
+  // ---------- Free guides: lead capture + download reveal ----------
+  (() => {
+    const form = document.getElementById('guideForm');
+    if (!form) return;
+    const ES = document.documentElement.lang === 'es';
+    const err = form.querySelector('.error');
+    const btn = form.querySelector('button[type=submit]');
+    const NAMES = ES ? { buyer: 'Guía para Compradores', seller: 'Guía para Vendedores', moving: 'Mudarse a Sioux Falls' }
+                     : { buyer: "Buyer's Guide", seller: "Seller's Guide", moving: 'Moving to Sioux Falls' };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const picked = [...form.querySelectorAll('[name=guide]:checked')].map(c => c.value);
+      if (!picked.length) { err.textContent = ES ? 'Escoja al menos una guía.' : 'Pick at least one guide.'; return; }
+      for (const el of form.querySelectorAll('.guide-fields [required]')) {
+        if (!el.checkValidity()) {
+          err.textContent = ES ? 'Escriba su nombre y un correo válido.' : 'Please enter your name and a valid email.';
+          el.focus(); return;
+        }
+      }
+      err.textContent = '';
+      btn.disabled = true; btn.textContent = ES ? 'Enviando…' : 'Sending…';
+      const fd = new FormData(form);
+      fd.delete('guide');
+      const list = picked.map(k => NAMES[k]).join(', ');
+      fd.set('Looking to', 'Guide: ' + list);
+      fd.set('Timeline', 'Guide download');
+      fd.set('Language', ES ? 'Español' : 'English');
+      fd.set('message', 'Downloaded free guide(s): ' + list);
+      if (form.dataset.sheet) {
+        fetch(form.dataset.sheet, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(fd), keepalive: true }).catch(() => {});
+      }
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 10000);
+      try {
+        await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd, signal: ctrl.signal });
+      } catch (_) { /* still give them the guides */ }
+      clearTimeout(timer);
+      const first = (fd.get('Name') || '').trim().split(' ')[0];
+      const done = form.querySelector('.guide-done');
+      done.querySelector('.sent-name').textContent = first ? ', ' + first : '';
+      form.querySelectorAll('.guide-dl').forEach(a => { a.hidden = !picked.includes(a.dataset.guide); });
+      form.querySelector('.guides-list').hidden = true;
+      form.querySelector('.guide-form').hidden = true;
+      form.querySelectorAll('.eyebrow').forEach(x => x.hidden = true);
+      done.hidden = false;
+      done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (window.gtag) gtag('event', 'generate_lead', { method: 'guide' });
+    });
+  })();
+
 })();

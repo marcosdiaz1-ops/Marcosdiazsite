@@ -9,3 +9,6 @@
 1. Append a new dict to `POSTS` in `blog_posts.py` (newest date shows first).
 2. `python3 tools/build_blog.py`
 3. Commit and push to `main`; GitHub Actions publishes to 605homesearch.com.
+
+- `build_guides.py` + `guides_content.py`: build the 6 free-guide PDFs into guides/files/ (needs `python3 -m http.server 8766` running).
+- `build_guide_pages.py`: builds /guides/ and /es/guias/ download pages (lead form) and adds them to the sitemap.
