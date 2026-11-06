@@ -331,4 +331,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/homebuyer-class/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/clase-para-compradores/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/blog/sioux-falls-news-week-of-nov-2-2026/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/sioux-falls-news-week-of-nov-2-2026/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/noticias-sioux-falls-semana-2-nov-2026/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/noticias-sioux-falls-semana-2-nov-2026/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/sioux-falls-news-week-of-nov-2-2026/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/noticias-sioux-falls-semana-2-nov-2026/"/>
+  </url>
 </urlset>
