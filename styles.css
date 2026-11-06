@@ -602,7 +602,7 @@ html, body { overflow-x: clip; }
 .news-band h2 { color: #fff; font-size: clamp(1.9rem, 3vw, 2.6rem); margin-bottom: 12px; }
 .news-band p { color: #c9c2b5; }
 .news-form { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 10px; }
-.news-form input[type=text], .news-form input[type=email] { width: 100%; padding: 14px 16px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06); color: #fff; border-radius: 6px; font: inherit; }
+.news-form input[type=text], .news-form input[type=email], .news-form input[type=tel] { width: 100%; padding: 14px 16px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06); color: #fff; border-radius: 6px; font: inherit; }
 .news-form input::placeholder { color: #a9a296; }
 .news-form .news-msg { grid-column: 1 / -1; min-height: 1.2em; margin: 4px 0 0; font-size: .95rem; color: var(--gold-soft); }
 .news-form.done label, .news-form.done button { display: none; }
@@ -628,3 +628,5 @@ html, body { overflow-x: clip; }
 .page-hero .hero-search .btn { background: var(--gold-soft); color: var(--navy); text-decoration: none; }
 .page-hero .hero-search .btn:hover { background: #e3c39e; }
 .faq-list { max-width: 820px; }
+.class-form { grid-template-columns: 1fr 1fr; } .class-form label:nth-of-type(3) { grid-column: 1 / -1; } .class-form button { grid-column: 1 / -1; }
+@media (max-width: 900px) { .class-form { grid-template-columns: 1fr; } }

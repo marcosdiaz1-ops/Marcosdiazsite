@@ -319,17 +319,17 @@
       }
       const btn = form.querySelector('button'); btn.disabled = true;
       const fd = new FormData(form);
-      fd.set('Looking to', 'Monthly market update email');
-      fd.set('Timeline', 'Newsletter signup');
+      fd.set('Looking to', form.dataset.looking || 'Monthly market update email');
+      fd.set('Timeline', form.dataset.timeline || 'Newsletter signup');
       fd.set('Language', ES ? 'Español' : 'English');
-      fd.set('message', 'Signed up for the monthly Sioux Falls market update from ' + location.pathname);
+      fd.set('message', (form.dataset.looking || 'Signed up for the monthly Sioux Falls market update') + ' — from ' + location.pathname);
       if (form.dataset.sheet) fetch(form.dataset.sheet, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(fd), keepalive: true }).catch(() => {});
       const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 10000);
       try { await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd, signal: ctrl.signal }); } catch (_) {}
       clearTimeout(timer);
       const first = (fd.get('Name') || '').trim().split(' ')[0];
       form.classList.add('done');
-      msg.textContent = ES ? `¡Listo${first ? ', ' + first : ''}! Recibirá el próximo reporte del mercado.` : `You're in${first ? ', ' + first : ''}! Watch for the next market update.`;
+      msg.textContent = form.dataset.done ? form.dataset.done.replace('{name}', first ? ', ' + first : '') : (ES ? `¡Listo${first ? ', ' + first : ''}! Recibirá el próximo reporte del mercado.` : `You're in${first ? ', ' + first : ''}! Watch for the next market update.`);
       if (window.gtag) gtag('event', 'generate_lead', { method: 'newsletter' });
     });
   });

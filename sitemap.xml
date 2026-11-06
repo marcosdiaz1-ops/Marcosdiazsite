@@ -317,4 +317,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/buy-a-home-with-low-credit/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/comprar-casa-con-poco-credito/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/homebuyer-class/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/homebuyer-class/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/clase-para-compradores/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/clase-para-compradores/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/homebuyer-class/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/clase-para-compradores/"/>
+  </url>
 </urlset>
