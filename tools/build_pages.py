@@ -199,7 +199,7 @@ CENTERS = {
 def town_search(slug, es=False):
     la, lo, dla, dlo = CENTERS[slug]
     vp = f'{la+dla:.4f}%2C{lo+dlo:.4f}%2C{la-dla:.4f}%2C{lo-dlo:.4f}'
-    return f'https://marcos.kw.com/{"es/" if es else ""}search/sale?viewport={vp}'
+    return f'https://marcos.kw.com/search/sale?viewport={vp}'
 
 AREA_CONTENT = {
  'sioux-falls': dict(
