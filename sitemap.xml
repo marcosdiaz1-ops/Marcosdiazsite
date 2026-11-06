@@ -275,4 +275,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/guides/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/guias/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/down-payment-assistance/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/down-payment-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/ayuda-pago-inicial/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/ayuda-pago-inicial/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/down-payment-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/ayuda-pago-inicial/"/>
+  </url>
 </urlset>

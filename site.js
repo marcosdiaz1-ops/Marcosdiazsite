@@ -308,4 +308,30 @@
     });
   })();
 
+  // ---------- Monthly market update signup ----------
+  document.querySelectorAll('.news-form').forEach(form => {
+    const ES = document.documentElement.lang === 'es';
+    const msg = form.querySelector('.news-msg');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      for (const el of form.querySelectorAll('[required]')) {
+        if (!el.checkValidity()) { msg.textContent = ES ? 'Escriba su nombre y un correo válido.' : 'Please enter your name and a valid email.'; el.focus(); return; }
+      }
+      const btn = form.querySelector('button'); btn.disabled = true;
+      const fd = new FormData(form);
+      fd.set('Looking to', 'Monthly market update email');
+      fd.set('Timeline', 'Newsletter signup');
+      fd.set('Language', ES ? 'Español' : 'English');
+      fd.set('message', 'Signed up for the monthly Sioux Falls market update from ' + location.pathname);
+      if (form.dataset.sheet) fetch(form.dataset.sheet, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(fd), keepalive: true }).catch(() => {});
+      const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 10000);
+      try { await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd, signal: ctrl.signal }); } catch (_) {}
+      clearTimeout(timer);
+      const first = (fd.get('Name') || '').trim().split(' ')[0];
+      form.classList.add('done');
+      msg.textContent = ES ? `¡Listo${first ? ', ' + first : ''}! Recibirá el próximo reporte del mercado.` : `You're in${first ? ', ' + first : ''}! Watch for the next market update.`;
+      if (window.gtag) gtag('event', 'generate_lead', { method: 'newsletter' });
+    });
+  });
+
 })();

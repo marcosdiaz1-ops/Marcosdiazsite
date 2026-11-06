@@ -12,3 +12,6 @@
 
 - `build_guides.py` + `guides_content.py`: build the 6 free-guide PDFs into guides/files/ (needs `python3 -m http.server 8766` running).
 - `build_guide_pages.py`: builds /guides/ and /es/guias/ download pages (lead form) and adds them to the sitemap.
+- `news.py`: monthly market-update signup band, added to every generated page by `page()` (pass news=False to skip) and to the homepage.
+- `build_dpa.py`: down payment assistance pages (/down-payment-assistance/, /es/ayuda-pago-inicial/).
+- Area pages: "See homes for sale" buttons use `town_search()` in build_pages.py (KW map search framed on each town).

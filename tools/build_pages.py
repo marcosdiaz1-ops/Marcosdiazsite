@@ -2,11 +2,14 @@
 import os, html
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
+import sys
+if HERE not in sys.path: sys.path.insert(0, HERE)
 ROOT = os.path.dirname(HERE)
 SEARCH = 'https://marcos.kw.com/search/sale?viewport=43.5123477544219%2C-96.73235438067628%2C43.46346435534284%2C-96.80573961932375'
 
 
-def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='', head_extra=''):
+def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='', head_extra='', news=True):
+    from news import news_band
     depth = path.count('/')
     p = '../' * depth
     es = lang == 'es'
@@ -70,7 +73,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
 
 <main>
 {body}
-</main>
+{news_band(es) if news else ''}</main>
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
@@ -182,6 +185,21 @@ AREAS = [
     ('lennox', 'Lennox'),
     ('canton', 'Canton'),
 ]
+
+
+# Map-framed KW search for each area (north,east,south,west)
+CENTERS = {
+ 'sioux-falls': (43.5446, -96.7311, .09, .15), 'southwest-sioux-falls': (43.505, -96.800, .045, .07),
+ 'southeast-sioux-falls': (43.505, -96.680, .045, .07), 'tea': (43.4573, -96.8215, .037, .059),
+ 'harrisburg': (43.4316, -96.6973, .037, .059), 'brandon': (43.5947, -96.5720, .037, .059),
+ 'garretson': (43.7172, -96.5028, .03, .05), 'hartford': (43.6233, -96.9426, .03, .05),
+ 'crooks': (43.6647, -96.8106, .03, .05), 'lennox': (43.3547, -96.8920, .03, .05),
+ 'canton': (43.3008, -96.5928, .03, .05),
+}
+def town_search(slug, es=False):
+    la, lo, dla, dlo = CENTERS[slug]
+    vp = f'{la+dla:.4f}%2C{lo+dlo:.4f}%2C{la-dla:.4f}%2C{lo-dlo:.4f}'
+    return f'https://marcos.kw.com/{"es/" if es else ""}search/sale?viewport={vp}'
 
 AREA_CONTENT = {
  'sioux-falls': dict(
@@ -476,6 +494,7 @@ for slug, name in AREAS:
       <p class="crumbs"><a href="../">Home</a> &nbsp;/&nbsp; <a href="../#areas">Areas</a> &nbsp;/&nbsp; {name}</p>
       <h1>Homes for Sale in {name}</h1>
       <p class="lead">{d['lead']}</p>
+      <p class="hero-search"><a href="{town_search(slug)}" class="btn btn-gold" target="_blank" rel="noopener">See Homes for Sale in {name}</a></p>
     </div>
   </section>
   <section class="page-body">
@@ -499,7 +518,7 @@ for slug, name in AREAS:
       <aside class="side-card">
         <p class="eyebrow">Work with Marcos</p>
         <h3>Search {name} homes</h3>
-        <a href="{SEARCH}" class="btn btn-navy">Search Homes for Sale</a>
+        <a href="{town_search(slug)}" class="btn btn-navy" target="_blank" rel="noopener">See Homes for Sale in {name}</a>
         <a href="../#contact" class="btn btn-gold">Talk to Marcos</a>
         <p class="muted">Call or text <a href="tel:+16058389140">605-838-9140</a><br>REALTOR® · Keller Williams Realty Sioux Falls<br>English &amp; Español</p>
       </aside>
@@ -520,6 +539,7 @@ for slug, name in AREAS:
       <p class="crumbs"><a href="../">Inicio</a> &nbsp;/&nbsp; <a href="../#areas">Áreas</a> &nbsp;/&nbsp; {short}</p>
       <h1>{e['title'].replace(', SD','')}</h1>
       <p class="lead">{e['lead']}</p>
+      <p class="hero-search"><a href="{town_search(slug, True)}" class="btn btn-gold" target="_blank" rel="noopener">Ver casas en venta en {short}</a></p>
     </div>
   </section>
   <section class="page-body">
@@ -543,7 +563,7 @@ for slug, name in AREAS:
       <aside class="side-card">
         <p class="eyebrow">Trabaje con Marcos</p>
         <h3>Casas en {short}</h3>
-        <a href="{SEARCH}" class="btn btn-navy">Buscar casas en venta</a>
+        <a href="{town_search(slug, True)}" class="btn btn-navy" target="_blank" rel="noopener">Ver casas en venta en {short}</a>
         <a href="../#contact" class="btn btn-gold">Hablar con Marcos</a>
         <p class="muted">Llame o envíe texto al <a href="tel:+16058389140">605-838-9140</a><br>REALTOR® · Keller Williams Realty Sioux Falls<br>Se habla español</p>
       </aside>
@@ -630,7 +650,7 @@ market_en = f'''  <section class="page-hero">
           <h3>Want numbers for your neighborhood?</h3>
           <p class="muted" style="font-size:.95rem">Citywide averages only tell part of the story. I'll pull recent sales near you and show what they mean for your plans.</p>
           <a href="../home-value/" class="btn btn-gold">What's My Home Worth?</a>
-          <a href="{SEARCH}" class="btn btn-navy">Search Homes for Sale</a>
+          <a href="{town_search(slug)}" class="btn btn-navy" target="_blank" rel="noopener">See Homes for Sale in {name}</a>
           <p class="muted">Call or text <a href="tel:+16058389140">605-838-9140</a><br>English &amp; Español · <a href="../es/mercado/">Ver en español</a></p>
         </aside>
       </div>
@@ -685,7 +705,7 @@ market_es = f'''  <section class="page-hero">
           <h3>¿Quiere los números de su vecindario?</h3>
           <p class="muted" style="font-size:.95rem">Los promedios de la ciudad solo cuentan una parte. Le preparo las ventas recientes cerca de usted y le explico qué significan para sus planes.</p>
           <a href="../valor-de-casa/" class="btn btn-gold">¿Cuánto vale mi casa?</a>
-          <a href="{SEARCH}" class="btn btn-navy">Buscar casas en venta</a>
+          <a href="{town_search(slug, True)}" class="btn btn-navy" target="_blank" rel="noopener">Ver casas en venta en {short}</a>
           <p class="muted">Llame o envíe texto al <a href="tel:+16058389140">605-838-9140</a><br>Se habla español · <a href="../../market/">View in English</a></p>
         </aside>
       </div>
@@ -823,4 +843,4 @@ rv_body = f'''  <section class="page-hero review-page">
   </section>'''
 page('review/index.html', 'Leave a Review | Marcos Diaz, REALTOR®',
      'Thank you for working with Marcos Diaz. Leave a quick Google review.',
-     rv_body, canonical='https://605homesearch.com/review/', head_extra='<meta name="robots" content="noindex">\n')
+     rv_body, canonical='https://605homesearch.com/review/', head_extra='<meta name="robots" content="noindex">\n', news=False)

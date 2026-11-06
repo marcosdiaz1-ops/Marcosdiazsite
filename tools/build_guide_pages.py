@@ -82,7 +82,7 @@ def build(es):
          T(es, "Download free guides for buying a home, selling a home, and moving to Sioux Falls, SD. In English and Spanish, from bilingual REALTOR® Marcos Diaz.",
               'Descargue guías gratis para comprar casa, vender casa y mudarse a Sioux Falls, SD. En español e inglés, de Marcos Diaz, agente bilingüe.'),
          body, lang='es' if es else 'en', canonical=f'{SITE}/{path[:-10]}',
-         alt_es=None if es else other, alt_en=other if es else None, head_extra=alts)
+         alt_es=None if es else other, alt_en=other if es else None, head_extra=alts, news=False)
 
 for es in (False, True):
     build(es)
