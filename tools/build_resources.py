@@ -45,7 +45,6 @@ def build(spec, es):
         <div class="dpa-cta">
           <a href="{home}#contact" class="btn btn-navy">{T('Talk to Marcos','Hablar con Marcos')}</a>
           <a href="sms:+16058389140" class="btn btn-gold">{T('Text 605-838-9140','Mensaje al 605-838-9140')}</a>
-          <a href="{p}{'es/clase-para-compradores/' if es else 'homebuyer-class/'}" class="calc-link dark">{T('Free homebuyer class in Spanish →','Clase gratis para compradores →')}</a>
           <a href="{p}{'es/ayuda-pago-inicial/' if es else 'down-payment-assistance/'}" class="calc-link dark">{T('Down payment help programs →','Programas de ayuda para el pago inicial →')}</a>
         </div>
       </div>
