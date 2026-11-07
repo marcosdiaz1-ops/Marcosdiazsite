@@ -21,6 +21,11 @@ s = s.replace('<a href="es/" class="lang" lang="es" hreflang="es" aria-label="Ve
 s = s.replace('<a href="es/">Español</a>', '<a href="../">English</a>')
 
 T = [
+("<p>I'm currently serving in the Iowa National Guard. That service has shaped my discipline, work ethic, and commitment to serving others.</p>", '<p>Actualmente sirvo en la Guardia Nacional de Iowa. Ese servicio ha formado mi disciplina, mi ética de trabajo y mi compromiso de servir a los demás.</p>'),
+('<img src="../images/marcos-national-guard.jpg" alt="Marcos Diaz in uniform, Iowa National Guard" width="600" height="800" loading="lazy">', '<img src="../images/marcos-national-guard.jpg" alt="Marcos Diaz en uniforme, Guardia Nacional de Iowa" width="600" height="800" loading="lazy">'),
+('<p class="eyebrow">Proud to Serve</p>', '<p class="eyebrow">Orgulloso de servir</p>'),
+('<p><strong>Currently serving in the Iowa National Guard.</strong> I bring the same discipline and dedication to every client, and I understand the needs of military families and veterans, including VA home loans.</p>', '<p><strong>Actualmente sirvo en la Guardia Nacional de Iowa.</strong> Le doy la misma disciplina y dedicación a cada cliente, y entiendo las necesidades de las familias militares y los veteranos, incluidos los préstamos VA.</p>'),
+('<a href="blog/va-home-loans-sioux-falls/" class="calc-link dark">VA home loans in Sioux Falls →</a>', '<a href="blog/prestamos-va-sioux-falls/" class="calc-link dark">Préstamos VA en Sioux Falls →</a>'),
 ('<a href="homebuyer-class/" class="calc-link dark">Free homebuyer class in Spanish →</a>', '<a href="clase-para-compradores/" class="calc-link dark">Clase gratis para compradores en español →</a>'),
 ('<a href="buy-a-home-with-low-credit/" class="calc-link dark">Buying with low credit →</a>', '<a href="comprar-casa-con-poco-credito/" class="calc-link dark">Comprar casa con poco crédito →</a>'),
 ('<a href="itin-mortgage-sioux-falls/" class="calc-link dark">Buying with an ITIN →</a>', '<a href="prestamo-itin-sioux-falls/" class="calc-link dark">Comprar casa con ITIN →</a>'),
