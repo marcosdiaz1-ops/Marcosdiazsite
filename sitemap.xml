@@ -331,4 +331,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/sioux-falls-news-week-of-nov-2-2026/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/noticias-sioux-falls-semana-2-nov-2026/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/give-me-five/</loc>
+    <lastmod>2026-11-09</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/give-me-five/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/califica-give-me-five/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/califica-give-me-five/</loc>
+    <lastmod>2026-11-09</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/give-me-five/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/califica-give-me-five/"/>
+  </url>
 </urlset>

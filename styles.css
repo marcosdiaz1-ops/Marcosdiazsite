@@ -638,3 +638,16 @@ html, body { overflow-x: clip; }
 .service-card p { margin: 0 0 8px; }
 .service-card .calc-link { margin-top: 4px; }
 @media (max-width: 520px) { .service-card { grid-template-columns: 110px 1fr; gap: 14px; } .service-card img { width: 110px; height: 147px; } }
+
+/* Give Me Five quiz */
+.gm5-hint { color: #b9b2a6; font-size: .9rem; margin-top: -10px !important; }
+.gm5-result { text-align: left; margin-top: 18px; }
+.gm5-tier h4 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; color: var(--gold-soft); margin: 0 0 8px; }
+.gm5-tier p, .gm5-flags li { color: #e9e4da; line-height: 1.55; }
+.gm5-flags { margin: 12px 0 0; padding-left: 20px; }
+.gm5-flags li + li { margin-top: 8px; }
+.gm5-flags a { color: var(--gold-soft); }
+.gm5-next { margin-top: 22px !important; text-align: left; color: #fff; }
+.gm5-more { margin-top: 32px; text-align: center; }
+.gm5-disc { text-align: center; max-width: 720px; margin: 14px auto 0; color: #6f6a60; }
+.sent .btn-gold { color: #fff; }
