@@ -56,13 +56,15 @@
       bar.style.width = ((n + 1) / steps.length * 100) + '%';
       count.innerHTML = T.step(n + 1, steps.length);
       i = n;
+      form.dispatchEvent(new CustomEvent('wizard:step', { detail: { step: steps[n] } }));
       if (n === steps.length - 1) setTimeout(() => form.querySelector('[name="Name"]').focus({ preventScroll: true }), 450);
     };
     steps.forEach((step, k) => {
       const next = step.querySelector('.next');
       if (!next) return;
+      if (step.classList.contains('info')) next.disabled = false;
       const texts = [...step.querySelectorAll('input[type=text]')];
-      const ready = () => step.querySelector('input:checked') || (texts.length && texts.every(t => t.value.trim().length > 3));
+      const ready = () => step.classList.contains('info') || step.querySelector('input:checked') || (texts.length && texts.every(t => t.value.trim().length > 3));
       step.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => { next.disabled = false; }));
       texts.forEach(t => {
         t.addEventListener('input', () => { next.disabled = !ready(); });
@@ -86,16 +88,7 @@
       const fd = new FormData(form);
       fd.set('Language', ES ? 'Español' : 'English');
       if (form.dataset.kind === 'home-value') fd.set('Looking to', 'Home value: ' + (fd.get('Address') || '').trim());
-      // Give Me Five quiz: work out the result from the flagged answers
-      let gm5 = null;
-      if (form.dataset.kind === 'gm5') {
-        const flags = [...form.querySelectorAll('input[type=radio]:checked')].map(r => r.dataset.flag).filter(Boolean);
-        const hard = ['owned', 'notprimary'];
-        const tier = flags.some(f => hard.includes(f)) ? 'no' : (flags.length ? 'check' : 'fit');
-        gm5 = { tier, flags };
-        const label = { fit: 'strong fit', check: 'check', no: 'may not fit' }[tier];
-        fd.set('Looking to', 'Give Me Five: ' + label + (flags.length ? ' (' + flags.join(', ') + ')' : ''));
-      }
+      form.dispatchEvent(new CustomEvent('wizard:submit', { detail: { fd } }));
       // Lead tracker + instant alert + auto-reply (Google Apps Script), sent alongside the email
       const sheetUrl = form.dataset.sheet;
       if (sheetUrl) {
@@ -110,10 +103,7 @@
         if (!res.ok || data.success !== true) throw new Error(data.message || 'send failed');
         const first = form.querySelector('[name="Name"]').value.trim().split(' ')[0];
         sent.querySelector('.sent-name').textContent = first ? ', ' + first : '';
-        if (gm5) {
-          sent.querySelectorAll('.gm5-tier').forEach(t => { t.hidden = t.dataset.tier !== gm5.tier; });
-          sent.querySelectorAll('.gm5-flags li').forEach(li => { li.hidden = !gm5.flags.includes(li.dataset.flag); });
-        }
+        form.dispatchEvent(new CustomEvent('wizard:sent'));
         steps.forEach(s => s.classList.remove('active'));
         bar.style.width = '100%'; count.textContent = T.sent;
         sent.classList.add('active');

@@ -651,3 +651,17 @@ html, body { overflow-x: clip; }
 .gm5-more { margin-top: 32px; text-align: center; }
 .gm5-disc { text-align: center; max-width: 720px; margin: 14px auto 0; color: #6f6a60; }
 .sent .btn-gold { color: #fff; }
+.gm5-teaser .gm5-big { font-family: var(--serif); font-size: 3.6rem; line-height: 1; color: var(--gold-soft); margin: 4px 0 0; }
+.gm5-teaser .gm5-sub { color: #e9e4da; }
+.gm5-teaser .gm5-get { color: #fff; font-weight: 500; margin-top: 18px; }
+.gm5-list { list-style: none; padding: 0; margin: 8px 0 0; }
+.gm5-list li { color: #e9e4da; padding-left: 26px; position: relative; margin-top: 6px; }
+.gm5-list li::before { content: "✓"; position: absolute; left: 0; color: var(--gold-soft); }
+.gm5-foot { font-size: .8rem; color: #a9a397; }
+.gm5-plan { width: 100%; border-collapse: collapse; margin: 18px 0 8px; }
+.gm5-plan th, .gm5-plan td { border-top: 1px solid rgba(255,255,255,.14); padding: 10px 0; vertical-align: top; text-align: left; color: #e9e4da; font-weight: 400; }
+.gm5-plan td { text-align: right; font-family: var(--serif); font-size: 1.35rem; color: #fff; white-space: nowrap; padding-left: 12px; }
+.gm5-plan th small { display: block; color: #a9a397; font-size: .78rem; margin-top: 2px; }
+.gm5-plan tr:nth-child(5) td, .gm5-plan tr:nth-child(6) td { color: var(--gold-soft); }
+.gm5-note { font-size: .78rem; color: #a9a397; max-width: none !important; }
+.sent .gm5-result p { max-width: none; }
