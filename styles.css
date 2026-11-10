@@ -671,3 +671,4 @@ html, body { overflow-x: clip; }
 .idx-frame iframe{display:block;width:100%;height:1400px;border:0}
 @media (max-width:700px){.idx-frame iframe{height:1100px}}
 .idx-note{margin-top:.75rem;font-size:.9rem}
+.legal .eho-logo { flex: 0 0 auto; width: 56px; height: 56px; opacity: .9; }
