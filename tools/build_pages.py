@@ -93,7 +93,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
     </div>
   </div>
   <div class="wrap legal">
-    <img class="eho-logo" src="/images/equal-housing.svg" alt="Equal Housing Opportunity" width="56" height="56">
+    <span class="legal-logos"><img class="eho-logo" src="/images/equal-housing.svg" alt="Equal Housing Opportunity" width="56" height="56"><img class="realtor-logo" src="/images/realtor-logo.png" alt="REALTOR®" width="48" height="56"></span>
     <p>{legal}</p>
     <p>&copy; <span class="year">2026</span> Marcos Diaz · <a href="{priv}">{privlabel}</a></p>
   </div>
