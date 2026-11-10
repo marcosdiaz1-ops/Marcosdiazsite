@@ -81,7 +81,7 @@ T = [
 ('aria-label="Bright modern kitchen in a Sioux Falls home"', 'aria-label="Cocina moderna y luminosa en una casa de Sioux Falls"'),
 ('"description": "Bilingual (English and Spanish) real estate agent with Keller Williams Realty Sioux Falls helping buyers and sellers in Sioux Falls, Tea, Harrisburg, Brandon and the surrounding areas."',
  '"description": "Agente de bienes raíces bilingüe (español e inglés) con Keller Williams Realty Sioux Falls que ayuda a compradores y vendedores en Sioux Falls, Tea, Harrisburg, Brandon y sus alrededores."'),
-('<meta property="og:site_name" content="Marcos Diaz Real Estate">', '<meta property="og:site_name" content="Marcos Diaz Bienes Raíces">'),
+('<meta property="og:site_name" content="Marcos Diaz, Keller Williams Realty Sioux Falls">', '<meta property="og:site_name" content="Marcos Diaz, Keller Williams Realty Sioux Falls">'),
 ('<meta property="og:title" content="Marcos Diaz | REALTOR® in Sioux Falls, SD">', '<meta property="og:title" content="Marcos Diaz | Agente de Bienes Raíces en Sioux Falls, SD">'),
 ('content="Buying or selling in Sioux Falls? Bilingual (English &amp; Español) guidance from Marcos Diaz, Keller Williams Realty Sioux Falls. 5.0★ on Google."',
  'content="¿Va a comprar o vender en Sioux Falls? Asesoría en español e inglés con Marcos Diaz, Keller Williams Realty Sioux Falls. 5.0★ en Google."'),
@@ -90,7 +90,7 @@ T = [
 ('<meta name="twitter:description" content="Bilingual real estate guidance in Sioux Falls. 5.0★ on Google.">', '<meta name="twitter:description" content="Asesoría de bienes raíces en español en Sioux Falls. 5.0★ en Google.">'),
 ('<link rel="canonical" href="https://605homesearch.com/">', '<link rel="canonical" href="https://605homesearch.com/es/">'),
 # nav
-('<span class="brand-text">Marcos Diaz<small>Real Estate</small></span>', '<span class="brand-text">Marcos Diaz<small>Bienes Raíces</small></span>'),
+('<span class="brand-text">Marcos Diaz<small>Keller Williams Realty</small></span>', '<span class="brand-text">Marcos Diaz<small>Keller Williams Realty</small></span>'),
 ('aria-label="Open menu"', 'aria-label="Abrir menú"'),
 ('<a href="#about">About</a>', '<a href="#about">Sobre mí</a>'),
 ('<a href="#reviews">Reviews</a>', '<a href="#reviews">Reseñas</a>'),
@@ -326,8 +326,8 @@ T = [
 ("<p>I'll reach out personally, usually the same day.</p>", '<p>Me comunicaré con usted personalmente, por lo general el mismo día.</p>'),
 ('<p class="fine">Need me sooner? Call or text', '<p class="fine">¿Me necesita antes? Llame o envíe texto al'),
 # footer
-('Marcos Diaz, REALTOR®, Keller Williams Realty Sioux Falls. Each office is independently owned and operated. Equal Housing Opportunity.',
- 'Marcos Diaz, REALTOR®, Keller Williams Realty Sioux Falls. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda.'),
+('Marcos Diaz, Broker Associate licensed in South Dakota, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Office <a href="tel:+16052750555">605-275-0555</a>. Each office is independently owned and operated. Equal Housing Opportunity.',
+ 'Marcos Diaz, Broker Associate con licencia en Dakota del Sur, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Oficina <a href="tel:+16052750555">605-275-0555</a>. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda.'),
 ('>Privacy</a>', '>Privacidad</a>'),
 ]
 missing = []

@@ -11,7 +11,7 @@ def build(template, out, slug_url, alt_en, alt_es, title, desc, date_iso, date_h
     t = re.sub(r'(<link rel="alternate" hreflang="en" href=")[^"]*', lambda m: m.group(1)+alt_en, t)
     t = re.sub(r'(<link rel="alternate" hreflang="es" href=")[^"]*', lambda m: m.group(1)+alt_es, t)
     t = re.sub(r'(<link rel="alternate" hreflang="x-default" href=")[^"]*', lambda m: m.group(1)+alt_en, t)
-    ld = {"@context":"https://schema.org","@type":"BlogPosting","headline":title,"description":desc,"inLanguage":lang,"datePublished":date_iso,"dateModified":date_iso,"mainEntityOfPage":slug_url,"image":"https://605homesearch.com/images/og-image.jpg","author":{"@type":"Person","name":"Marcos Diaz","url":"https://605homesearch.com/"},"publisher":{"@type":"Organization","name":"Marcos Diaz Real Estate","logo":{"@type":"ImageObject","url":"https://605homesearch.com/images/og-image.jpg"}}}
+    ld = {"@context":"https://schema.org","@type":"BlogPosting","headline":title,"description":desc,"inLanguage":lang,"datePublished":date_iso,"dateModified":date_iso,"mainEntityOfPage":slug_url,"image":"https://605homesearch.com/images/og-image.jpg","author":{"@type":"Person","name":"Marcos Diaz","url":"https://605homesearch.com/"},"publisher":{"@type":"Organization","name":"Marcos Diaz, Keller Williams Realty Sioux Falls","logo":{"@type":"ImageObject","url":"https://605homesearch.com/images/og-image.jpg"}}}
     t = re.sub(r'<script type="application/ld\+json">\{"@context": "https://schema.org", "@type": "BlogPosting".*?</script>', lambda m: '<script type="application/ld+json">'+json.dumps(ld, ensure_ascii=False)+'</script>', t, flags=re.S)
     # language switch link in header (points to other-language post)
     other = alt_es if lang=="en" else alt_en

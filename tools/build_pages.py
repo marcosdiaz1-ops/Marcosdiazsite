@@ -33,8 +33,8 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
       <a href="{SEARCH}">Search Homes</a>
       <a href="{alt_es or p + 'es/'}" class="lang" lang="es" hreflang="es" aria-label="Ver en español">ES</a>
       <a href="{home}#contact" class="nav-cta">Contact</a>''')
-    legal = ('Marcos Diaz, REALTOR®, Keller Williams Realty Sioux Falls. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda.'
-             if es else 'Marcos Diaz, REALTOR®, Keller Williams Realty Sioux Falls. Each office is independently owned and operated. Equal Housing Opportunity.')
+    legal = ('Marcos Diaz, Broker Associate con licencia en Dakota del Sur, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Oficina <a href="tel:+16052750555">605-275-0555</a>. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda.'
+             if es else 'Marcos Diaz, Broker Associate licensed in South Dakota, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Office <a href="tel:+16052750555">605-275-0555</a>. Each office is independently owned and operated. Equal Housing Opportunity.')
     priv = f'{p}es/privacidad.html' if es else f'{p}privacy.html'
     privlabel = 'Privacidad' if es else 'Privacy'
     doc = f'''<!DOCTYPE html>
@@ -62,7 +62,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
   <div class="nav">
     <a href="{home}" class="brand">
       <img src="{p}images/logo.svg" alt="" width="34" height="34">
-      <span class="brand-text">Marcos Diaz<small>{'Bienes Raíces' if es else 'Real Estate'}</small></span>
+      <span class="brand-text">Marcos Diaz<small>Keller Williams Realty</small></span>
     </a>
     <button class="menu-btn" aria-label="{'Abrir menú' if es else 'Open menu'}" aria-expanded="false"><span></span><span></span></button>
     <nav class="links">
@@ -718,7 +718,7 @@ alts = ('<link rel="alternate" hreflang="en" href="https://605homesearch.com/mar
 art = lambda headline, lang, url: ld({"@context": "https://schema.org", "@type": "Article", "headline": headline, "inLanguage": lang,
     "datePublished": "2026-11-04", "dateModified": "2026-11-04", "mainEntityOfPage": url,
     "author": {"@type": "Person", "name": "Marcos Diaz", "url": "https://605homesearch.com/"},
-    "publisher": {"@type": "Organization", "name": "Marcos Diaz Real Estate", "logo": {"@type": "ImageObject", "url": "https://605homesearch.com/images/og-image.jpg"}},
+    "publisher": {"@type": "Organization", "name": "Marcos Diaz, Keller Williams Realty Sioux Falls", "logo": {"@type": "ImageObject", "url": "https://605homesearch.com/images/og-image.jpg"}},
     "image": "https://605homesearch.com/images/og-image.jpg"})
 page('market/index.html', 'Sioux Falls Housing Market Update: September 2026 | Marcos Diaz, REALTOR®',
      'Sioux Falls housing market, September 2026: median price $344,600 (+1.8%), 219 homes sold, 81 days on market, 3.8 months of supply. What it means for buyers and sellers.',

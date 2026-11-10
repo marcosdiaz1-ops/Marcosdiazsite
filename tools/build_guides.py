@@ -82,7 +82,7 @@ def build(key, lang):
 </div>'''
     html = f'''<!DOCTYPE html><html lang="{lang}"><head><meta charset="utf-8"><title>{title}</title><style>{CSS}</style></head><body>
 <div class="cover">
-  <div class="logo"><img src="{BASE}/images/logo.svg" alt=""><div><span>Marcos Diaz</span><small>{'Bienes Raíces' if es else 'Real Estate'}</small></div></div>
+  <div class="logo"><img src="{BASE}/images/logo.svg" alt=""><div><span>Marcos Diaz</span><small>Keller Williams Realty</small></div></div>
   <div class="mid">
     <p class="eyebrow">{eyebrow}</p>
     <h1>{title}</h1>

@@ -41,7 +41,7 @@ def blog_ld(post, es, url):
                "inLanguage": 'es' if es else 'en', "datePublished": post['date'], "dateModified": post['date'],
                "mainEntityOfPage": url, "image": SITE + "/images/og-image.jpg",
                "author": {"@type": "Person", "name": "Marcos Diaz", "url": SITE + "/"},
-               "publisher": {"@type": "Organization", "name": "Marcos Diaz Real Estate",
+               "publisher": {"@type": "Organization", "name": "Marcos Diaz, Keller Williams Realty Sioux Falls",
                              "logo": {"@type": "ImageObject", "url": SITE + "/images/og-image.jpg"}}})
 
 
