@@ -5,7 +5,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 import sys
 if HERE not in sys.path: sys.path.insert(0, HERE)
 ROOT = os.path.dirname(HERE)
-SEARCH = 'https://marcos.kw.com/search/sale?viewport=43.5123477544219%2C-96.73235438067628%2C43.46346435534284%2C-96.80573961932375'
+SEARCH = '/search/'
 
 
 def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='', head_extra='', news=True):
@@ -130,7 +130,7 @@ privacy_en = '''  <section class="page-hero">
       <h2>Cookies and tracking</h2>
       <p>This website does not use advertising cookies or analytics tracking. Fonts are hosted on this site, not loaded from third parties.</p>
       <h2>Other websites</h2>
-      <p>Links such as "Search Homes" (my Keller Williams home search) and Google reviews take you to other websites, which have their own privacy policies.</p>
+      <p>Links such as my Keller Williams town searches and Google reviews take you to other websites, which have their own privacy policies.</p>
       <h2>Your choices</h2>
       <p>You can ask me to update or delete the information you've shared at any time. Contact Marcos Diaz at <a href="mailto:marcosdiaz1@kw.com">marcosdiaz1@kw.com</a> or <a href="tel:+16058389140">605-838-9140</a>.</p>
     </div>
@@ -162,7 +162,7 @@ privacy_es = '''  <section class="page-hero">
       <h2>Cookies y rastreo</h2>
       <p>Este sitio no usa cookies de publicidad ni herramientas de análisis. Las fuentes tipográficas están alojadas en este mismo sitio, no se cargan desde terceros.</p>
       <h2>Otros sitios web</h2>
-      <p>Enlaces como "Buscar casas" (mi buscador de Keller Williams) y las reseñas de Google le llevan a otros sitios web, que tienen sus propias políticas de privacidad.</p>
+      <p>Enlaces como mis búsquedas por ciudad de Keller Williams y las reseñas de Google le llevan a otros sitios web, que tienen sus propias políticas de privacidad.</p>
       <h2>Sus opciones</h2>
       <p>Puede pedirme en cualquier momento que actualice o elimine la información que compartió. Comuníquese con Marcos Diaz en <a href="mailto:marcosdiaz1@kw.com">marcosdiaz1@kw.com</a> o al <a href="tel:+16058389140">605-838-9140</a>.</p>
     </div>
