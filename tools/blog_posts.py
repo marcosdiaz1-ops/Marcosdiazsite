@@ -170,4 +170,87 @@ POSTS = [
 <h2>¿Tiene preguntas?</h2>
 <p>Cada caso es diferente. Llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>, o <a href="{book}" target="_blank" rel="noopener">agende una llamada rápida</a>, y le ayudo con su próximo paso.</p>''',
  },
+ {
+  'slug': 'owner-occupied-property-tax-sioux-falls', 'es_slug': 'impuestos-propiedad-dueno-ocupante-sioux-falls',
+  'date': '2026-11-10', 'date_en': 'November 10, 2026', 'date_es': '10 de noviembre de 2026',
+  'tag': 'Property Taxes', 'tag_es': 'Impuestos de propiedad',
+  'title': 'New Homeowner in Sioux Falls? File for Owner-Occupied Tax Status',
+  'title_es': 'Dueño de casa nuevo en Sioux Falls: pida su estatus de dueño ocupante',
+  'desc': 'South Dakota homeowners can lower their property taxes with owner-occupied status. The window is open now through March 15. Here’s how it works and the key dates.',
+  'desc_es': 'En Dakota del Sur puede bajar sus impuestos de propiedad con el estatus de dueño ocupante. Se solicita del 1 de noviembre al 15 de marzo. Cómo funciona y fechas clave.',
+  'body': '''<p>Just bought a home in Sioux Falls, Tea, Harrisburg or Brandon? There’s one form you don’t want to miss. In South Dakota, a home you live in can be classified as <strong>owner-occupied</strong>, and that lowers your property tax bill. It doesn’t happen on its own when you buy. You have to apply, and the window for this season opened on November 1.</p>
+<h2>What is owner-occupied status?</h2>
+<p>It’s a property tax classification for the home you live in as your main residence. When your home has it, a lower school tax rate (the school general fund levy) applies to it. The rest of your tax bill stays the same, but the savings are real, and they repeat every year.</p>
+<ul>
+<li>It covers houses, condos, townhomes, manufactured and mobile homes, and buildings with up to four units (like a duplex where you live in one side).</li>
+<li>It must be your <strong>primary residence</strong>.</li>
+<li>Once approved, it stays in place until you sell or stop living there. You don’t reapply every year.</li>
+</ul>
+<h2>When and how to apply</h2>
+<ul>
+<li><strong>Dates:</strong> Applications are accepted from <strong>November 1 to March 15</strong>. The next deadline is March 15, 2027.</li>
+<li><strong>Where:</strong> File a Certificate of Owner-Occupied Dwelling with the Director of Equalization in the county where your home is. You can also file it online through the South Dakota Department of Revenue.</li>
+<li><strong>Which county?</strong> Most of Sioux Falls, <a href="{areas}brandon.html">Brandon</a>, Garretson and Hartford are in Minnehaha County. <a href="{areas}tea.html">Tea</a>, <a href="{areas}harrisburg.html">Harrisburg</a>, Lennox and Canton are in Lincoln County. Part of Sioux Falls is in Lincoln County too, so check your closing papers.</li>
+<li><strong>Already have it?</strong> Look for “OO” on your tax bill or assessment notice.</li>
+</ul>
+<p>If you’re not sure which tax year your application will count toward, ask the county Equalization office. They can tell you based on your closing date.</p>
+<h2>Key property tax dates</h2>
+<p>Here’s how the year works in Minnehaha County:</p>
+<ul>
+<li><strong>By March 1:</strong> Assessment notices are mailed. Check your home’s value and classification.</li>
+<li><strong>March:</strong> If you think your value is wrong, appeal deadlines come fast. The local board meets starting the third Monday of March, and written appeals are due before that.</li>
+<li><strong>April 30:</strong> First half of property taxes due.</li>
+<li><strong>October 31:</strong> Second half due.</li>
+</ul>
+<p>Late payments get a 10% yearly penalty. If your mortgage has an escrow account, your lender pays these bills from it, but it’s still smart to check that the payments were made. Lincoln County has its own treasurer, so homeowners there should check their county’s dates.</p>
+<h2>Other ways to lower your taxes</h2>
+<p>South Dakota has a few other programs. Two that come up often:</p>
+<ul>
+<li><strong>Disabled veterans:</strong> A veteran rated permanently and totally disabled from a service-connected disability may get the first $200,000 of the home’s value exempt. Apply with the county Director of Equalization by November 1. See my <a href="{blog}va-home-loans-sioux-falls/">VA home loan guide</a> too.</li>
+<li><strong>Seniors and people with disabilities:</strong> Owners 65 and older, or with a disability, may be able to freeze their assessed value if they meet income limits. The deadline is April 1.</li>
+</ul>
+<p>The state also passed a temporary limit on how fast owner-occupied home values can grow for taxes (3% per year), which first showed up on 2026 assessment notices and affects taxes paid in 2027.</p>
+<h2>Budget for taxes before you buy</h2>
+<p>Property taxes are part of your monthly payment, so plan for them early. Try my <a href="{home}#calculator">mortgage calculator</a> to see a full monthly estimate. If you’re thinking about selling, start with a <a href="{home}home-value/">free home value estimate</a>. And if you’re still saving, see what <a href="{home}down-payment-assistance/">down payment help</a> you may qualify for.</p>
+<h2>Questions?</h2>
+<p>Buying, selling or just trying to make sense of your tax bill? Call or text me at <a href="tel:+16058389140">605-838-9140</a>, or <a href="{book}" target="_blank" rel="noopener">book a quick call</a>. Se habla español.</p>
+<p class="note">Details come from the South Dakota Department of Revenue (owner-occupied fact sheet and 2026 property tax reduction programs, both July 2026; appeal process guide) and the Minnehaha County Treasurer’s website. Rules, dates and amounts can change. Confirm with your county Director of Equalization or Treasurer.</p>''',
+  'body_es': '''<p>¿Acaba de comprar casa en Sioux Falls, Tea, Harrisburg o Brandon? Hay un formulario que no debe olvidar. En Dakota del Sur, la casa donde usted vive puede clasificarse como <strong>dueño ocupante</strong> (en inglés, <em>owner-occupied</em>), y eso baja sus impuestos de propiedad. No pasa automáticamente al comprar. Usted tiene que solicitarlo, y el periodo para hacerlo se abrió el 1 de noviembre.</p>
+<h2>¿Qué es el estatus de dueño ocupante?</h2>
+<p>Es una clasificación de impuestos para la casa donde usted vive como residencia principal. Con ella, a su casa se le aplica una tasa más baja del impuesto escolar (el <em>school general fund levy</em>). El resto de su cuenta de impuestos no cambia, pero el ahorro es real y se repite cada año.</p>
+<ul>
+<li>Aplica a casas, condominios, townhomes, casas prefabricadas y móviles, y edificios de hasta cuatro unidades (por ejemplo, un dúplex donde usted vive en un lado).</li>
+<li>Debe ser su <strong>residencia principal</strong>.</li>
+<li>Una vez aprobado, se mantiene hasta que venda la casa o deje de vivir en ella. No tiene que volver a solicitarlo cada año.</li>
+</ul>
+<h2>Cuándo y cómo solicitarlo</h2>
+<ul>
+<li><strong>Fechas:</strong> Se aceptan solicitudes del <strong>1 de noviembre al 15 de marzo</strong>. La próxima fecha límite es el 15 de marzo de 2027.</li>
+<li><strong>Dónde:</strong> Presente el formulario <em>Certificate of Owner-Occupied Dwelling</em> ante el Director de Equalization del condado donde está su casa. También puede hacerlo en línea con el Departamento de Ingresos de Dakota del Sur (en inglés).</li>
+<li><strong>¿Qué condado?</strong> La mayor parte de Sioux Falls, <a href="{areas}brandon.html">Brandon</a>, Garretson y Hartford está en el condado de Minnehaha. <a href="{areas}tea.html">Tea</a>, <a href="{areas}harrisburg.html">Harrisburg</a>, Lennox y Canton están en el condado de Lincoln. Una parte de Sioux Falls también está en Lincoln, así que revise sus papeles del cierre.</li>
+<li><strong>¿Ya lo tiene?</strong> Busque “OO” en su cuenta de impuestos o en su aviso de avalúo.</li>
+</ul>
+<p>Si no sabe para qué año de impuestos contará su solicitud, pregunte en la oficina de Equalization del condado. Ellos le dirán según la fecha de su cierre.</p>
+<h2>Fechas clave de los impuestos de propiedad</h2>
+<p>Así funciona el año en el condado de Minnehaha:</p>
+<ul>
+<li><strong>Antes del 1 de marzo:</strong> Se envían los avisos de avalúo. Revise el valor y la clasificación de su casa.</li>
+<li><strong>Marzo:</strong> Si cree que el valor está mal, las fechas para apelar llegan rápido. La junta local se reúne a partir del tercer lunes de marzo, y las apelaciones por escrito se entregan antes.</li>
+<li><strong>30 de abril:</strong> Se paga la primera mitad de los impuestos.</li>
+<li><strong>31 de octubre:</strong> Se paga la segunda mitad.</li>
+</ul>
+<p>Los pagos tardíos tienen una multa del 10% anual. Si su hipoteca tiene una cuenta de depósito (<em>escrow</em>), su prestamista paga estos impuestos por usted, pero vale la pena confirmar que se hicieron los pagos. El condado de Lincoln tiene su propio tesorero, así que si vive allí, revise las fechas de su condado.</p>
+<h2>Otras formas de bajar sus impuestos</h2>
+<p>Dakota del Sur tiene otros programas. Dos de los más comunes:</p>
+<ul>
+<li><strong>Veteranos con discapacidad:</strong> Un veterano con una discapacidad permanente y total relacionada con su servicio puede quedar exento en los primeros $200,000 del valor de su casa. Se solicita con el Director de Equalization del condado antes del 1 de noviembre. Vea también mi <a href="{blog}prestamos-va-sioux-falls/">guía de préstamos VA</a>.</li>
+<li><strong>Personas mayores y con discapacidad:</strong> Dueños de 65 años o más, o con una discapacidad, pueden congelar el valor de avalúo de su casa si cumplen con límites de ingreso. La fecha límite es el 1 de abril.</li>
+</ul>
+<p>El estado también aprobó un límite temporal de 3% al año en cuánto puede subir el valor de las casas de dueño ocupante para impuestos. Apareció por primera vez en los avisos de avalúo de 2026 y afecta los impuestos que se pagan en 2027.</p>
+<h2>Incluya los impuestos en su presupuesto</h2>
+<p>Los impuestos de propiedad son parte de su pago mensual, así que inclúyalos desde el principio. Use mi <a href="{home}#calculator">calculadora de hipoteca</a> para ver un estimado completo. Si piensa vender, empiece con un <a href="{home}valor-de-casa/">estimado gratis del valor de su casa</a>. Y si todavía está ahorrando, vea qué <a href="{home}ayuda-pago-inicial/">ayuda para el pago inicial</a> podría recibir.</p>
+<h2>¿Tiene preguntas?</h2>
+<p>Ya sea que vaya a comprar, vender o solo quiera entender su cuenta de impuestos, llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>, o <a href="{book}" target="_blank" rel="noopener">agende una llamada rápida</a>. Se habla español.</p>
+<p class="note">La información viene del Departamento de Ingresos de Dakota del Sur (hoja informativa sobre <em>owner-occupied</em> y programas de reducción de impuestos de 2026, ambos de julio de 2026; guía del proceso de apelación) y del sitio web del Tesorero del condado de Minnehaha (en inglés). Las reglas, fechas y montos pueden cambiar. Confirme con el Director de Equalization o el Tesorero de su condado.</p>''',
+ },
 ]

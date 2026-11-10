@@ -345,4 +345,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/give-me-five/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/califica-give-me-five/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/blog/owner-occupied-property-tax-sioux-falls/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/owner-occupied-property-tax-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/impuestos-propiedad-dueno-ocupante-sioux-falls/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/impuestos-propiedad-dueno-ocupante-sioux-falls/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/owner-occupied-property-tax-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/impuestos-propiedad-dueno-ocupante-sioux-falls/"/>
+  </url>
 </urlset>
