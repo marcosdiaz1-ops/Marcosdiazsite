@@ -88,6 +88,12 @@
       const fd = new FormData(form);
       fd.set('Language', ES ? 'Español' : 'English');
       if (form.dataset.kind === 'home-value') fd.set('Looking to', 'Home value: ' + (fd.get('Address') || '').trim());
+      // Tag leads that came from an ad link (?utm_source=facebook etc.) so Marcos knows which ad worked
+      const src = (new URLSearchParams(location.search).get('utm_source') || '').trim().slice(0, 20);
+      if (src) {
+        fd.set('Source', src);
+        fd.set('Looking to', (/^(fb|facebook|ig|instagram|meta)$/i.test(src) ? 'FB ad' : src) + ' · ' + fd.get('Looking to'));
+      }
       form.dispatchEvent(new CustomEvent('wizard:submit', { detail: { fd } }));
       // Lead tracker + instant alert + auto-reply (Google Apps Script), sent alongside the email
       const sheetUrl = form.dataset.sheet;
