@@ -54,8 +54,13 @@
   </section>
   <section class="idx-search">
     <div class="wrap">
+      <div class="idx-tabs" role="group" aria-label="Home search views">
+        <button type="button" class="idx-tab" data-view="all" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" aria-pressed="true">Search all homes</button>
+        <button type="button" class="idx-tab" data-view="mine" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=2" aria-pressed="false">My listings</button>
+        <button type="button" class="idx-tab" data-view="office" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=3" aria-pressed="false">Keller Williams listings</button>
+      </div>
       <iframe class="idx-frame" src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" title="Home search: MLS listings" loading="eager"></iframe>
-      <p class="idx-note">Having trouble with the search? <a href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" target="_blank" rel="noopener">Open it in a new window</a>.</p>
+      <p class="idx-note">Having trouble with the search? <a class="idx-open" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" target="_blank" rel="noopener">Open it in a new window</a>.</p>
     </div>
   </section>
 </main>
@@ -84,5 +89,18 @@
   </div>
 </footer>
 <script src="/site.js?v=BUILD" defer></script>
+<script>
+(function(){
+  var tabs=document.querySelectorAll('.idx-tab'),frame=document.querySelector('.idx-frame'),open=document.querySelector('.idx-open');
+  function show(btn,push){
+    tabs.forEach(function(t){t.setAttribute('aria-pressed',t===btn?'true':'false');});
+    frame.src=btn.dataset.src; if(open) open.href=btn.dataset.src;
+    if(push&&history.replaceState){var v=btn.dataset.view;history.replaceState(null,'',v==='all'?location.pathname:location.pathname+'?view='+v);}
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t,true);});});
+  var v=new URLSearchParams(location.search).get('view');
+  tabs.forEach(function(t){if(t.dataset.view===v&&v!=='all') show(t,false);});
+})();
+</script>
 </body>
 </html>
