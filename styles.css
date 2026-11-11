@@ -717,3 +717,11 @@ html, body { overflow-x: clip; }
 .kw-embed { display: block; width: 100%; height: 88vh; min-height: 640px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 .idx-search { padding-top: 24px; }
 @media (max-width: 700px) { .kw-embed { height: 80vh; min-height: 560px; } }
+
+/* Phones: big button opens map full screen instead of cramped embed */
+.map-cta-phone { display: none; }
+@media (max-width: 700px) {
+  .map-cta-phone { display: flex; }
+  .map-cta-phone .btn { width: 100%; text-align: center; padding-top: 18px; padding-bottom: 18px; }
+  .kw-embed, .kw-embed-bar { display: none; }
+}
