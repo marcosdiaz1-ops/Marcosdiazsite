@@ -505,7 +505,7 @@ details:has(.step-n) p { padding-left: 34px; }
 .post-more { font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-ink); }
 @media (max-width: 960px) { .post-list { grid-template-columns: 1fr; } }
 .links a, .nav .brand-text { white-space: nowrap; }
-@media (min-width: 961px) { .links { gap: 20px; } .links a { letter-spacing: .14em; } }
+@media (max-width: 1380px) and (min-width: 961px) { .links { gap: 20px; } .links a { letter-spacing: .14em; } }
 @media (max-width: 1200px) and (min-width: 961px) {
   .menu-btn { display: block; }
   .links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 22px; padding: 28px 5% 34px; background: var(--ivory); border-bottom: 1px solid var(--line); }
@@ -727,21 +727,4 @@ html, body { overflow-x: clip; }
   .kw-embed, .kw-embed-bar { display: none; }
 }
 
-/* Open houses page */
-.oh-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
-.oh-card { background: #fff; border: 1px solid var(--line); display: flex; flex-direction: column; }
-.oh-card img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; display: block; background: var(--navy); }
-.oh-body { padding: 26px 28px 28px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.oh-when { font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-ink); font-weight: 600; margin: 0; }
-.oh-card h2 { font-size: 1.9rem; line-height: 1.15; color: var(--ink); margin: 0; }
-.oh-city { color: #6b675f; font-size: .95rem; margin: 0; }
-.oh-price { font-family: var(--serif); font-size: 1.6rem; color: var(--navy); margin: 0; }
-.oh-stats { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0; margin: 4px 0; font-size: .92rem; }
-.oh-stats li + li::before { content: "·"; margin-right: 18px; color: var(--gold-ink); }
-.oh-desc { font-size: .95rem; color: #4a473f; flex: 1; margin: 0; }
-.oh-fine { font-size: .78rem; color: #6b675f; margin: 6px 0 0; }
-.oh-cta { margin-top: 56px; padding: 36px 40px; background: var(--navy); color: #d9d2c6; display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap; }
-.oh-cta h2 { color: #fff; font-size: 1.9rem; margin: 0 0 6px; }
-.oh-cta a:not(.btn) { color: var(--gold-soft); }
 .page-body .source { margin-top: 28px; font-size: .85rem; color: #6b675f; }
-@media (max-width: 860px) { .oh-list { grid-template-columns: 1fr; } .oh-cta { padding: 28px 24px; } }
