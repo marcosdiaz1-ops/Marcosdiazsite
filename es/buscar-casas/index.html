@@ -58,15 +58,13 @@
         <span class="map-cta-text"><strong>Búsqueda con mapa y fotos</strong><span>Vea todas las casas del área de Sioux Falls en un mapa, con fotos grandes, filtros y búsquedas guardadas.</span></span>
         <span class="btn btn-gold">Abrir búsqueda con mapa</span>
       </a>
-      <p class="map-cta-or">O use la búsqueda del MLS abajo:</p>
-      <div class="idx-tabs" role="group" aria-label="Vistas de búsqueda">
-        <button type="button" class="idx-tab" data-view="all" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" aria-pressed="true">Buscar todas las casas</button>
-        <button type="button" class="idx-tab" data-view="mine" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=2" aria-pressed="false">Mis listados</button>
-        <button type="button" class="idx-tab" data-view="office" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=3" aria-pressed="false">Listados de Keller Williams</button>
-        <button type="button" class="idx-tab" data-view="mls" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" aria-pressed="false">MLS # / Dirección</button>
+      <p class="map-cta-or">Otras formas de buscar en el MLS:</p>
+      <div class="search-cards" role="list" aria-label="Otras formas de buscar">
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="sc-text"><strong>Buscar todas las casas</strong><span>Todos los listados activos del MLS</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=2" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg></span><span class="sc-text"><strong>Mis listados</strong><span>Casas que tengo a la venta ahora</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=3" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 10h4a1 1 0 0 1 1 1v10M2 21h20M8 8h3M8 12h3M8 16h3"/></svg></span><span class="sc-text"><strong>Listados de Keller Williams</strong><span>Casas listadas por mi oficina</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg></span><span class="sc-text"><strong>Buscar por MLS # o dirección</strong><span>¿Ya tiene una casa en mente?</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
       </div>
-      <iframe class="idx-frame" src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" title="Búsqueda de casas: listados del MLS" loading="eager"></iframe>
-      <p class="idx-note">¿Problemas con la búsqueda? <a class="idx-open" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" target="_blank" rel="noopener">Ábrala en una ventana nueva</a>.</p>
     </div>
   </section>
 </main>
@@ -95,18 +93,5 @@
   </div>
 </footer>
 <script src="/site.js?v=BUILD" defer></script>
-<script>
-(function(){
-  var tabs=document.querySelectorAll('.idx-tab'),frame=document.querySelector('.idx-frame'),open=document.querySelector('.idx-open');
-  function show(btn,push){
-    tabs.forEach(function(t){t.setAttribute('aria-pressed',t===btn?'true':'false');});
-    frame.src=btn.dataset.src; if(open) open.href=btn.dataset.src;
-    if(push&&history.replaceState){var v=btn.dataset.view;history.replaceState(null,'',v==='all'?location.pathname:location.pathname+'?view='+v);}
-  }
-  tabs.forEach(function(t){t.addEventListener('click',function(){show(t,true);});});
-  var v=new URLSearchParams(location.search).get('view');
-  tabs.forEach(function(t){if(t.dataset.view===v&&v!=='all') show(t,false);});
-})();
-</script>
 </body>
 </html>

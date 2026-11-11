@@ -58,15 +58,13 @@
         <span class="map-cta-text"><strong>Map search with photos</strong><span>See every Sioux Falls-area home on a map, with big photos, filters and saved searches.</span></span>
         <span class="btn btn-gold">Open map search</span>
       </a>
-      <p class="map-cta-or">Or use the MLS search below:</p>
-      <div class="idx-tabs" role="group" aria-label="Home search views">
-        <button type="button" class="idx-tab" data-view="all" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" aria-pressed="true">Search all homes</button>
-        <button type="button" class="idx-tab" data-view="mine" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=2" aria-pressed="false">My listings</button>
-        <button type="button" class="idx-tab" data-view="office" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=3" aria-pressed="false">Keller Williams listings</button>
-        <button type="button" class="idx-tab" data-view="mls" data-src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" aria-pressed="false">MLS # / Address</button>
+      <p class="map-cta-or">More ways to search the MLS:</p>
+      <div class="search-cards" role="list" aria-label="More ways to search">
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="sc-text"><strong>Search all homes</strong><span>Every active MLS listing in the area</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=2" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg></span><span class="sc-text"><strong>My listings</strong><span>Homes I&rsquo;m listing right now</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=3" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 10h4a1 1 0 0 1 1 1v10M2 21h20M8 8h3M8 12h3M8 16h3"/></svg></span><span class="sc-text"><strong>Keller Williams listings</strong><span>Homes listed by my office</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg></span><span class="sc-text"><strong>Look up an MLS # or address</strong><span>Already have a home in mind?</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
       </div>
-      <iframe class="idx-frame" src="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" title="Home search: MLS listings" loading="eager"></iframe>
-      <p class="idx-note">Having trouble with the search? <a class="idx-open" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" target="_blank" rel="noopener">Open it in a new window</a>.</p>
     </div>
   </section>
 </main>
@@ -95,18 +93,5 @@
   </div>
 </footer>
 <script src="/site.js?v=BUILD" defer></script>
-<script>
-(function(){
-  var tabs=document.querySelectorAll('.idx-tab'),frame=document.querySelector('.idx-frame'),open=document.querySelector('.idx-open');
-  function show(btn,push){
-    tabs.forEach(function(t){t.setAttribute('aria-pressed',t===btn?'true':'false');});
-    frame.src=btn.dataset.src; if(open) open.href=btn.dataset.src;
-    if(push&&history.replaceState){var v=btn.dataset.view;history.replaceState(null,'',v==='all'?location.pathname:location.pathname+'?view='+v);}
-  }
-  tabs.forEach(function(t){t.addEventListener('click',function(){show(t,true);});});
-  var v=new URLSearchParams(location.search).get('view');
-  tabs.forEach(function(t){if(t.dataset.view===v&&v!=='all') show(t,false);});
-})();
-</script>
 </body>
 </html>

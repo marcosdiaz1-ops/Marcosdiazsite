@@ -696,3 +696,16 @@ html, body { overflow-x: clip; }
 .map-cta:hover .btn { background: #a97c4f; }
 .map-cta-or { margin: 26px 0 12px; font-size: .95rem; color: var(--text); }
 @media (max-width: 700px) { .map-cta { flex-direction: column; align-items: flex-start; padding: 26px 22px; } .map-cta-text strong { font-size: 1.6rem; } }
+
+/* Search page: branded link cards (replace embedded Paragon form) */
+.search-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.search-card { display: flex; align-items: center; gap: 18px; padding: 22px 24px; background: #fff; border: 1px solid var(--line); border-radius: 6px; text-decoration: none; color: var(--ink); transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+.search-card:hover { border-color: var(--gold); box-shadow: 0 8px 24px rgba(19,32,59,.08); transform: translateY(-2px); }
+.sc-icon { flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: var(--sand); display: grid; place-items: center; }
+.sc-icon svg { width: 22px; height: 22px; fill: none; stroke: var(--gold-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sc-text { flex: 1; min-width: 0; }
+.sc-text strong { display: block; font-family: var(--serif); font-size: 1.35rem; font-weight: 500; line-height: 1.25; color: var(--navy); }
+.sc-text span { display: block; font-size: .92rem; color: var(--text); line-height: 1.4; margin-top: 2px; }
+.sc-arrow { font-size: 1.3rem; color: var(--gold); transition: transform .2s ease; }
+.search-card:hover .sc-arrow { transform: translateX(4px); }
+@media (max-width: 700px) { .search-cards { grid-template-columns: 1fr; } .search-card { padding: 18px; gap: 14px; } }
