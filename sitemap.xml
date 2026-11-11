@@ -379,4 +379,39 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/search/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/buscar-casas/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/garretson.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/garretson.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/garretson.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/hartford.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/hartford.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/hartford.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/crooks.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/crooks.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/crooks.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/lennox.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/lennox.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/lennox.html"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/areas/canton.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/canton.html"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/canton.html"/>
+  </url>
 </urlset>
