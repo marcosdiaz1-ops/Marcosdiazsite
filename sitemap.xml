@@ -408,4 +408,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/areas/canton.html"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/areas/canton.html"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/blog/sioux-falls-news-week-of-nov-9-2026/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/sioux-falls-news-week-of-nov-9-2026/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/noticias-sioux-falls-semana-9-nov-2026/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/noticias-sioux-falls-semana-9-nov-2026/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/sioux-falls-news-week-of-nov-9-2026/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/noticias-sioux-falls-semana-9-nov-2026/"/>
+  </url>
 </urlset>
