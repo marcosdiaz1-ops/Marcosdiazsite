@@ -253,4 +253,78 @@ POSTS = [
 <p>Ya sea que vaya a comprar, vender o solo quiera entender su cuenta de impuestos, llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>, o <a href="{book}" target="_blank" rel="noopener">agende una llamada rápida</a>. Se habla español.</p>
 <p class="note">La información viene del Departamento de Ingresos de Dakota del Sur (hoja informativa sobre <em>owner-occupied</em> y programas de reducción de impuestos de 2026, ambos de julio de 2026; guía del proceso de apelación) y del sitio web del Tesorero del condado de Minnehaha (en inglés). Las reglas, fechas y montos pueden cambiar. Confirme con el Director de Equalization o el Tesorero de su condado.</p>''',
  },
+ {
+  'slug': 'contract-for-deed-vs-mortgage-sioux-falls', 'es_slug': 'contrato-por-escritura-vs-hipoteca',
+  'date': '2026-11-17', 'date_en': 'November 17, 2026', 'date_es': '17 de noviembre de 2026',
+  'tag': 'Buyer Tips', 'tag_es': 'Consejos para compradores',
+  'title': 'Contract for Deed vs. a Mortgage: What Sioux Falls Buyers Should Know',
+  'title_es': 'Contrato por escritura vs. hipoteca: lo que debe saber antes de firmar',
+  'desc': 'Thinking about buying a home “on contract”? Learn how a contract for deed works, the risks for buyers, and mortgage options to check first in Sioux Falls.',
+  'desc_es': '¿Le ofrecen comprar una casa “por contrato”? Cómo funciona un contrato por escritura, sus riesgos y qué opciones de hipoteca revisar primero en Sioux Falls.',
+  'body': '''<p>Sometimes a seller offers to sell you a home “on contract.” No bank, no long approval, just monthly payments to the seller. It can sound like an easy way in, especially if you have low credit or no Social Security number. Before you sign, here is what you should know.</p>
+<h2>What is a contract for deed?</h2>
+<p>With a contract for deed, you pay the seller in monthly installments instead of getting a mortgage loan. The big difference: <strong>the seller keeps the deed</strong> (legal ownership) until you finish paying. You may also hear it called a land contract, an installment land contract or “buying on contract.”</p>
+<p>With a mortgage, a lender pays the seller at closing, and the house goes in your name right away. The lender holds a lien on the home until the loan is paid off.</p>
+<h2>The risks for buyers</h2>
+<p>The Consumer Financial Protection Bureau (CFPB) has warned about these contracts. Here are the main risks it points out:</p>
+<ul>
+<li><strong>You pay like an owner without being the owner.</strong> In a typical contract, the buyer pays property taxes, insurance, repairs and upkeep.</li>
+<li><strong>You can lose the home fast.</strong> A missed payment, a missed balloon payment, or unpaid taxes can lead to losing the home, and the seller often keeps the money you already paid.</li>
+<li><strong>Balloon payments.</strong> Many contracts require a large lump sum after a few years. If you can’t pay or refinance by then, you may be in trouble.</li>
+<li><strong>Problems with the seller’s title.</strong> If the seller still owes a mortgage or has liens, or doesn’t pay the taxes, you can get hurt even if you paid every month.</li>
+<li><strong>No inspection and higher prices.</strong> These homes often sell without the inspection a regular loan usually involves, and sometimes with a high price and high interest rate.</li>
+</ul>
+<h2>If you still consider one</h2>
+<ul>
+<li><strong>Talk to a real estate attorney</strong> before you sign. South Dakota has its own rules for what happens when a buyer falls behind, and a lawyer can explain them.</li>
+<li><strong>Record the contract</strong> with the county Register of Deeds so you get notice if a lien or new mortgage is filed on the home.</li>
+<li><strong>Ask for a title search and a home inspection</strong>, just like you would with a regular purchase.</li>
+<li><strong>Get every cost in writing:</strong> price, interest rate, payment, who pays taxes and insurance, and any balloon payment date.</li>
+<li><strong>Talk to a HUD-approved housing counselor</strong> for free or low-cost advice.</li>
+</ul>
+<h2>Check your mortgage options first</h2>
+<p>Many people who think they can’t get a mortgage actually can. A few places to start:</p>
+<ul>
+<li><strong>No Social Security number?</strong> See my page on <a href="{home}itin-mortgage-sioux-falls/">ITIN mortgages in Sioux Falls</a>.</li>
+<li><strong>Low credit?</strong> Read <a href="{home}buy-a-home-with-low-credit/">how to buy a home with low credit</a>.</li>
+<li><strong>Short on the down payment?</strong> Look at <a href="{home}down-payment-assistance/">down payment assistance</a>, including South Dakota’s <a href="{blog}give-me-five-down-payment-assistance/">Give Me Five program</a>.</li>
+<li><strong>Want to see the numbers?</strong> Try the <a href="{home}#calculator">mortgage calculator</a> or my <a href="{blog}first-time-home-buyer-guide-sioux-falls/">first-time buyer guide</a>.</li>
+</ul>
+<h2>Let’s compare your options</h2>
+<p>If someone has offered you a contract for deed in Sioux Falls, Tea, Harrisburg, Brandon or nearby, I’m happy to help you compare it with a regular mortgage before you decide. Call or text me at <a href="tel:+16058389140">605-838-9140</a> or <a href="{book}" target="_blank" rel="noopener">book a quick call</a>. Se habla español.</p>
+<p class="note">Information comes from Consumer Financial Protection Bureau consumer materials on contracts for deed (August 2024, now archived on consumerfinance.gov). This is general information, not legal advice. Laws and rules can change; talk to a South Dakota attorney about any contract before you sign.</p>''',
+  'body_es': '''<p>A veces un vendedor le ofrece venderle su casa “por contrato”. Sin banco, sin una larga aprobación, solo pagos mensuales al vendedor. Puede parecer una forma fácil de tener casa, sobre todo si tiene poco crédito o no tiene número de Seguro Social. Antes de firmar, esto es lo que debe saber.</p>
+<h2>¿Qué es un contrato por escritura?</h2>
+<p>En un contrato por escritura (<em>contract for deed</em>), usted le paga al vendedor en cuotas mensuales en lugar de sacar un préstamo hipotecario. La gran diferencia: <strong>el vendedor se queda con la escritura</strong> (la propiedad legal) hasta que usted termine de pagar. También se le llama contrato de tierra, <em>land contract</em> o “comprar por contrato”.</p>
+<p>Con una hipoteca, el prestamista le paga al vendedor en el cierre y la casa queda a su nombre desde el primer día. El prestamista tiene un gravamen sobre la casa hasta que usted pague el préstamo.</p>
+<h2>Los riesgos para el comprador</h2>
+<p>La Oficina para la Protección Financiera del Consumidor (CFPB) ha advertido sobre estos contratos. Estos son los riesgos principales que menciona:</p>
+<ul>
+<li><strong>Paga como dueño sin ser el dueño.</strong> En un contrato típico, el comprador paga los impuestos de propiedad, el seguro, las reparaciones y el mantenimiento.</li>
+<li><strong>Puede perder la casa muy rápido.</strong> Un pago atrasado, un pago global (<em>balloon</em>) que no pueda cubrir o impuestos sin pagar pueden hacer que pierda la casa, y muchas veces el vendedor se queda con todo lo que usted ya pagó.</li>
+<li><strong>Pagos globales.</strong> Muchos contratos piden una suma grande después de unos años. Si para esa fecha no puede pagarla o conseguir un préstamo, puede tener problemas.</li>
+<li><strong>Problemas con el título del vendedor.</strong> Si el vendedor todavía debe una hipoteca, tiene gravámenes o no paga los impuestos, usted puede salir perjudicado aunque haya pagado cada mes.</li>
+<li><strong>Sin inspección y con precios más altos.</strong> Estas casas muchas veces se venden sin la inspección que normalmente requiere un préstamo, y a veces con precio e interés altos.</li>
+</ul>
+<h2>Si de todos modos lo está considerando</h2>
+<ul>
+<li><strong>Hable con un abogado de bienes raíces</strong> antes de firmar. Dakota del Sur tiene sus propias reglas sobre lo que pasa si el comprador se atrasa, y un abogado se las puede explicar.</li>
+<li><strong>Registre el contrato</strong> en la oficina del Register of Deeds del condado, para que le avisen si se registra un gravamen o una nueva hipoteca sobre la casa.</li>
+<li><strong>Pida una búsqueda de título y una inspección de la casa</strong>, igual que en una compra normal.</li>
+<li><strong>Pida todos los costos por escrito:</strong> precio, tasa de interés, pago mensual, quién paga impuestos y seguro, y la fecha de cualquier pago global.</li>
+<li><strong>Hable con un consejero de vivienda aprobado por HUD</strong>, que da consejos gratis o a bajo costo.</li>
+</ul>
+<h2>Primero revise sus opciones de hipoteca</h2>
+<p>Mucha gente que cree que no puede sacar una hipoteca, sí puede. Algunos lugares para empezar:</p>
+<ul>
+<li><strong>¿No tiene número de Seguro Social?</strong> Vea mi página sobre <a href="{home}prestamo-itin-sioux-falls/">préstamos con ITIN en Sioux Falls</a>.</li>
+<li><strong>¿Poco crédito?</strong> Lea <a href="{home}comprar-casa-con-poco-credito/">cómo comprar casa con poco crédito</a>.</li>
+<li><strong>¿Le falta para el pago inicial?</strong> Vea la <a href="{home}ayuda-pago-inicial/">ayuda para el pago inicial</a>, incluido el programa <a href="{blog}give-me-five-ayuda-pago-inicial/">Give Me Five</a> de Dakota del Sur.</li>
+<li><strong>¿Quiere ver los números?</strong> Use la <a href="{home}#calculator">calculadora de hipoteca</a> o mi <a href="{blog}guia-comprar-primera-casa-sioux-falls/">guía para comprar su primera casa</a>.</li>
+</ul>
+<p>Si va a necesitar préstamo, Gisselle Perez de CharterWest Bank también habla español y le puede decir para qué califica.</p>
+<h2>Comparemos sus opciones</h2>
+<p>Si le ofrecieron un contrato por escritura en Sioux Falls, Tea, Harrisburg, Brandon o cerca, con gusto le ayudo a compararlo con una hipoteca normal antes de decidir. Llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>, o <a href="{book}" target="_blank" rel="noopener">agende una llamada rápida</a>. Se habla español.</p>
+<p class="note">La información viene de materiales para consumidores de la Oficina para la Protección Financiera del Consumidor (CFPB) sobre contratos por escritura (agosto de 2024, ahora archivados en consumerfinance.gov, en inglés). Esto es información general, no consejo legal. Las leyes y reglas pueden cambiar; consulte con un abogado de Dakota del Sur antes de firmar cualquier contrato.</p>''',
+ },
 ]
