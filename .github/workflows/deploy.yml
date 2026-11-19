@@ -61,7 +61,7 @@ jobs:
           python3 - <<'PY'
           import os, re, subprocess, json, urllib.request
           site = "https://605homesearch.com"
-          skip = ("tools/", "automation/", "google", "thank-you", "review/")
+          skip = ("tools/", "automation/", "google", "thank-you", "review/", "search-preview/")
           sm = open("sitemap.xml").read()
           all_urls = re.findall(r"<loc>([^<]+)</loc>", sm)
           urls = []

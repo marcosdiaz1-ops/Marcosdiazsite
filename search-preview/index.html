@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search Preview (Demo) | Marcos Diaz</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/fonts/fonts.css?v=BUILD">
+<link rel="stylesheet" href="/styles.css?v=BUILD">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<style>
+  .demo-banner { background: #b3261e; color: #fff; text-align: center; font-size: 14px; padding: 8px 12px; font-weight: 500; letter-spacing: .02em; }
+  .sp { padding: 18px 0 40px; }
+  .sp-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-bottom: 14px; }
+  .sp-filters input, .sp-filters select { font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
+  .sp-filters input[type=search] { flex: 1 1 200px; }
+  .sp-filters button { font: inherit; font-size: 15px; font-weight: 500; padding: 9px 16px; border: 0; border-radius: 8px; background: var(--navy); color: #fff; cursor: pointer; }
+  .sp-toggle { display: none; gap: 6px; margin-bottom: 10px; }
+  .sp-toggle button { flex: 1; font: inherit; padding: 8px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 8px; }
+  .sp-toggle button.on { background: var(--navy); color: #fff; }
+  .sp-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; height: 74vh; min-height: 520px; }
+  #sp-map { border-radius: 10px; border: 1px solid var(--line); height: 100%; }
+  .sp-list { overflow-y: auto; padding-right: 4px; }
+  .sp-count { font-size: 14px; margin-bottom: 8px; color: var(--text); }
+  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; cursor: pointer; transition: box-shadow .15s; }
+  .sp-card:hover, .sp-card.hi { box-shadow: 0 4px 16px rgba(19,32,59,.18); }
+  .sp-card .ph { aspect-ratio: 4/3; background: var(--sand) center/cover no-repeat; position: relative; }
+  .sp-card .ph span { position: absolute; left: 8px; top: 8px; background: var(--navy); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 20px; }
+  .sp-card .in { padding: 10px 12px; font-size: 14px; line-height: 1.45; }
+  .sp-card .pr { font-size: 20px; font-weight: 600; color: var(--ink); }
+  .sp-card .st { color: var(--ink); }
+  .sp-card .ad { color: var(--text); }
+  .sp-card .co { font-size: 11px; color: #777; margin-top: 4px; }
+  .pin { background: var(--navy); color: #fff; font: 600 12px var(--sans); padding: 3px 7px; border-radius: 14px; border: 2px solid #fff; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,.3); transform: translate(-50%,-50%); display: inline-block; }
+  .pin.hi { background: var(--gold); }
+  .leaflet-div-icon { background: none; border: 0; }
+  .sp-more { display: block; margin: 14px auto; font: inherit; padding: 9px 18px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 8px; cursor: pointer; }
+  .sp-msg { padding: 20px; text-align: center; color: var(--text); }
+  .sp-modal { position: fixed; inset: 0; background: rgba(13,23,48,.6); display: none; z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
+  .sp-modal.open { display: flex; }
+  .sp-box { background: #fff; border-radius: 12px; max-width: 860px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; }
+  .sp-x { position: absolute; right: 10px; top: 8px; z-index: 2; background: #fff; border: 0; border-radius: 50%; width: 36px; height: 36px; font-size: 22px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .sp-gal { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 4px; background: #000; }
+  .sp-gal img { height: 340px; width: auto; max-width: none; scroll-snap-align: start; object-fit: cover; }
+  .sp-det { padding: 18px 20px 22px; font-size: 15px; }
+  .sp-det .pr { font-size: 28px; font-weight: 600; color: var(--ink); }
+  .sp-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 6px 16px; margin: 14px 0; font-size: 14px; }
+  .sp-facts b { color: var(--ink); font-weight: 500; }
+  .sp-cta { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+  .sp-cta a { padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; }
+  .sp-cta .a1 { background: var(--navy); color: #fff; }
+  .sp-cta .a2 { background: var(--gold); color: #fff; }
+  .sp-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 10px; }
+  .sp-disc { font-size: 12px; color: #666; margin-top: 18px; line-height: 1.5; }
+  @media (max-width: 860px) {
+    .sp-toggle { display: flex; }
+    .sp-body { display: block; height: auto; min-height: 0; }
+    #sp-map { height: 62vh; }
+    .sp-list { overflow: visible; }
+    .sp-body.show-list #sp-map { display: none; }
+    .sp-body.show-map .sp-list { display: none; }
+    .sp-gal img { height: 240px; }
+  }
+</style>
+</head>
+<body class="subpage">
+
+<div class="demo-banner">DEMO DATA — these are sample listings, not real homes for sale. Private preview page.</div>
+
+<header class="site-header" id="header">
+  <div class="nav">
+    <a href="/" class="brand">
+      <img src="/images/logo.svg" alt="" width="34" height="34">
+      <span class="brand-text">Marcos Diaz<small>Keller Williams Realty</small></span>
+    </a>
+    <button class="menu-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    <nav class="links">
+      <a href="/#about">About</a>
+      <a href="/#reviews">Reviews</a>
+      <a href="/#guide">Buyers</a>
+      <a href="/#sellers">Sellers</a>
+      <a href="/#areas">Areas</a>
+      <a href="/market/">Market</a>
+      <a href="/blog/">Blog</a>
+      <a href="/search/">Search Homes</a>
+      <a href="/#contact" class="nav-cta">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="sp">
+    <div class="wrap">
+      <h1 style="font-size:clamp(1.8rem,3.4vw,2.6rem);margin-bottom:12px">Search Homes for Sale</h1>
+
+      <form class="sp-filters" id="sp-form">
+        <input type="search" id="f-q" placeholder="City, ZIP, address, or MLS #">
+        <select id="f-min"><option value="">Min price</option><option>100000</option><option>200000</option><option>300000</option><option>400000</option><option>500000</option><option>750000</option></select>
+        <select id="f-max"><option value="">Max price</option><option>200000</option><option>300000</option><option>400000</option><option>500000</option><option>750000</option><option>1000000</option></select>
+        <select id="f-beds"><option value="">Beds</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
+        <select id="f-baths"><option value="">Baths</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option></select>
+        <select id="f-type"><option value="">Any type</option><option value="residential">House</option><option value="condominium">Condo</option><option value="multifamily">Multi-family</option><option value="land">Land</option></select>
+        <button type="submit">Search</button>
+      </form>
+
+      <div class="sp-toggle"><button type="button" data-v="map" class="on">Map</button><button type="button" data-v="list">List</button></div>
+
+      <div class="sp-body show-map" id="sp-body">
+        <div id="sp-map"></div>
+        <div class="sp-list">
+          <div class="sp-count" id="sp-count">Loading homes…</div>
+          <div class="sp-cards" id="sp-cards"></div>
+          <button class="sp-more" id="sp-more" hidden>Show more homes</button>
+        </div>
+      </div>
+
+      <p class="sp-disc">Listing information is deemed reliable but not guaranteed and should be independently verified. Listings shown are courtesy of the listing brokerage named on each listing. This preview uses SimplyRETS sample data; live listings will be provided by the REALTOR® Association of the Sioux Empire MLS once approved.</p>
+    </div>
+  </section>
+</main>
+
+<div class="sp-modal" id="sp-modal" role="dialog" aria-modal="true">
+  <div class="sp-box">
+    <button class="sp-x" id="sp-x" aria-label="Close">&times;</button>
+    <div id="sp-detail"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap legal">
+    <span class="legal-logos"><img class="eho-logo" src="/images/equal-housing.svg" alt="Equal Housing Opportunity" width="56" height="56"><img class="realtor-logo" src="/images/realtor-logo.png" alt="REALTOR®" width="48" height="56"></span>
+    <p>Marcos Diaz, Broker Associate licensed in South Dakota, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Office <a href="tel:+16052750555">605-275-0555</a>. Each office is independently owned and operated. Equal Housing Opportunity.</p>
+    <p>&copy; <span class="year">2026</span> Marcos Diaz · <a href="/privacy.html">Privacy</a></p>
+  </div>
+</footer>
+
+<script src="/site.js?v=BUILD" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function () {
+  // DEMO keys published by SimplyRETS for testing. Real keys go behind a Cloudflare Worker, never in this file.
+  var API = 'https://api.simplyrets.com/properties';
+  var AUTH = 'Basic ' + btoa('simplyrets:simplyrets');
+  var PAGE = 24;
+  var offset = 0, results = [], markers = {}, moveTimer = null, skipMove = false;
+
+  var map = L.map('sp-map', { scrollWheelZoom: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  var layer = L.layerGroup().addTo(map);
+  map.setView([29.76, -95.37], 10); // demo data is in Houston; real feed will center on Sioux Falls
+
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (n) { return n ? '$' + Math.round(n).toLocaleString() : ''; };
+  var short = function (n) { return n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : '$' + Math.round(n / 1000) + 'K'; };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+
+  function query(more) {
+    var p = new URLSearchParams();
+    var q = $('f-q').value.trim();
+    if (q) p.set('q', q);
+    if ($('f-min').value) p.set('minprice', $('f-min').value);
+    if ($('f-max').value) p.set('maxprice', $('f-max').value);
+    if ($('f-beds').value) p.set('minbeds', $('f-beds').value);
+    if ($('f-baths').value) p.set('minbaths', $('f-baths').value);
+    if ($('f-type').value) p.set('type', $('f-type').value);
+    if (!q) {
+      var b = map.getBounds();
+      [[b.getNorth(), b.getWest()], [b.getNorth(), b.getEast()], [b.getSouth(), b.getEast()], [b.getSouth(), b.getWest()]]
+        .forEach(function (pt) { p.append('points', pt[0].toFixed(5) + ',' + pt[1].toFixed(5)); });
+    }
+    p.set('limit', PAGE);
+    p.set('offset', more ? offset : 0);
+    return API + '?' + p.toString();
+  }
+
+  function load(more) {
+    if (!more) { offset = 0; results = []; $('sp-count').textContent = 'Loading homes…'; }
+    fetch(query(more), { headers: { Authorization: AUTH } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (data) {
+        results = results.concat(data);
+        offset = results.length;
+        render(!more && $('f-q').value.trim());
+        $('sp-more').hidden = data.length < PAGE;
+      })
+      .catch(function () {
+        $('sp-count').textContent = '';
+        $('sp-cards').innerHTML = '<div class="sp-msg">Couldn’t load listings right now. Please try again in a minute.</div>';
+      });
+  }
+
+  function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
+
+  function render(fit) {
+    $('sp-count').textContent = results.length ? results.length + (($('sp-more').hidden) ? '' : '+') + ' homes in this area' : 'No homes match. Try zooming out or changing filters.';
+    layer.clearLayers(); markers = {};
+    var pts = [];
+    $('sp-cards').innerHTML = results.map(function (h, i) {
+      var p = h.property || {}, a = h.address || {}, g = h.geo || {};
+      if (g.lat && g.lng) {
+        var m = L.marker([g.lat, g.lng], { icon: L.divIcon({ className: '', html: '<span class="pin" data-i="' + i + '">' + short(h.listPrice) + '</span>' }) })
+          .on('click', function () { openDetail(i); }).addTo(layer);
+        markers[i] = m; pts.push([g.lat, g.lng]);
+      }
+      var photo = (h.photos && h.photos[0]) || '';
+      return '<div class="sp-card" data-i="' + i + '">' +
+        '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc((h.mls && h.mls.status) || 'Active') + '</span></div>' +
+        '<div class="in"><div class="pr">' + money(h.listPrice) + '</div>' +
+        '<div class="st">' + (p.bedrooms || 0) + ' bd · ' + baths(h) + ' ba · ' + (p.area ? p.area.toLocaleString() + ' sq ft' : '') + '</div>' +
+        '<div class="ad">' + esc(a.full) + ', ' + esc(a.city) + '</div>' +
+        '<div class="co">Listing courtesy of ' + esc((h.office && h.office.name) || 'listing brokerage') + '</div></div></div>';
+    }).join('');
+    if (fit && pts.length) { skipMove = true; map.fitBounds(pts, { padding: [30, 30], maxZoom: 15 }); }
+  }
+
+  function hi(i, on) {
+    var c = document.querySelector('.sp-card[data-i="' + i + '"]'); if (c) c.classList.toggle('hi', on);
+    var pin = document.querySelector('.pin[data-i="' + i + '"]'); if (pin) pin.classList.toggle('hi', on);
+  }
+
+  $('sp-cards').addEventListener('click', function (e) { var c = e.target.closest('.sp-card'); if (c) openDetail(+c.dataset.i); });
+  $('sp-cards').addEventListener('mouseover', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, true); });
+  $('sp-cards').addEventListener('mouseout', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, false); });
+
+  function openDetail(i) {
+    var h = results[i], p = h.property || {}, a = h.address || {}, s = h.school || {}, t = h.tax || {};
+    var facts = [
+      ['Beds', p.bedrooms], ['Baths', baths(h)], ['Sq ft', p.area && p.area.toLocaleString()], ['Lot', p.lotSizeArea && (p.lotSizeArea + ' ' + (p.lotSizeAreaUnits || ''))],
+      ['Year built', p.yearBuilt], ['Type', p.subTypeText || p.type], ['Garage', p.garageSpaces], ['Heating', p.heating], ['Cooling', p.cooling],
+      ['Taxes', t.taxAnnualAmount && money(t.taxAnnualAmount)], ['School district', s.district], ['MLS #', h.listingId]
+    ].filter(function (f) { return f[1]; });
+    var addr = (a.full || '') + ', ' + (a.city || '') + ' ' + (a.state || '') + ' ' + (a.postalCode || '');
+    var sms = 'sms:+16058389140?&body=' + encodeURIComponent("Hi Marcos, I'd like to see " + addr);
+    $('sp-detail').innerHTML =
+      '<div class="sp-gal">' + (h.photos || []).map(function (u) { return '<img src="' + esc(u) + '" alt="" loading="lazy">'; }).join('') + '</div>' +
+      '<div class="sp-det"><div class="pr">' + money(h.listPrice) + '</div><div>' + esc(addr) + '</div>' +
+      '<div class="sp-cta"><a class="a1" href="' + sms + '">Text Marcos to see it</a><a class="a2" href="tel:+16058389140">Call 605-838-9140</a></div>' +
+      '<div class="sp-facts">' + facts.map(function (f) { return '<div>' + f[0] + ': <b>' + esc(f[1]) + '</b></div>'; }).join('') + '</div>' +
+      (h.remarks ? '<p style="margin-bottom:14px">' + esc(h.remarks) + '</p>' : '') +
+      '<div class="sp-courtesy">Listing courtesy of ' + esc((h.office && h.office.name) || 'listing brokerage') +
+      (h.agent && h.agent.firstName ? ', ' + esc(h.agent.firstName + ' ' + (h.agent.lastName || '')) : '') +
+      '. Information deemed reliable but not guaranteed.' + (h.mls && h.mls.daysOnMarket != null ? ' Days on market: ' + h.mls.daysOnMarket + '.' : '') + '</div></div>';
+    $('sp-modal').classList.add('open');
+  }
+  function closeDetail() { $('sp-modal').classList.remove('open'); }
+  $('sp-x').onclick = closeDetail;
+  $('sp-modal').addEventListener('click', function (e) { if (e.target.id === 'sp-modal') closeDetail(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDetail(); });
+
+  $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); load(false); });
+  ['f-min', 'f-max', 'f-beds', 'f-baths', 'f-type'].forEach(function (id) { $(id).addEventListener('change', function () { load(false); }); });
+  $('sp-more').onclick = function () { load(true); };
+  map.on('moveend', function () {
+    if (skipMove) { skipMove = false; return; }
+    if ($('f-q').value.trim()) return;
+    clearTimeout(moveTimer); moveTimer = setTimeout(function () { load(false); }, 350);
+  });
+
+  document.querySelectorAll('.sp-toggle button').forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll('.sp-toggle button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      $('sp-body').className = 'sp-body show-' + b.dataset.v;
+      if (b.dataset.v === 'map') setTimeout(function () { map.invalidateSize(); }, 50);
+    };
+  });
+
+  load(false);
+})();
+</script>
+</body>
+</html>
