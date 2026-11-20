@@ -145,7 +145,7 @@
   // LIVE_API: the Cloudflare Worker URL that holds the real SimplyRETS keys (see tools/simplyrets-worker.js),
   // e.g. 'https://listings.605homesearch.com'. Leave empty to keep using SimplyRETS's public DEMO data.
   // Real keys never go in this file.
-  var LIVE_API = '';
+  var LIVE_API = 'https://listings.605homesearch.com';
   var LIVE = !!LIVE_API;
   var API = LIVE ? LIVE_API.replace(/\/$/, '') + '/properties' : 'https://api.simplyrets.com/properties';
   var AUTH = LIVE ? null : 'Basic ' + btoa('simplyrets:simplyrets');
