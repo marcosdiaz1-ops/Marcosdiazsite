@@ -184,8 +184,9 @@
     fetch(query(more), { headers: { Authorization: AUTH } })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
+        if (!more) results = [sampleListing()];
         results = results.concat(data);
-        offset = results.length;
+        offset = results.length - 1;
         render(!more && $('f-q').value.trim());
         $('sp-more').hidden = data.length < PAGE;
       })
@@ -200,8 +201,26 @@
     var ag = h.agent || {}, of = h.office || {}, oc = of.contact || {}, ac = ag.contact || {};
     var name = [ag.firstName, ag.lastName].filter(Boolean).join(' ');
     var ac2 = h.attributionContact || h.AttributionContact || (h.mls && (h.mls.attributionContact || h.mls.AttributionContact)) || of.attributionContact || ag.attributionContact || (h.attribution && (h.attribution.contact || h.attribution.attributionContact));
-    var contact = ac2 || oc.email || oc.office || ac.email || ac.office || '';
-    return { office: of.name || '(office name not in sample data)', agent: name, contact: contact };
+    // SimplyRETS has no AttributionContact field: the listing firm's contact is office.contact (office phone, then email).
+    var contact = ac2 || oc.office || oc.email || ac.office || ac.email || '';
+    return { office: of.name || of.servingName || (h.mls && h.mls.originatingSystemName) || '(office name not in sample data)', agent: name, contact: contact };
+  }
+
+  // One made-up listing so the "Listing courtesy of" line can be checked before the RASE feed is on. Not a real home.
+  function sampleListing() {
+    var c = map.getCenter();
+    return {
+      _sample: true, listingId: 'SAMPLE-0001', listPrice: 349900,
+      address: { full: '123 Sample St (test listing)', city: 'Sample City', state: 'SD', postalCode: '00000' },
+      geo: { lat: c.lat, lng: c.lng },
+      photos: ['/images/kitchen.jpg'],
+      property: { bedrooms: 3, bathsFull: 2, area: 1850, yearBuilt: 2015, type: 'RES' },
+      mls: { status: 'Sample', daysOnMarket: 0 },
+      agent: { firstName: 'Jane', lastName: 'Example' },
+      office: { name: 'Sample Realty Co.', contact: { office: '605-555-0100', email: 'office@example.com' } },
+      remarks: 'This is a made-up test listing so you can see how listing attribution looks. It will be removed when real MLS listings are turned on.',
+      disclaimer: 'Test listing only. Not a real property.'
+    };
   }
   function attrHtml(h, links) {
     var x = attr(h), c = x.contact;
@@ -213,7 +232,8 @@
   function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
 
   function render(fit) {
-    $('sp-count').textContent = results.length ? results.length + (($('sp-more').hidden) ? '' : '+') + ' homes in this area' : 'No homes match. Try zooming out or changing filters.';
+    var real = results.filter(function (h) { return !h._sample; }).length;
+    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + ' homes in this area (plus 1 test listing)' : 'No homes match. Try zooming out or changing filters.';
     layer.clearLayers(); markers = {};
     var pts = [];
     $('sp-cards').innerHTML = results.map(function (h, i) {
@@ -221,7 +241,7 @@
       if (g.lat && g.lng) {
         var m = L.marker([g.lat, g.lng], { icon: L.divIcon({ className: '', html: '<span class="pin" data-i="' + i + '">' + short(h.listPrice) + '</span>' }) })
           .on('click', function () { openDetail(i); }).addTo(layer);
-        markers[i] = m; pts.push([g.lat, g.lng]);
+        markers[i] = m; if (!h._sample) pts.push([g.lat, g.lng]);
       }
       var photo = (h.photos && h.photos[0]) || '';
       return '<div class="sp-card" data-i="' + i + '">' +
