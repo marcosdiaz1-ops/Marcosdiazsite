@@ -142,9 +142,15 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
 (function () {
-  // DEMO keys published by SimplyRETS for testing. Real keys go behind a Cloudflare Worker, never in this file.
-  var API = 'https://api.simplyrets.com/properties';
-  var AUTH = 'Basic ' + btoa('simplyrets:simplyrets');
+  // LIVE_API: the Cloudflare Worker URL that holds the real SimplyRETS keys (see tools/simplyrets-worker.js),
+  // e.g. 'https://listings.605homesearch.com'. Leave empty to keep using SimplyRETS's public DEMO data.
+  // Real keys never go in this file.
+  var LIVE_API = '';
+  var LIVE = !!LIVE_API;
+  var API = LIVE ? LIVE_API.replace(/\/$/, '') + '/properties' : 'https://api.simplyrets.com/properties';
+  var AUTH = LIVE ? null : 'Basic ' + btoa('simplyrets:simplyrets');
+  var HEADERS = AUTH ? { Authorization: AUTH } : {};
+  if (LIVE) { var db = document.querySelector('.demo-banner'); if (db) db.remove(); }
   var PAGE = 24;
   var offset = 0, results = [], markers = {}, moveTimer = null, skipMove = false;
 
@@ -153,7 +159,8 @@
     maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
   var layer = L.layerGroup().addTo(map);
-  map.setView([29.76, -95.37], 10); // demo data is in Houston; real feed will center on Sioux Falls
+  if (LIVE) map.setView([43.5446, -96.7311], 11); // Sioux Falls
+  else map.setView([29.76, -95.37], 10); // demo data is in Houston
 
   var $ = function (id) { return document.getElementById(id); };
   var money = function (n) { return n ? '$' + Math.round(n).toLocaleString() : ''; };
@@ -181,12 +188,12 @@
 
   function load(more) {
     if (!more) { offset = 0; results = []; $('sp-count').textContent = 'Loading homes…'; }
-    fetch(query(more), { headers: { Authorization: AUTH } })
+    fetch(query(more), { headers: HEADERS })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
-        if (!more) results = [sampleListing()];
+        if (!more) results = LIVE ? [] : [sampleListing()];
         results = results.concat(data);
-        offset = results.length - 1;
+        offset = results.length - (LIVE ? 0 : 1);
         render(!more && $('f-q').value.trim());
         $('sp-more').hidden = data.length < PAGE;
       })
@@ -203,7 +210,7 @@
     var ac2 = h.attributionContact || h.AttributionContact || (h.mls && (h.mls.attributionContact || h.mls.AttributionContact)) || of.attributionContact || ag.attributionContact || (h.attribution && (h.attribution.contact || h.attribution.attributionContact));
     // SimplyRETS has no AttributionContact field: the listing firm's contact is office.contact (office phone, then email).
     var contact = ac2 || oc.office || oc.email || ac.office || ac.email || '';
-    return { office: of.name || of.servingName || (h.mls && h.mls.originatingSystemName) || '(office name not in sample data)', agent: name, contact: contact };
+    return { office: of.name || of.servingName || (h.mls && h.mls.originatingSystemName) || (LIVE ? '' : '(office name not in sample data)'), agent: name, contact: contact };
   }
 
   // One made-up listing so the "Listing courtesy of" line can be checked before the RASE feed is on. Not a real home.
@@ -233,7 +240,7 @@
 
   function render(fit) {
     var real = results.filter(function (h) { return !h._sample; }).length;
-    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + ' homes in this area (plus 1 test listing)' : 'No homes match. Try zooming out or changing filters.';
+    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + ' homes in this area' + (LIVE ? '' : ' (plus 1 test listing)') : 'No homes match. Try zooming out or changing filters.';
     layer.clearLayers(); markers = {};
     var pts = [];
     $('sp-cards').innerHTML = results.map(function (h, i) {
@@ -305,7 +312,7 @@
   });
 
   // Listing data "last updated" time for the disclaimer (SimplyRETS: OPTIONS on the API root, or the X-SimplyRETS-Last-Update header).
-  fetch('https://api.simplyrets.com/', { method: 'OPTIONS', headers: { Authorization: AUTH } })
+  (LIVE ? fetch(LIVE_API.replace(/\/$/, '') + '/last-update') : fetch('https://api.simplyrets.com/', { method: 'OPTIONS', headers: HEADERS }))
     .then(function (r) { return r.json(); })
     .then(function (o) {
       var u = o.lastUpdate || (o.updates && Object.keys(o.updates).map(function (k) { return o.updates[k]; }).filter(Boolean).sort().pop());
