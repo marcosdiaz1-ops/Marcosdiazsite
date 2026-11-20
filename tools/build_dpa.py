@@ -86,7 +86,7 @@ def build(es):
     alts = (f'<link rel="alternate" hreflang="en" href="{SITE}/{EN}">\n<link rel="alternate" hreflang="es" href="{SITE}/{ES}">\n'
             f'<link rel="alternate" hreflang="x-default" href="{SITE}/{EN}">\n')
     page(path, T(es,'Down Payment Assistance in Sioux Falls, SD (2026) | Give Me Five, VA, FHA | Marcos Diaz','Ayuda para el pago inicial en Sioux Falls, SD (2026) | Give Me Five, VA, FHA | Marcos Diaz'),
-         T(es,'Down payment help for Sioux Falls homebuyers: Give Me Five (5%), South Dakota Housing programs, GROW SD, VA and USDA $0 down, FHA 3.5%. Explained by bilingual REALTOR® Marcos Diaz.',
+         T(es,'Down payment help for Sioux Falls homebuyers: Give Me Five (5%), South Dakota Housing programs, GROW SD, VA and USDA $0 down, FHA 3.5%. Explained by bilingual real estate agent Marcos Diaz.',
               'Ayuda para el pago inicial en Sioux Falls: Give Me Five (5%), programas de South Dakota Housing, GROW SD, VA y USDA sin pago inicial, FHA 3.5%. Explicado por Marcos Diaz, agente bilingüe.'),
          body, lang='es' if es else 'en', canonical=f'{SITE}/{ES if es else EN}',
          alt_es=None if es else '../es/ayuda-pago-inicial/', alt_en='../../down-payment-assistance/' if es else None, head_extra=alts)

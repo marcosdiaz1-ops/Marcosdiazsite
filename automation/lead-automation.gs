@@ -96,14 +96,14 @@ function autoReply_(lead) {
     'Si necesita hablar conmigo antes, llámeme o envíeme un mensaje de texto al ' + PHONE + '.',
     'Mientras tanto, puede ver todas las casas en venta en Sioux Falls aquí: ' + SITE + '/es/',
     'Saludos,',
-    'Marcos Diaz<br>REALTOR® · Keller Williams Realty Sioux Falls<br>' + PHONE + ' · ' + OWNER_EMAIL,
+    'Marcos Diaz<br>Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls<br>' + PHONE + ' · ' + OWNER_EMAIL,
   ] : [
     'Hi ' + first + ',',
     'Thanks for reaching out through my website. I received your information and will reach out to you personally very soon, usually the same day.',
     'If you need me sooner, call or text me at ' + PHONE + '.',
     'In the meantime, you can browse homes for sale in Sioux Falls here: ' + SITE,
     'Talk soon,',
-    'Marcos Diaz<br>REALTOR® · Keller Williams Realty Sioux Falls<br>' + PHONE + ' · ' + OWNER_EMAIL + '<br>Se habla español',
+    'Marcos Diaz<br>Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls<br>' + PHONE + ' · ' + OWNER_EMAIL + '<br>Se habla español',
   ];
   const html = '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1a2237">' +
     lines.map(function (l) { return '<p>' + l + '</p>'; }).join('') + '</div>';

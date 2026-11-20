@@ -1,6 +1,6 @@
 # Marcos Diaz – Real Estate Website
 
-Personal website for Marcos Diaz, REALTOR® at Keller Williams Realty Sioux Falls.
+Personal website for Marcos Diaz, Broker Associate at Keller Williams Realty Sioux Falls.
 
 Live at **https://605homesearch.com**
 

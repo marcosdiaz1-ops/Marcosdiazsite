@@ -79,7 +79,7 @@ def build(es):
             f'<link rel="alternate" hreflang="es" href="{SITE}/es/guias/">\n'
             f'<link rel="alternate" hreflang="x-default" href="{SITE}/guides/">\n')
     page(path, T(es, "Free Sioux Falls Home Buyer's, Seller's & Moving Guides | Marcos Diaz", 'Guías gratis para comprar, vender y mudarse a Sioux Falls | Marcos Diaz'),
-         T(es, "Download free guides for buying a home, selling a home, and moving to Sioux Falls, SD. In English and Spanish, from bilingual REALTOR® Marcos Diaz.",
+         T(es, "Download free guides for buying a home, selling a home, and moving to Sioux Falls, SD. In English and Spanish, from bilingual real estate agent Marcos Diaz.",
               'Descargue guías gratis para comprar casa, vender casa y mudarse a Sioux Falls, SD. En español e inglés, de Marcos Diaz, agente bilingüe.'),
          body, lang='es' if es else 'en', canonical=f'{SITE}/{path[:-10]}',
          alt_es=None if es else other, alt_en=other if es else None, head_extra=alts, news=False)

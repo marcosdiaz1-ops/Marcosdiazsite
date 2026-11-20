@@ -27,7 +27,7 @@ def side(es, p):
     return f'''        <aside class="side-card">
           <p class="eyebrow">Ready to talk?</p>
           <h3>Work with Marcos</h3>
-          <p class="muted" style="font-size:.95rem">Bilingual REALTOR® with Keller Williams Realty Sioux Falls, helping buyers and sellers move with confidence.</p>
+          <p class="muted" style="font-size:.95rem">Bilingual Broker Associate with Keller Williams Realty Sioux Falls, helping buyers and sellers move with confidence.</p>
           <a href="{BOOK}" target="_blank" rel="noopener" class="btn btn-gold">Book a 15-Min Call</a>
           <a href="{SEARCH}" class="btn btn-navy">Search Homes</a>
           <a href="{hv}" class="btn btn-navy">What's My Home Worth?</a>
@@ -66,7 +66,7 @@ for post in POSTS:
       <p class="crumbs"><a href="{home}">{'Inicio' if es else 'Home'}</a> &nbsp;/&nbsp; <a href="{blog}">Blog</a></p>
       <p class="post-tag">{post['tag_es' if es else 'tag']}</p>
       <h1 class="post-title">{post['title_es' if es else 'title']}</h1>
-      <p class="post-meta">{'Por' if es else 'By'} Marcos Diaz, REALTOR® · {post['date_es' if es else 'date_en']} · <a href="{other}">{'View in English' if es else 'Ver en español'}</a></p>
+      <p class="post-meta">{'Por' if es else 'By'} Marcos Diaz, Broker Associate · {post['date_es' if es else 'date_en']} · <a href="{other}">{'View in English' if es else 'Ver en español'}</a></p>
     </div>
   </section>
   <section class="page-body">
@@ -106,7 +106,7 @@ for es in (False, True):
     <div class="wrap">
       <p class="crumbs"><a href="{home}">{'Inicio' if es else 'Home'}</a> &nbsp;/&nbsp; Blog</p>
       <h1>{'Blog de bienes raíces' if es else 'Real Estate Blog'}</h1>
-      <p class="lead">{'Consejos sencillos para comprar y vender casa en Sioux Falls, Tea, Harrisburg y Brandon. Por Marcos Diaz, REALTOR®.' if es else 'Simple, local advice for buying and selling a home in Sioux Falls, Tea, Harrisburg and Brandon. From Marcos Diaz, REALTOR®.'}</p>
+      <p class="lead">{'Consejos sencillos para comprar y vender casa en Sioux Falls, Tea, Harrisburg y Brandon. Por Marcos Diaz, Broker Associate.' if es else 'Simple, local advice for buying and selling a home in Sioux Falls, Tea, Harrisburg and Brandon. From Marcos Diaz, Broker Associate.'}</p>
     </div>
   </section>
   <section class="page-body">
@@ -116,7 +116,7 @@ for es in (False, True):
     </div>
   </section>'''
     other = f'{p}blog/' if es else f'{p}es/blog/'
-    page(path, ('Blog de bienes raíces en Sioux Falls | Marcos Diaz' if es else 'Sioux Falls Real Estate Blog | Marcos Diaz, REALTOR®'),
+    page(path, ('Blog de bienes raíces en Sioux Falls | Marcos Diaz' if es else 'Sioux Falls Real Estate Blog | Marcos Diaz, Broker Associate'),
          ('Consejos para comprar y vender casa en Sioux Falls: programas de ayuda, préstamos VA, guías para compradores y más.' if es else
           'Tips for buying and selling a home in Sioux Falls: down payment programs, VA loans, buyer guides and more.'),
          content, lang='es' if es else 'en', canonical=f"{SITE}/{path[:-10]}",

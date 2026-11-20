@@ -86,7 +86,7 @@ ITIN = dict(en_path='itin-mortgage-sioux-falls/', es_path='es/prestamo-itin-siou
  ),
  en=dict(
   title='ITIN Mortgage in Sioux Falls: Buying a Home Without a Social Security Number | Marcos Diaz',
-  desc='Can you buy a home in Sioux Falls with an ITIN? Yes. Requirements, documents, down payment and local lenders, explained by bilingual REALTOR® Marcos Diaz.',
+  desc='Can you buy a home in Sioux Falls with an ITIN? Yes. Requirements, documents, down payment and local lenders, explained by bilingual real estate agent Marcos Diaz.',
   crumb='ITIN Mortgage', h1='Buying a Home in Sioux Falls with an ITIN',
   lead='Yes, you can buy a home without a Social Security number. Here is how an ITIN mortgage works, step by step.',
   intro='<p>An <b>ITIN</b> (Individual Taxpayer Identification Number) is issued by the IRS to people who pay taxes but don\'t have a Social Security number. Some banks offer mortgages to ITIN holders. These are not government loans (FHA, VA or USDA): each bank sets its own rules, rates and requirements.</p><p>In the Sioux Falls area, at least one local bank, <b>Sunrise Banks</b>, advertises ITIN mortgages for Sioux Falls and the surrounding area, with bilingual loan officers. I\'ll help you find the right lender and shop with confidence.</p>',
@@ -137,7 +137,7 @@ CREDIT = dict(en_path='buy-a-home-with-low-credit/', es_path='es/comprar-casa-co
  ),
  en=dict(
   title='Buying a Home with Low or Bad Credit in Sioux Falls | Marcos Diaz',
-  desc='Can you buy a house with bad credit or no credit? Minimum scores for FHA, VA and conventional loans, and how to raise your score. Sioux Falls REALTOR® Marcos Diaz.',
+  desc='Can you buy a house with bad credit or no credit? Minimum scores for FHA, VA and conventional loans, and how to raise your score. Sioux Falls real estate agent Marcos Diaz.',
   crumb='Buying with Low Credit', h1='Buying a Home with Low or Bad Credit',
   lead='Many people think they need perfect credit to buy a home. They don\'t. Here is what the most common loans actually ask for.',
   intro='<p>Your credit score helps decide which loan you can use, how much you put down and your interest rate. But there are options for almost every situation, and a few months of good habits can make a big difference.</p>',

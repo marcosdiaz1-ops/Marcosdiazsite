@@ -69,7 +69,7 @@ def build(key, lang):
     <div>
       <p class="eyebrow">{'¿Listo para el siguiente paso?' if es else 'Ready for the next step?'}</p>
       <h2>{'Hablemos.' if es else "Let's talk."}</h2>
-      <p>{'Soy Marcos Diaz, agente de bienes raíces bilingüe con Keller Williams Realty Sioux Falls. Le ayudo a comprar o vender con confianza, en inglés o en español.' if es else "I'm Marcos Diaz, a bilingual REALTOR® with Keller Williams Realty Sioux Falls. I help buyers and sellers move with confidence, in English or Spanish."}</p>
+      <p>{'Soy Marcos Diaz, agente de bienes raíces bilingüe con Keller Williams Realty Sioux Falls. Le ayudo a comprar o vender con confianza, en inglés o en español.' if es else "I'm Marcos Diaz, a bilingual Broker Associate with Keller Williams Realty Sioux Falls. I help buyers and sellers move with confidence, in English or Spanish."}</p>
       <div class="contact">
         <b>{'Llame o envíe texto' if es else 'Call or text'}:</b> 605-838-9140<br>
         <b>Email:</b> marcosdiaz1@kw.com<br>
@@ -78,7 +78,7 @@ def build(key, lang):
       </div>
     </div>
   </div>
-  <p class="legal">Marcos Diaz, REALTOR®, Broker Associate, Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108. {'Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades de vivienda. Esta guía es informativa y no es asesoría legal, fiscal ni de préstamos; confirme los detalles con los profesionales adecuados.' if es else 'Each office is independently owned and operated. Equal Housing Opportunity. This guide is for general information and is not legal, tax or lending advice; confirm details with the right professionals.'}</p>
+  <p class="legal">Marcos Diaz, Broker Associate, {'miembro de la National Association of REALTORS®' if es else 'member of the National Association of REALTORS®'}, Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108. {'Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades de vivienda. REALTOR® es una marca colectiva de membresía registrada a nivel federal que identifica a un profesional de bienes raíces que es miembro de la NATIONAL ASSOCIATION OF REALTORS® y se compromete con su estricto Código de Ética. Esta guía es informativa y no es asesoría legal, fiscal ni de préstamos; confirme los detalles con los profesionales adecuados.' if es else 'Each office is independently owned and operated. Equal Housing Opportunity. REALTOR® is a federally registered collective membership mark which identifies a real estate professional who is a member of the NATIONAL ASSOCIATION OF REALTORS® and subscribes to its strict Code of Ethics. This guide is for general information and is not legal, tax or lending advice; confirm details with the right professionals.'}</p>
 </div>'''
     html = f'''<!DOCTYPE html><html lang="{lang}"><head><meta charset="utf-8"><title>{title}</title><style>{CSS}</style></head><body>
 <div class="cover">
@@ -89,7 +89,7 @@ def build(key, lang):
     <div class="rule"></div>
     <p class="sub">{g['sub_es' if es else 'sub_en']}</p>
   </div>
-  <div class="foot"><div><b>Marcos Diaz, REALTOR®</b>Keller Williams Realty Sioux Falls</div><div style="text-align:right">605-838-9140<br>605homesearch.com</div></div>
+  <div class="foot"><div><b>Marcos Diaz, Broker Associate</b>Keller Williams Realty Sioux Falls</div><div style="text-align:right">605-838-9140<br>605homesearch.com</div></div>
 </div>
 <div class="content">
 {g['es' if es else 'en']}

@@ -33,8 +33,8 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
       <a href="{SEARCH}">Search Homes</a>
       <a href="{alt_es or p + 'es/'}" class="lang" lang="es" hreflang="es" aria-label="Ver en español">ES</a>
       <a href="{home}#contact" class="nav-cta">Contact</a>''')
-    legal = ('Marcos Diaz, Broker Associate con licencia en Dakota del Sur, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Oficina <a href="tel:+16052750555">605-275-0555</a>. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda.'
-             if es else 'Marcos Diaz, Broker Associate licensed in South Dakota, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Office <a href="tel:+16052750555">605-275-0555</a>. Each office is independently owned and operated. Equal Housing Opportunity.')
+    legal = ('Marcos Diaz, Broker Associate con licencia en Dakota del Sur y miembro de la National Association of REALTORS®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Oficina <a href="tel:+16052750555">605-275-0555</a>. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda. REALTOR® es una marca colectiva de membresía registrada a nivel federal que identifica a un profesional de bienes raíces que es miembro de la NATIONAL ASSOCIATION OF REALTORS® y se compromete con su estricto Código de Ética.'
+             if es else 'Marcos Diaz, Broker Associate licensed in South Dakota and a member of the National Association of REALTORS®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Office <a href="tel:+16052750555">605-275-0555</a>. Each office is independently owned and operated. Equal Housing Opportunity. REALTOR® is a federally registered collective membership mark which identifies a real estate professional who is a member of the NATIONAL ASSOCIATION OF REALTORS® and subscribes to its strict Code of Ethics.')
     priv = f'{p}es/privacidad.html' if es else f'{p}privacy.html'
     privlabel = 'Privacidad' if es else 'Privacy'
     doc = f'''<!DOCTYPE html>
@@ -79,7 +79,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
   <div class="wrap footer-inner">
     <div class="footer-brand">
       <img src="{p}images/logo.svg" alt="" width="40" height="40">
-      <span class="brand-text light">Marcos Diaz<small>REALTOR® · Keller Williams Realty Sioux Falls</small></span>
+      <span class="brand-text light">Marcos Diaz<small>Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls</small></span>
     </div>
     <div class="footer-links">
       <a href="tel:+16058389140">605-838-9140</a>
@@ -136,7 +136,7 @@ privacy_en = '''  <section class="page-hero">
       <p>You can ask me to update or delete the information you've shared at any time. Contact Marcos Diaz at <a href="mailto:marcosdiaz1@kw.com">marcosdiaz1@kw.com</a> or <a href="tel:+16058389140">605-838-9140</a>.</p>
     </div>
   </section>'''
-page('privacy.html', 'Privacy Notice | Marcos Diaz, REALTOR® | 605homesearch.com',
+page('privacy.html', 'Privacy Notice | Marcos Diaz, Broker Associate | 605homesearch.com',
      'How information shared on 605homesearch.com is collected and used.', privacy_en,
      canonical='https://605homesearch.com/privacy.html', alt_es='es/privacidad.html')
 
@@ -168,7 +168,7 @@ privacy_es = '''  <section class="page-hero">
       <p>Puede pedirme en cualquier momento que actualice o elimine la información que compartió. Comuníquese con Marcos Diaz en <a href="mailto:marcosdiaz1@kw.com">marcosdiaz1@kw.com</a> o al <a href="tel:+16058389140">605-838-9140</a>.</p>
     </div>
   </section>'''
-page('es/privacidad.html', 'Aviso de Privacidad | Marcos Diaz, REALTOR® | 605homesearch.com',
+page('es/privacidad.html', 'Aviso de Privacidad | Marcos Diaz, Broker Associate | 605homesearch.com',
      'Cómo se recopila y usa la información compartida en 605homesearch.com.', privacy_es, lang='es',
      canonical='https://605homesearch.com/es/privacidad.html', alt_en='../privacy.html')
 
@@ -521,12 +521,12 @@ for slug, name in AREAS:
         <h3>Search {name} homes</h3>
         <a href="{town_search(slug)}" class="btn btn-navy" target="_blank" rel="noopener">See Homes for Sale in {name}</a>
         <a href="../#contact" class="btn btn-gold">Talk to Marcos</a>
-        <p class="muted">Call or text <a href="tel:+16058389140">605-838-9140</a><br>REALTOR® · Keller Williams Realty Sioux Falls<br>English &amp; Español</p>
+        <p class="muted">Call or text <a href="tel:+16058389140">605-838-9140</a><br>Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls<br>English &amp; Español</p>
       </aside>
     </div>
   </section>"""
     extra = alts + ld(crumbs_ld([('Home', 'https://605homesearch.com/'), ('Areas', 'https://605homesearch.com/#areas'), (name, en_url)]))
-    page(f'areas/{slug}.html', f"{d['title']} | Marcos Diaz, REALTOR®",
+    page(f'areas/{slug}.html', f"{d['title']} | Marcos Diaz, Broker Associate",
          f"{d['lead']} Buy or sell in {name} with Marcos Diaz, Keller Williams Realty Sioux Falls. Se habla español.",
          body, canonical=en_url, alt_es=f'../es/areas/{slug}.html', head_extra=extra)
     # ---------- Spanish ----------
@@ -566,7 +566,7 @@ for slug, name in AREAS:
         <h3>Casas en {short}</h3>
         <a href="{town_search(slug, True)}" class="btn btn-navy" target="_blank" rel="noopener">Ver casas en venta en {short}</a>
         <a href="../#contact" class="btn btn-gold">Hablar con Marcos</a>
-        <p class="muted">Llame o envíe texto al <a href="tel:+16058389140">605-838-9140</a><br>REALTOR® · Keller Williams Realty Sioux Falls<br>Se habla español</p>
+        <p class="muted">Llame o envíe texto al <a href="tel:+16058389140">605-838-9140</a><br>Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls<br>Se habla español</p>
       </aside>
     </div>
   </section>"""
@@ -607,7 +607,7 @@ market_en = f'''  <section class="page-hero">
     <div class="wrap">
       <p class="crumbs"><a href="../">Home</a> &nbsp;/&nbsp; Market Update</p>
       <h1>Sioux Falls Housing Market Update</h1>
-      <p class="lead">September 2026 numbers for the city of Sioux Falls, from the latest official report by the Realtor Association of the Sioux Empire. Updated November 4, 2026.</p>
+      <p class="lead">September 2026 numbers for the city of Sioux Falls, from the latest official report by the REALTOR® Association of the Sioux Empire. Updated November 4, 2026.</p>
     </div>
   </section>
   <section class="page-body">
@@ -644,7 +644,7 @@ market_en = f'''  <section class="page-hero">
             <li>Pricing still matters. Buyers are paying close to asking price, not far over it, so pricing right from day one is the best way to sell faster.</li>
             <li>Higher-end homes take longer: the $900,000 to $1 million range was the slowest-selling in September, at 124 days.</li>
           </ul>
-          <p class="source">Source: <a href="{SRC}" target="_blank" rel="noopener">Realtor Association of the Sioux Empire, as reported by SiouxFalls.Business</a> (September 2026, city of Sioux Falls). Monthly medians from the association's 2026 reports. October 2026 figures will be added when the next report is released. Information is deemed reliable but not guaranteed.</p>
+          <p class="source">Source: <a href="{SRC}" target="_blank" rel="noopener">REALTOR® Association of the Sioux Empire, as reported by SiouxFalls.Business</a> (September 2026, city of Sioux Falls). Monthly medians from the association's 2026 reports. October 2026 figures will be added when the next report is released. Information is deemed reliable but not guaranteed.</p>
         </div>
         <aside class="side-card">
           <p class="eyebrow">Your Home, Your Numbers</p>
@@ -662,7 +662,7 @@ market_es = f'''  <section class="page-hero">
     <div class="wrap">
       <p class="crumbs"><a href="../">Inicio</a> &nbsp;/&nbsp; Mercado</p>
       <h1>Reporte del mercado de vivienda en Sioux Falls</h1>
-      <p class="lead">Cifras de septiembre de 2026 para la ciudad de Sioux Falls, del reporte oficial más reciente de la Asociación de Realtors del Sioux Empire. Actualizado el 4 de noviembre de 2026.</p>
+      <p class="lead">Cifras de septiembre de 2026 para la ciudad de Sioux Falls, del reporte oficial más reciente de la REALTOR® Association of the Sioux Empire. Actualizado el 4 de noviembre de 2026.</p>
     </div>
   </section>
   <section class="page-body">
@@ -699,7 +699,7 @@ market_es = f'''  <section class="page-hero">
             <li>El precio sigue siendo clave. Los compradores pagan cerca del precio de lista, no mucho más, así que ponerle el precio correcto desde el primer día es la mejor forma de vender más rápido.</li>
             <li>Las casas de mayor precio tardan más: el rango de $900,000 a $1 millón fue el más lento en septiembre, con 124 días.</li>
           </ul>
-          <p class="source">Fuente: <a href="{SRC}" target="_blank" rel="noopener">Asociación de Realtors del Sioux Empire, según SiouxFalls.Business</a> (septiembre de 2026, ciudad de Sioux Falls; en inglés). Medianas mensuales de los reportes de 2026 de la asociación. Las cifras de octubre de 2026 se agregarán cuando salga el próximo reporte. La información se considera confiable pero no está garantizada.</p>
+          <p class="source">Fuente: <a href="{SRC}" target="_blank" rel="noopener">REALTOR® Association of the Sioux Empire, según SiouxFalls.Business</a> (septiembre de 2026, ciudad de Sioux Falls; en inglés). Medianas mensuales de los reportes de 2026 de la asociación. Las cifras de octubre de 2026 se agregarán cuando salga el próximo reporte. La información se considera confiable pero no está garantizada.</p>
         </div>
         <aside class="side-card">
           <p class="eyebrow">Su casa, sus números</p>
@@ -721,7 +721,7 @@ art = lambda headline, lang, url: ld({"@context": "https://schema.org", "@type":
     "author": {"@type": "Person", "name": "Marcos Diaz", "url": "https://605homesearch.com/"},
     "publisher": {"@type": "Organization", "name": "Marcos Diaz, Keller Williams Realty Sioux Falls", "logo": {"@type": "ImageObject", "url": "https://605homesearch.com/images/og-image.jpg"}},
     "image": "https://605homesearch.com/images/og-image.jpg"})
-page('market/index.html', 'Sioux Falls Housing Market Update: September 2026 | Marcos Diaz, REALTOR®',
+page('market/index.html', 'Sioux Falls Housing Market Update: September 2026 | Marcos Diaz, Broker Associate',
      'Sioux Falls housing market, September 2026: median price $344,600 (+1.8%), 219 homes sold, 81 days on market, 3.8 months of supply. What it means for buyers and sellers.',
      market_en, canonical='https://605homesearch.com/market/', alt_es='../es/mercado/',
      head_extra=alts + art('Sioux Falls Housing Market Update: September 2026', 'en', 'https://605homesearch.com/market/'))
@@ -839,9 +839,9 @@ rv_body = f'''  <section class="page-hero review-page">
       <h2 lang="es">Gracias por confiar en mí.</h2>
       <p class="lead" lang="es">Si tiene un minuto, una reseña rápida en Google ayuda a otras familias a encontrar un agente de confianza. Significa mucho para mí.</p>
       <a href="{REVIEW}" class="btn btn-gold btn-lg" lang="es">★ Dejar una reseña en Google</a>
-      <p class="muted rv-sign">— Marcos Diaz, REALTOR® · <a href="tel:+16058389140">605-838-9140</a></p>
+      <p class="muted rv-sign">— Marcos Diaz, Broker Associate · <a href="tel:+16058389140">605-838-9140</a></p>
     </div>
   </section>'''
-page('review/index.html', 'Leave a Review | Marcos Diaz, REALTOR®',
+page('review/index.html', 'Leave a Review | Marcos Diaz, Broker Associate',
      'Thank you for working with Marcos Diaz. Leave a quick Google review.',
      rv_body, canonical='https://605homesearch.com/review/', head_extra='<meta name="robots" content="noindex">\n', news=False)

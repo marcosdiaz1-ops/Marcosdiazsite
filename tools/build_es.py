@@ -69,10 +69,10 @@ T = [
 ('<span class="sold-badge">Sold</span>', '<span class="sold-badge">Vendida</span>'),
 ('<p class="book-call"><a href="https://calendar.app.google/rymyVUbd555Y3xSDA" target="_blank" rel="noopener" class="btn btn-ghost"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3zm12 8H5v9h14zM5 6v2h14V6z"/></svg> Book a 15-Min Call</a></p>', '<p class="book-call"><a href="https://calendar.app.google/rymyVUbd555Y3xSDA" target="_blank" rel="noopener" class="btn btn-ghost"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3zm12 8H5v9h14zM5 6v2h14V6z"/></svg> Agendar una llamada</a></p>'),
 # head
-('<title>Sioux Falls Realtor® | Marcos Diaz, Keller Williams</title>',
- '<title>Realtor® que habla español en Sioux Falls | Marcos Diaz</title>'),
-('content="Sioux Falls Realtor® Marcos Diaz (Keller Williams Realty Sioux Falls) helps you buy and sell homes in Sioux Falls, Tea, Harrisburg and Brandon. 5.0★ on Google. Se habla español. Call 605-838-9140."',
- 'content="Realtor hispano y agente de bienes raíces que habla español en Sioux Falls, SD. Casas en venta, préstamos ITIN, ayuda para el pago inicial y venta de su casa. Marcos Diaz, Keller Williams. 5.0★ en Google. 605-838-9140."'),
+('<title>Sioux Falls Real Estate Agent | Marcos Diaz, Keller Williams</title>',
+ '<title>Agente de bienes raíces que habla español en Sioux Falls | Marcos Diaz</title>'),
+('content="Sioux Falls real estate agent Marcos Diaz (Keller Williams Realty Sioux Falls) helps you buy and sell homes in Sioux Falls, Tea, Harrisburg and Brandon. 5.0★ on Google. Se habla español. Call 605-838-9140."',
+ 'content="Agente de bienes raíces hispano que habla español en Sioux Falls, SD. Casas en venta, préstamos ITIN, ayuda para el pago inicial y venta de su casa. Marcos Diaz, Keller Williams. 5.0★ en Google. 605-838-9140."'),
 ('alt="Bright home office in a newer Sioux Falls area home"', 'alt="Oficina luminosa en una casa nueva del área de Sioux Falls"'),
 ('alt="Updated white kitchen in a home for sale"', 'alt="Cocina blanca renovada en una casa en venta"'),
 ('alt="Marcos Diaz knocking on a homeowner\'s door for an off-market home search"', 'alt="Marcos Diaz tocando la puerta de un propietario en una búsqueda fuera del mercado"'),
@@ -81,11 +81,11 @@ T = [
 ('"description": "Bilingual (English and Spanish) real estate agent with Keller Williams Realty Sioux Falls helping buyers and sellers in Sioux Falls, Tea, Harrisburg, Brandon and the surrounding areas."',
  '"description": "Agente de bienes raíces bilingüe (español e inglés) con Keller Williams Realty Sioux Falls que ayuda a compradores y vendedores en Sioux Falls, Tea, Harrisburg, Brandon y sus alrededores."'),
 ('<meta property="og:site_name" content="Marcos Diaz, Keller Williams Realty Sioux Falls">', '<meta property="og:site_name" content="Marcos Diaz, Keller Williams Realty Sioux Falls">'),
-('<meta property="og:title" content="Marcos Diaz | REALTOR® in Sioux Falls, SD">', '<meta property="og:title" content="Marcos Diaz | Agente de Bienes Raíces en Sioux Falls, SD">'),
+('<meta property="og:title" content="Marcos Diaz | Real Estate Agent in Sioux Falls, SD">', '<meta property="og:title" content="Marcos Diaz | Agente de Bienes Raíces en Sioux Falls, SD">'),
 ('content="Buying or selling in Sioux Falls? Bilingual (English &amp; Español) guidance from Marcos Diaz, Keller Williams Realty Sioux Falls. 5.0★ on Google."',
  'content="¿Va a comprar o vender en Sioux Falls? Asesoría en español e inglés con Marcos Diaz, Keller Williams Realty Sioux Falls. 5.0★ en Google."'),
 ('<meta property="og:url" content="https://605homesearch.com/">', '<meta property="og:url" content="https://605homesearch.com/es/">'),
-('<meta name="twitter:title" content="Marcos Diaz | REALTOR® in Sioux Falls, SD">', '<meta name="twitter:title" content="Marcos Diaz | Agente de Bienes Raíces en Sioux Falls, SD">'),
+('<meta name="twitter:title" content="Marcos Diaz | Real Estate Agent in Sioux Falls, SD">', '<meta name="twitter:title" content="Marcos Diaz | Agente de Bienes Raíces en Sioux Falls, SD">'),
 ('<meta name="twitter:description" content="Bilingual real estate guidance in Sioux Falls. 5.0★ on Google.">', '<meta name="twitter:description" content="Asesoría de bienes raíces en español en Sioux Falls. 5.0★ en Google.">'),
 ('<link rel="canonical" href="https://605homesearch.com/">', '<link rel="canonical" href="https://605homesearch.com/es/">'),
 # nav
@@ -115,11 +115,11 @@ T = [
 ('Helping individuals and families across Sioux Falls buy, sell, and build long-term wealth through real estate, with honest guidance and strong advocacy every step of the way.',
  'Ayudo a personas y familias en Sioux Falls a comprar, vender y construir patrimonio a largo plazo a través de los bienes raíces, con asesoría honesta y defensa firme de sus intereses en cada paso.'),
 # about
-('alt="Marcos Diaz, REALTOR® with Keller Williams Realty Sioux Falls" width="818"', 'alt="Marcos Diaz, REALTOR® con Keller Williams Realty Sioux Falls" width="818"'),
+('alt="Marcos Diaz, Broker Associate with Keller Williams Realty Sioux Falls" width="818"', 'alt="Marcos Diaz, Broker Associate con Keller Williams Realty Sioux Falls" width="818"'),
 ('<p class="eyebrow">About Me</p>', '<p class="eyebrow">Sobre mí</p>'),
 ('<h2>Discipline, honesty, and a commitment to serving others.</h2>', '<h2>Disciplina, honestidad y compromiso de servir a los demás.</h2>'),
-("<p>I'm Marcos Diaz, a Realtor with Keller Williams Realty dedicated to serving individuals and families across Sioux Falls and the surrounding areas.</p>",
- '<p>Soy Marcos Diaz, agente de bienes raíces (Realtor) con Keller Williams Realty, dedicado a servir a personas y familias en Sioux Falls y sus alrededores.</p>'),
+("<p>I'm Marcos Diaz, a Broker Associate with Keller Williams Realty dedicated to serving individuals and families across Sioux Falls and the surrounding areas.</p>",
+ '<p>Soy Marcos Diaz, Broker Associate con Keller Williams Realty, dedicado a servir a personas y familias en Sioux Falls y sus alrededores.</p>'),
 ('<p>My background in military service has shaped my discipline, work ethic, and commitment to serving others.</p>',
  '<p>Mi experiencia en el servicio militar formó mi disciplina, mi ética de trabajo y mi compromiso de servir a los demás.</p>'),
 ("<p>I'm passionate about helping clients build wealth through real estate while providing honest guidance and strong advocacy every step of the way.</p>",
@@ -325,10 +325,10 @@ T = [
 ("<p>I'll reach out personally, usually the same day.</p>", '<p>Me comunicaré con usted personalmente, por lo general el mismo día.</p>'),
 ('<p class="fine">Need me sooner? Call or text', '<p class="fine">¿Me necesita antes? Llame o envíe texto al'),
 # footer
-('Marcos Diaz, Broker Associate licensed in South Dakota, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Office <a href="tel:+16052750555">605-275-0555</a>. Each office is independently owned and operated. Equal Housing Opportunity.',
- 'Marcos Diaz, Broker Associate con licencia en Dakota del Sur, REALTOR®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Oficina <a href="tel:+16052750555">605-275-0555</a>. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda.'),
+('Marcos Diaz, Broker Associate licensed in South Dakota and a member of the National Association of REALTORS®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Office <a href="tel:+16052750555">605-275-0555</a>. Each office is independently owned and operated. Equal Housing Opportunity. REALTOR® is a federally registered collective membership mark which identifies a real estate professional who is a member of the NATIONAL ASSOCIATION OF REALTORS® and subscribes to its strict Code of Ethics.',
+ 'Marcos Diaz, Broker Associate con licencia en Dakota del Sur y miembro de la National Association of REALTORS®. Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · Oficina <a href="tel:+16052750555">605-275-0555</a>. Cada oficina es de propiedad y operación independiente. Igualdad de oportunidades en la vivienda. REALTOR® es una marca colectiva de membresía registrada a nivel federal que identifica a un profesional de bienes raíces que es miembro de la NATIONAL ASSOCIATION OF REALTORS® y se compromete con su estricto Código de Ética.'),
 ('>Privacy</a>', '>Privacidad</a>'),
-('<h1>Marcos Diaz <span class="h1-sub">Sioux Falls Realtor®</span></h1>', '<h1>Marcos Diaz <span class="h1-sub">Realtor® en Sioux Falls</span></h1>'),
+('<h1>Marcos Diaz <span class="h1-sub">Sioux Falls Real Estate Agent</span></h1>', '<h1>Marcos Diaz <span class="h1-sub">Agente de bienes raíces en Sioux Falls</span></h1>'),
 ]
 missing = []
 for en, es_ in T:
