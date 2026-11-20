@@ -201,7 +201,7 @@
     var name = [ag.firstName, ag.lastName].filter(Boolean).join(' ');
     var ac2 = h.attributionContact || h.AttributionContact || (h.mls && (h.mls.attributionContact || h.mls.AttributionContact)) || of.attributionContact || ag.attributionContact || (h.attribution && (h.attribution.contact || h.attribution.attributionContact));
     var contact = ac2 || oc.email || oc.office || ac.email || ac.office || '';
-    return { office: of.name || 'Listing brokerage not provided', agent: name, contact: contact };
+    return { office: of.name || '(office name not in sample data)', agent: name, contact: contact };
   }
   function attrHtml(h, links) {
     var x = attr(h), c = x.contact;
@@ -247,7 +247,7 @@
     var h = results[i], p = h.property || {}, a = h.address || {}, s = h.school || {}, t = h.tax || {};
     var facts = [
       ['Beds', p.bedrooms], ['Baths', baths(h)], ['Sq ft', p.area && p.area.toLocaleString()], ['Lot', p.lotSizeArea && (p.lotSizeArea + ' ' + (p.lotSizeAreaUnits || ''))],
-      ['Year built', p.yearBuilt], ['Type', p.subTypeText || p.type], ['Garage', p.garageSpaces], ['Heating', p.heating], ['Cooling', p.cooling],
+      ['Year built', p.yearBuilt], ['Type', p.subTypeText || p.type], ['Garage', p.garageSpaces && Math.round(p.garageSpaces)], ['Heating', p.heating], ['Cooling', p.cooling],
       ['Taxes', t.taxAnnualAmount && money(t.taxAnnualAmount)], ['School district', s.district], ['MLS #', h.listingId]
     ].filter(function (f) { return f[1]; });
     var addr = (a.full || '') + ', ' + (a.city || '') + ' ' + (a.state || '') + ' ' + (a.postalCode || '');
