@@ -147,6 +147,19 @@
   // Real keys never go in this file.
   var LIVE_API = 'https://listings.605homesearch.com';
   var LIVE = !!LIVE_API;
+  // RASE sends addresses like "508 E Plum Creek Rd Road" - drop the repeated spelled-out street type
+  var SUFFIX = { rd:'road', dr:'drive', st:'street', ave:'avenue', av:'avenue', ln:'lane', ct:'court', cir:'circle', pl:'place', blvd:'boulevard', trl:'trail', pkwy:'parkway', ter:'terrace', hwy:'highway', cv:'cove', way:'way', pt:'point', sq:'square', xing:'crossing', loop:'loop' };
+  function cleanAddr(full) {
+    var w = String(full || '').split(/\s+/), out = [];
+    for (var i = 0; i < w.length; i++) {
+      var prev = out.length ? out[out.length - 1].replace(/\.$/, '').toLowerCase() : '';
+      if (prev && SUFFIX[prev] && SUFFIX[prev] === w[i].toLowerCase() && SUFFIX[prev] !== prev) continue;
+      out.push(w[i]);
+    }
+    return out.join(' ');
+  }
+
+
   var API = LIVE ? LIVE_API.replace(/\/$/, '') + '/properties' : 'https://api.simplyrets.com/properties';
   var AUTH = LIVE ? null : 'Basic ' + btoa('simplyrets:simplyrets');
   var HEADERS = AUTH ? { Authorization: AUTH } : {};
@@ -255,7 +268,7 @@
         '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc((h.mls && h.mls.status) || 'Active') + '</span></div>' +
         '<div class="in"><div class="pr">' + money(h.listPrice) + '</div>' +
         '<div class="st">' + (p.bedrooms || 0) + ' bd · ' + baths(h) + ' ba · ' + (p.area ? p.area.toLocaleString() + ' sq ft' : '') + '</div>' +
-        '<div class="ad">' + esc(a.full) + ', ' + esc(a.city) + '</div>' +
+        '<div class="ad">' + esc(cleanAddr(a.full)) + ', ' + esc(a.city) + '</div>' +
         '<div class="co">' + attrHtml(h, false) + '</div></div></div>';
     }).join('');
     if (fit && pts.length) { skipMove = true; map.fitBounds(pts, { padding: [30, 30], maxZoom: 15 }); }
@@ -277,7 +290,7 @@
       ['Year built', p.yearBuilt], ['Type', p.subTypeText || p.type], ['Garage', p.garageSpaces && Math.round(p.garageSpaces)], ['Heating', p.heating], ['Cooling', p.cooling],
       ['Taxes', t.taxAnnualAmount && money(t.taxAnnualAmount)], ['School district', s.district], ['MLS #', h.listingId]
     ].filter(function (f) { return f[1]; });
-    var addr = (a.full || '') + ', ' + (a.city || '') + ' ' + (a.state || '') + ' ' + (a.postalCode || '');
+    var addr = cleanAddr(a.full) + ', ' + (a.city || '') + ' ' + (a.state || '') + ' ' + (a.postalCode || '');
     var sms = 'sms:+16058389140?&body=' + encodeURIComponent("Hi Marcos, I'd like to see " + addr);
     $('sp-detail').innerHTML =
       '<div class="sp-gal">' + (h.photos || []).map(function (u) { return '<img src="' + esc(u) + '" alt="" loading="lazy">'; }).join('') + '</div>' +
