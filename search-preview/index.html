@@ -286,7 +286,7 @@
   function openDetail(i) {
     var h = results[i], p = h.property || {}, a = h.address || {}, s = h.school || {}, t = h.tax || {};
     var facts = [
-      ['Beds', p.bedrooms], ['Baths', baths(h)], ['Sq ft', p.area && p.area.toLocaleString()], ['Lot', p.lotSizeArea && (p.lotSizeArea + ' ' + (p.lotSizeAreaUnits || ''))],
+      ['Beds', p.bedrooms], ['Baths', baths(h)], ['Sq ft', p.area && p.area.toLocaleString()], ['Lot', p.lotSizeArea && (Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? 'sq ft' : 'acres')))],
       ['Year built', p.yearBuilt], ['Type', p.subTypeText || p.type], ['Garage', p.garageSpaces && Math.round(p.garageSpaces)], ['Heating', p.heating], ['Cooling', p.cooling],
       ['Taxes', t.taxAnnualAmount && money(t.taxAnnualAmount)], ['School district', s.district], ['MLS #', h.listingId]
     ].filter(function (f) { return f[1]; });
