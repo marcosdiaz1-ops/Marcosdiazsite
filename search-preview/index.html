@@ -118,7 +118,7 @@
         </div>
       </div>
 
-      <p class="sp-disc">Listing information is deemed reliable but not guaranteed and should be independently verified. Listings shown are courtesy of the listing brokerage named on each listing. This preview uses SimplyRETS sample data; live listings will be provided by the REALTOR® Association of the Sioux Empire MLS once approved.</p>
+      <p class="sp-disc">Listing information is deemed reliable but not guaranteed and should be independently verified. <span id="sp-updated"></span> Listings shown are courtesy of the listing brokerage named on each listing. This preview uses SimplyRETS sample data; live listings will be provided by the REALTOR® Association of the Sioux Empire MLS once approved.</p>
     </div>
   </section>
 </main>
@@ -283,6 +283,15 @@
       if (b.dataset.v === 'map') setTimeout(function () { map.invalidateSize(); }, 50);
     };
   });
+
+  // Listing data "last updated" time for the disclaimer (SimplyRETS: OPTIONS on the API root, or the X-SimplyRETS-Last-Update header).
+  fetch('https://api.simplyrets.com/', { method: 'OPTIONS', headers: { Authorization: AUTH } })
+    .then(function (r) { return r.json(); })
+    .then(function (o) {
+      var u = o.lastUpdate || (o.updates && Object.keys(o.updates).map(function (k) { return o.updates[k]; }).filter(Boolean).sort().pop());
+      var d = u && new Date(u);
+      if (d && !isNaN(d)) $('sp-updated').textContent = 'Listing data last updated ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
+    }).catch(function () {});
 
   load(false);
 })();
