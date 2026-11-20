@@ -199,7 +199,8 @@
   function attr(h) {
     var ag = h.agent || {}, of = h.office || {}, oc = of.contact || {}, ac = ag.contact || {};
     var name = [ag.firstName, ag.lastName].filter(Boolean).join(' ');
-    var contact = h.attributionContact || (h.mls && h.mls.attributionContact) || oc.email || oc.office || ac.email || ac.office || '';
+    var ac2 = h.attributionContact || h.AttributionContact || (h.mls && (h.mls.attributionContact || h.mls.AttributionContact)) || of.attributionContact || ag.attributionContact || (h.attribution && (h.attribution.contact || h.attribution.attributionContact));
+    var contact = ac2 || oc.email || oc.office || ac.email || ac.office || '';
     return { office: of.name || 'Listing brokerage not provided', agent: name, contact: contact };
   }
   function attrHtml(h, links) {
