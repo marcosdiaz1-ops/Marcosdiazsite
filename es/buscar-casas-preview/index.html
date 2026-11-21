@@ -660,14 +660,14 @@
       '</div>' +
       '<aside class="hd-side"><div class="hd-card">' +
         '<div class="hd-agent"><img src="/images/marcos-headshot.jpg" alt=""><div><b>Marcos Diaz</b><span>Broker Associate · Keller Williams Realty Sioux Falls</span></div></div>' +
-        '<a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Schedule a showing', 'Agendar una visita') + '<small>' + t('Pick a time on my calendar', 'Escoja una hora en mi calendario') + '</small></a>' +
+        '<a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Request a showing', 'Solicitar una visita') + '<small>' + t('Pick a time that works for you', 'Escoja la hora que le convenga') + '</small></a>' +
         '<a class="hd-btn hd-b2" href="tel:+16058389140">' + t('Call', 'Llamar') + ' 605-838-9140</a>' +
         '<a class="hd-btn hd-b3" href="' + payUrl(h) + '">' + t('What would my payment be?', '¿Cuánto sería mi pago?') + '</a>' +
         '<a class="hd-link" href="' + sms + '">' + t('Or text me about this home', 'O envíeme un texto sobre esta casa') + '</a>' +
         (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>' + t('Email me new homes like this', 'Envíenme casas nuevas como esta') + '</button>' : '') +
         '<p class="hd-note">' + t('Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.', '¿No está seguro? Le puedo decir qué hay cerca, en cuánto se vendieron casas parecidas y si el precio es justo.') + '</p>' +
       '</div></aside></div>' +
-      '<div class="hd-dock"><a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Book a showing', 'Agendar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
+      '<div class="hd-dock"><a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Request a showing', 'Solicitar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
 
     $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
     trackView(h);
@@ -902,9 +902,9 @@
     var street = showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible');
     var photo = (h.photos && h.photos[0]) || '';
     $('tr-head').innerHTML = (photo ? '<img src="' + esc(photo) + '" alt="">' : '') +
-      '<div><h2 id="tr-h">' + t('Schedule a showing', 'Agendar una visita') + '</h2>' +
+      '<div><h2 id="tr-h">' + t('Request a showing', 'Solicitar una visita') + '</h2>' +
       '<p><b>' + esc(street) + '</b>, ' + esc(a.city || '') + '<br>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba', ' baños') + (p.area ? ' · ' + p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + ' · ' + money(h.listPrice) + '</p></div>';
-    $('tr-note').textContent = t('Pick a time and I’ll meet you at the home. Questions? Call or text 605-838-9140.', 'Escoja una hora y lo veo en la casa. ¿Preguntas? Llame o envíe un texto al 605-838-9140.');
+    $('tr-note').textContent = t('Pick a time that works for you. I’ll confirm it with the seller’s agent and get back to you. Questions? Call or text 605-838-9140.', 'Escoja la hora que le convenga. La confirmaré con el agente del vendedor y le avisaré. ¿Preguntas? Llame o envíe un texto al 605-838-9140.');
     $('tr-body').innerHTML = '<div class="tr-load">' + t('Loading my calendar…', 'Cargando mi calendario…') + '</div>';
     $('tr').classList.add('open'); document.body.classList.add('sp-lock');
     var home = t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
@@ -928,7 +928,7 @@
   window.addEventListener('message', function (e) {
     if (e.origin !== 'https://calendly.com' || !e.data || e.data.event !== 'calendly.event_scheduled') return;
     if (tourHome) trackView(tourHome);
-    $('tr-note').textContent = t('You’re booked! Check your email for the details. I’ll reach out to confirm.', '¡Listo! Revise su correo para ver los detalles. Me comunicaré con usted para confirmar.');
+    $('tr-note').textContent = t('Request sent! I’ll confirm the time with the seller’s agent and get back to you soon. Check your email for the details.', '¡Solicitud enviada! Confirmaré la hora con el agente del vendedor y le avisaré pronto. Revise su correo para ver los detalles.');
   });
 
   // ===== New listing alerts (saved to Marcos's "Listing Alert Leads" Google Sheet) =====
