@@ -25,8 +25,8 @@
   .sp-q input:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
   .sp-qgo { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 0; border-radius: 8px; background: none; color: var(--navy); cursor: pointer; display: grid; place-items: center; }
   .sp-qgo svg, .pl-ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-  .pills { display: flex; gap: 8px; align-items: center; flex: 0 1 auto; }
-  .pill { position: relative; }
+  .fpills { display: flex; gap: 8px; align-items: center; flex: 0 1 auto; }
+  .fpill { position: relative; }
   .pill-b { font: inherit; font-size: 15px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid #c9c2b5; border-radius: 10px; padding: 9px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
   .pill-b i { width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
   .pill-b[aria-expanded="true"] i { transform: rotate(-135deg) translateY(-1px); }
@@ -270,10 +270,10 @@
     .sp-bar { top: 58px; }
     .sp-filters { flex-wrap: wrap; padding: 8px; }
     .sp-q { flex: 1 1 100%; }
-    .pills { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-    .pills::-webkit-scrollbar { display: none; }
+    .fpills { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .fpills::-webkit-scrollbar { display: none; }
     .pill-b, .sp-savebtn { font-size: 14px; padding: 8px 11px; }
-    .pill { position: static; }
+    .fpill { position: static; }
     .pop { position: fixed; left: 0 !important; right: 0 !important; top: auto; bottom: 0; width: auto; border-radius: 18px 18px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); z-index: 2600; max-height: 80vh; overflow-y: auto; }
     .pop-shade.on { display: block; position: fixed; inset: 0; background: rgba(13,23,48,.45); z-index: 2550; }
     .sp-toggle { display: flex; bottom: calc(74px + env(safe-area-inset-bottom)); }
@@ -326,8 +326,8 @@
         <div class="sp-q"><input type="search" id="f-q" placeholder="City, ZIP, address, or MLS #" aria-label="City, ZIP, address, or MLS #"><button type="submit" class="sp-qgo" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div>
         <input type="hidden" id="f-min"><input type="hidden" id="f-max"><input type="hidden" id="f-beds"><input type="hidden" id="f-baths"><input type="hidden" id="f-type">
         <input type="hidden" id="f-area"><input type="hidden" id="f-year"><input type="hidden" id="f-dom">
-        <div class="pills" id="pills">
-          <div class="pill"><button type="button" class="pill-b" data-pop="price" aria-expanded="false"><span id="pl-price">Price</span><i></i></button>
+        <div class="fpills" id="pills">
+          <div class="fpill"><button type="button" class="pill-b" data-pop="price" aria-expanded="false"><span id="pl-price">Price</span><i></i></button>
             <div class="pop" id="pop-price" role="dialog" aria-label="Price">
               <div class="pop-h">Price range</div>
               <div class="pop-2"><label>Min<input type="text" inputmode="numeric" id="pp-min" placeholder="No min"></label><span>–</span><label>Max<input type="text" inputmode="numeric" id="pp-max" placeholder="No max"></label></div>
@@ -335,7 +335,7 @@
               <div class="pop-f"><button type="button" class="pop-reset" data-reset="price">Reset</button><button type="button" class="pop-apply" data-apply="price">Apply</button></div>
             </div>
           </div>
-          <div class="pill"><button type="button" class="pill-b" data-pop="beds" aria-expanded="false"><span id="pl-beds">Beds &amp; baths</span><i></i></button>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="beds" aria-expanded="false"><span id="pl-beds">Beds &amp; baths</span><i></i></button>
             <div class="pop" id="pop-beds" role="dialog" aria-label="Beds and baths">
               <div class="pop-h">Bedrooms</div>
               <div class="seg" id="pb-beds"><button type="button" data-v="">Any</button><button type="button" data-v="1">1+</button><button type="button" data-v="2">2+</button><button type="button" data-v="3">3+</button><button type="button" data-v="4">4+</button><button type="button" data-v="5">5+</button></div>
@@ -344,7 +344,7 @@
               <div class="pop-f"><button type="button" class="pop-reset" data-reset="beds">Reset</button><button type="button" class="pop-apply" data-apply="beds">Apply</button></div>
             </div>
           </div>
-          <div class="pill"><button type="button" class="pill-b" data-pop="type" aria-expanded="false"><span id="pl-type">Home type</span><i></i></button>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="type" aria-expanded="false"><span id="pl-type">Home type</span><i></i></button>
             <div class="pop" id="pop-type" role="dialog" aria-label="Home type">
               <div class="pop-h">Home type</div>
               <div class="radios" id="pt-type">
@@ -357,7 +357,7 @@
               <div class="pop-f"><button type="button" class="pop-reset" data-reset="type">Reset</button><button type="button" class="pop-apply" data-apply="type">Apply</button></div>
             </div>
           </div>
-          <div class="pill"><button type="button" class="pill-b" data-pop="more" aria-expanded="false"><svg viewBox="0 0 24 24" class="pl-ic"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span id="pl-more">More</span><i></i></button>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="more" aria-expanded="false"><svg viewBox="0 0 24 24" class="pl-ic"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span id="pl-more">More</span><i></i></button>
             <div class="pop pop-r" id="pop-more" role="dialog" aria-label="More filters">
               <div class="pop-h">Square feet</div>
               <select id="pm-area"><option value="">Any size</option><option value="1000">1,000+ sq ft</option><option value="1500">1,500+ sq ft</option><option value="2000">2,000+ sq ft</option><option value="2500">2,500+ sq ft</option><option value="3000">3,000+ sq ft</option><option value="4000">4,000+ sq ft</option></select>
