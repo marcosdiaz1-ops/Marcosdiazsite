@@ -61,6 +61,8 @@
   .hd-top { position: sticky; top: 0; z-index: 5; background: rgba(248,245,240,.96); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
   .hd-top button { font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; }
   .hd-top button:hover { background: var(--sand); }
+  .hd-top > span { display: flex; align-items: center; gap: 2px; }
+  .hd-top button { white-space: nowrap; }
   .hd-top svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .hd-gal { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; height: 470px; border-radius: 16px; overflow: hidden; position: relative; }
   .hd-gal button { border: 0; padding: 0; cursor: zoom-in; background: var(--sand) center/cover no-repeat; }
@@ -120,6 +122,7 @@
   @media (max-width: 900px) {
     .sp-box { padding: 0 0 120px; }
     .hd-top { padding: 8px 10px; margin: 0; }
+    .hd-top button { font-size: 14px; padding: 6px 7px; gap: 4px; }
     .hd-gal { display: flex; height: 300px; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0; scrollbar-width: none; }
     .hd-gal::-webkit-scrollbar { display: none; }
     .hd-gal button { flex: 0 0 100%; scroll-snap-align: start; }
@@ -551,7 +554,7 @@
     var addr = street + ', ' + (a.city || '') + ', ' + (a.state || '') + ' ' + (a.postalCode || '');
     var photos = h.photos || [];
     var n = photos.length;
-    var ppsf = h.listPrice && p.area ? money(h.listPrice / p.area) + '/sq ft' : '';
+    var ppsf = h.listPrice && p.area ? money(h.listPrice / p.area) + t('/sq ft', ' por pie²') : '';
     var dom = m.daysOnMarket;
     var chips = [
       ['home', p.subTypeText || p.style || ''],
@@ -770,7 +773,7 @@
   $('sp-cmpgo').onclick = function () {
     var hs = cmpSel.map(function (id) { return results.filter(function (h) { return String(h.mlsId) === id; })[0]; }).filter(Boolean);
     var num = function (f) { return hs.map(function (h) { var v = f(h); return typeof v === 'number' && isFinite(v) ? v : null; }); };
-    var best = function (vals, low) { var ok = vals.filter(function (v) { return v != null; }); if (ok.length < 2) return -1; var b = low ? Math.min.apply(null, ok) : Math.max.apply(null, ok); return vals.indexOf(b); };
+    var best = function (vals, low) { var ok = vals.filter(function (v) { return v != null; }); if (ok.length < 2) return -1; var b = low ? Math.min.apply(null, ok) : Math.max.apply(null, ok); return ok.filter(function (v) { return v === b; }).length === 1 ? vals.indexOf(b) : -1; };
     var rows = [
       ['', hs.map(function (h) { return (h.photos && h.photos[0] ? '<img src="' + esc(h.photos[0]) + '" alt="">' : ''); })],
       [t('Price', 'Precio'), num(function (h) { return h.listPrice; }), money, true],
