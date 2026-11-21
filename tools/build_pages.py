@@ -131,7 +131,7 @@ privacy_en = '''  <section class="page-hero">
         <li><strong>My brokerage:</strong> as a licensee of Keller Williams Realty Sioux Falls, I may keep your contact details in my brokerage's client management tools so I can serve you.</li>
       </ul>
       <h2>Cookies and tracking</h2>
-      <p>This website does not use advertising cookies or analytics tracking. If you sign up for listing alerts, your browser keeps a random ID (in local storage, not a cookie) so the homes you open can fine-tune your alerts. To stop it, unsubscribe from the alerts or clear this site's data in your browser. Fonts are hosted on this site, not loaded from third parties.</p>
+      <p>This website does not use advertising cookies or analytics tracking. If you sign up for listing alerts, your browser keeps a random ID (in local storage, not a cookie) so the homes you open can fine-tune your alerts. Homes you save with the ♥ and the place you enter for drive times are kept only in your browser; saving a home also counts as opening it for your alerts. To look up drive times, the place you type and the home's location are sent to OpenStreetMap's free map services (Nominatim and OSRM). To stop any of this, unsubscribe from the alerts or clear this site's data in your browser. Fonts are hosted on this site, not loaded from third parties.</p>
       <h2>Other websites</h2>
       <p>Links such as "Search Homes" (my Keller Williams home search) and Google reviews take you to other websites, which have their own privacy policies.</p>
       <h2>Your choices</h2>
@@ -165,7 +165,7 @@ privacy_es = '''  <section class="page-hero">
         <li><strong>Mi correduría:</strong> como agente de Keller Williams Realty Sioux Falls, puedo guardar sus datos de contacto en las herramientas de mi correduría para poder atenderle.</li>
       </ul>
       <h2>Cookies y rastreo</h2>
-      <p>Este sitio no usa cookies de publicidad ni herramientas de análisis. Si se inscribe para alertas de casas, su navegador guarda un número de identificación al azar (en el almacenamiento local, no en una cookie) para que las casas que abre ajusten sus alertas. Para detenerlo, cancele las alertas o borre los datos de este sitio en su navegador. Las fuentes tipográficas están alojadas en este mismo sitio, no se cargan desde terceros.</p>
+      <p>Este sitio no usa cookies de publicidad ni herramientas de análisis. Si se inscribe para alertas de casas, su navegador guarda un número de identificación al azar (en el almacenamiento local, no en una cookie) para que las casas que abre ajusten sus alertas. Las casas que guarda con el ♥ y el lugar que escribe para el tiempo de manejo se guardan solo en su navegador; guardar una casa también cuenta como abrirla para sus alertas. Para calcular el tiempo de manejo, el lugar que escribe y la ubicación de la casa se envían a los servicios gratuitos de mapas de OpenStreetMap (Nominatim y OSRM). Para detener todo esto, cancele las alertas o borre los datos de este sitio en su navegador. Las fuentes tipográficas están alojadas en este mismo sitio, no se cargan desde terceros.</p>
       <h2>Otros sitios web</h2>
       <p>Enlaces como "Buscar casas" (mi buscador de Keller Williams) y las reseñas de Google le llevan a otros sitios web, que tienen sus propias políticas de privacidad.</p>
       <h2>Sus opciones</h2>
