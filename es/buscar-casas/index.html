@@ -363,8 +363,6 @@
                 <label><input type="radio" name="pt" value="" checked><span>Cualquier tipo</span></label>
                 <label><input type="radio" name="pt" value="residential"><span>Casa</span></label>
                 <label><input type="radio" name="pt" value="condominium"><span>Condominio / townhome</span></label>
-                <label><input type="radio" name="pt" value="multifamily"><span>Multifamiliar</span></label>
-                <label><input type="radio" name="pt" value="land"><span>Terreno</span></label>
               </div>
               <div class="pop-f"><button type="button" class="pop-reset" data-reset="type">Borrar</button><button type="button" class="pop-apply" data-apply="type">Aplicar</button></div>
             </div>
@@ -1200,7 +1198,7 @@
     setSel('f-min', u.get('minprice')); setSel('f-max', u.get('maxprice'));
     setSel('f-beds', u.get('minbeds')); setSel('f-baths', u.get('minbaths'));
     setSel('f-area', u.get('minarea')); setSel('f-year', u.get('minyear')); setSel('f-dom', u.get('maxdom'));
-    if (u.get('type') && /^(residential|condominium|multifamily|land)$/.test(u.get('type'))) $('f-type').value = u.get('type');
+    if (u.get('type') && /^(residential|condominium)$/.test(u.get('type'))) $('f-type').value = u.get('type');
     if (u.get('q')) $('f-q').value = u.get('q').slice(0, 80);
     pillLabels();
   })();
