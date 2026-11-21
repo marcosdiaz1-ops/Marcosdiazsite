@@ -11,45 +11,61 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
   .demo-banner { background: #b3261e; color: #fff; text-align: center; font-size: 14px; padding: 8px 12px; font-weight: 500; letter-spacing: .02em; }
-  .sp { padding: 18px 0 40px; }
-  .sp-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-bottom: 14px; }
-  .sp-filters input, .sp-filters select { font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
-  .sp-filters input[type=search] { flex: 1 1 200px; }
-  .sp-filters button { font: inherit; font-size: 15px; font-weight: 500; padding: 9px 16px; border: 0; border-radius: 8px; background: var(--navy); color: #fff; cursor: pointer; }
-  .sp-toggle { display: none; gap: 6px; margin-bottom: 10px; }
-  .sp-toggle button { flex: 1; font: inherit; padding: 8px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 8px; }
-  .sp-toggle button.on { background: var(--navy); color: #fff; }
-  .sp-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; height: 74vh; min-height: 520px; }
-  #sp-map { border-radius: 10px; border: 1px solid var(--line); height: 100%; }
+  /* Top band: sits below the fixed menu so the heading is never hidden */
+  .sp-hero { background: var(--navy); color: #d9d2c6; padding: 118px 0 30px; }
+  .sp-hero h1 { color: #fff; font-size: clamp(2rem, 4.2vw, 3rem); font-weight: 400; margin-bottom: 6px; }
+  .sp-hero p { font-size: 1.02rem; margin: 0; }
+  .sp-hero a { color: var(--gold-soft); }
+  .sp { padding: 0 0 40px; }
+  /* Filter bar */
+  .sp-bar { position: sticky; top: 64px; z-index: 900; margin: -22px 0 16px; }
+  .sp-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(19,32,59,.10); }
+  .sp-filters input, .sp-filters select { font: inherit; font-size: 15px; font-weight: 400; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
+  .sp-filters input:focus, .sp-filters select:focus { outline: 2px solid var(--gold); outline-offset: 0; border-color: var(--gold); }
+  .sp-filters input[type=search] { flex: 1 1 220px; }
+  .sp-filters button { font: inherit; font-size: 15px; font-weight: 500; padding: 10px 20px; border: 0; border-radius: 10px; background: var(--gold); color: #fff; cursor: pointer; transition: background .2s; }
+  .sp-filters button:hover { background: var(--gold-ink); }
+  .sp-more-f { display: none !important; background: #fff !important; color: var(--navy) !important; border: 1px solid var(--line) !important; }
+  .sp-extra { display: contents; }
+  /* Map + list */
+  .sp-body { display: grid; grid-template-columns: 1fr 1.15fr; gap: 16px; height: 76vh; min-height: 560px; }
+  #sp-map { border-radius: 14px; border: 1px solid var(--line); height: 100%; }
   .sp-list { overflow-y: auto; padding-right: 4px; }
-  .sp-count { font-size: 14px; margin-bottom: 8px; color: var(--text); }
-  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
-  .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; cursor: pointer; transition: box-shadow .15s; }
-  .sp-card:hover, .sp-card.hi { box-shadow: 0 4px 16px rgba(19,32,59,.18); }
-  .sp-card .ph { aspect-ratio: 4/3; background: var(--sand) center/cover no-repeat; position: relative; }
-  .sp-card .ph span { position: absolute; left: 8px; top: 8px; background: var(--navy); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 20px; }
-  .sp-card .in { padding: 10px 12px; font-size: 14px; line-height: 1.45; }
-  .sp-card .pr { font-size: 20px; font-weight: 600; color: var(--ink); }
-  .sp-card .st { color: var(--ink); }
+  .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
+  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; transition: box-shadow .2s, transform .2s; }
+  .sp-card:hover, .sp-card.hi { box-shadow: 0 10px 28px rgba(19,32,59,.16); transform: translateY(-2px); }
+  .sp-card .ph { aspect-ratio: 3/2; background: var(--sand) center/cover no-repeat; position: relative; }
+  .sp-card .ph span { position: absolute; left: 10px; top: 10px; background: var(--navy); color: #fff; font-size: 12px; font-weight: 500; letter-spacing: .04em; padding: 3px 10px; border-radius: 20px; }
+  .sp-card .in { padding: 12px 14px 14px; font-size: 15px; line-height: 1.45; }
+  .sp-card .pr { font-size: 24px; font-weight: 600; color: var(--ink); }
+  .sp-card .st { color: var(--ink); font-weight: 400; }
   .sp-card .ad { color: var(--text); }
-  .sp-card .co { font-size: 14px; color: var(--ink); margin-top: 6px; line-height: 1.4; }
-  .pin { background: var(--navy); color: #fff; font: 600 12px var(--sans); padding: 3px 7px; border-radius: 14px; border: 2px solid #fff; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,.3); transform: translate(-50%,-50%); display: inline-block; }
-  .pin.hi { background: var(--gold); }
+  .sp-card .co { font-size: 14px; color: var(--ink); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--sand); line-height: 1.4; }
+  /* Price pins */
+  .pin { background: var(--navy); color: #fff; font: 600 12px var(--sans); padding: 4px 9px; border-radius: 14px; border: 2px solid #fff; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,.3); transform: translate(-50%,-50%); display: inline-block; transition: background .15s, transform .15s; }
+  .pin.hi, .pin:hover { background: var(--gold); transform: translate(-50%,-50%) scale(1.12); z-index: 999; position: relative; }
   .leaflet-div-icon { background: none; border: 0; }
-  .sp-more { display: block; margin: 14px auto; font: inherit; padding: 9px 18px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 8px; cursor: pointer; }
+  .sp-more { display: block; margin: 16px auto; font: inherit; font-weight: 500; padding: 10px 22px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 10px; cursor: pointer; }
+  .sp-more:hover { background: var(--navy); color: #fff; }
   .sp-msg { padding: 20px; text-align: center; color: var(--text); }
-  .sp-modal { position: fixed; inset: 0; background: rgba(13,23,48,.6); display: none; z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
+  /* Floating Map / List switch (phones) */
+  .sp-toggle { display: none; position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 1500; background: var(--navy); border-radius: 30px; padding: 4px; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+  .sp-toggle button { font: inherit; font-size: 15px; font-weight: 500; padding: 9px 22px; border: 0; background: transparent; color: #fff; border-radius: 26px; cursor: pointer; }
+  .sp-toggle button.on { background: var(--gold); }
+  /* Home details */
+  .sp-modal { position: fixed; inset: 0; background: rgba(13,23,48,.65); display: none; z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
   .sp-modal.open { display: flex; }
-  .sp-box { background: #fff; border-radius: 12px; max-width: 860px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; }
-  .sp-x { position: absolute; right: 10px; top: 8px; z-index: 2; background: #fff; border: 0; border-radius: 50%; width: 36px; height: 36px; font-size: 22px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .sp-box { background: #fff; border-radius: 16px; max-width: 900px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; }
+  .sp-x { position: absolute; right: 10px; top: 10px; z-index: 2; background: #fff; border: 0; border-radius: 50%; width: 38px; height: 38px; font-size: 22px; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,.3); }
   .sp-gal { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 4px; background: #000; }
-  .sp-gal img { height: 340px; width: auto; max-width: none; scroll-snap-align: start; object-fit: cover; }
-  .sp-det { padding: 18px 20px 22px; font-size: 15px; }
-  .sp-det .pr { font-size: 28px; font-weight: 600; color: var(--ink); }
-  .sp-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 6px 16px; margin: 14px 0; font-size: 14px; }
+  .sp-gal img { height: 380px; width: auto; max-width: none; scroll-snap-align: start; object-fit: cover; }
+  .sp-det { padding: 20px 22px 24px; font-size: 15px; }
+  .sp-det .pr { font-size: 32px; font-weight: 600; color: var(--ink); line-height: 1.2; }
+  .sp-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 8px 16px; margin: 16px 0; font-size: 14px; background: var(--ivory); border-radius: 12px; padding: 14px; }
   .sp-facts b { color: var(--ink); font-weight: 500; }
-  .sp-cta { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
-  .sp-cta a { padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; }
+  .sp-cta { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+  .sp-cta a { padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 500; }
   .sp-cta .a1 { background: var(--navy); color: #fff; }
   .sp-cta .a2 { background: var(--gold); color: #fff; }
   .sp-attr { font-size: 15px; color: var(--ink); margin: 10px 0 0; line-height: 1.5; }
@@ -57,13 +73,25 @@
   .sp-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 10px; }
   .sp-disc { font-size: 12px; color: #666; margin-top: 18px; line-height: 1.5; }
   @media (max-width: 860px) {
+    .sp-hero { padding: 96px 0 30px; }
+    .sp-bar { top: 58px; }
     .sp-toggle { display: flex; }
+    .sp-more-f { display: inline-block !important; }
+    .sp-extra { display: none; }
+    .sp-filters.open .sp-extra { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+    .sp-extra select { flex: 1 1 45%; }
+    .sp-filters input[type=search] { flex: 1 1 100%; }
+    .sp-filters > button { flex: 1; }
     .sp-body { display: block; height: auto; min-height: 0; }
-    #sp-map { height: 62vh; }
-    .sp-list { overflow: visible; }
+    #sp-map { height: 68vh; }
+    .sp-list { overflow: visible; padding: 0 0 70px; }
+    .sp-cards { grid-template-columns: 1fr; }
     .sp-body.show-list #sp-map { display: none; }
     .sp-body.show-map .sp-list { display: none; }
-    .sp-gal img { height: 240px; }
+    .sp-box { border-radius: 14px; }
+    .sp-modal { padding: 0; align-items: flex-end; }
+    .sp-box { max-height: 96vh; border-radius: 16px 16px 0 0; }
+    .sp-gal img { height: 270px; width: 100%; min-width: 100%; }
   }
 </style>
 </head>
@@ -93,19 +121,28 @@
 </header>
 
 <main>
+  <section class="sp-hero">
+    <div class="wrap">
+      <h1>Search Homes for Sale</h1>
+      <p>Live MLS listings for Sioux Falls and the surrounding area. See one you like? Call or text me at <a href="tel:+16058389140">605-838-9140</a>.</p>
+    </div>
+  </section>
   <section class="sp">
     <div class="wrap">
-      <h1 style="font-size:clamp(1.8rem,3.4vw,2.6rem);margin-bottom:12px">Search Homes for Sale</h1>
-
+      <div class="sp-bar">
       <form class="sp-filters" id="sp-form">
         <input type="search" id="f-q" placeholder="City, ZIP, address, or MLS #">
-        <select id="f-min"><option value="">Min price</option><option>100000</option><option>200000</option><option>300000</option><option>400000</option><option>500000</option><option>750000</option></select>
-        <select id="f-max"><option value="">Max price</option><option>200000</option><option>300000</option><option>400000</option><option>500000</option><option>750000</option><option>1000000</option></select>
-        <select id="f-beds"><option value="">Beds</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
-        <select id="f-baths"><option value="">Baths</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option></select>
-        <select id="f-type"><option value="">Any type</option><option value="residential">House</option><option value="condominium">Condo</option><option value="multifamily">Multi-family</option><option value="land">Land</option></select>
+        <span class="sp-extra">
+        <select id="f-min" aria-label="Min price"><option value="">Min price</option><option value="100000">$100K</option><option value="200000">$200K</option><option value="300000">$300K</option><option value="400000">$400K</option><option value="500000">$500K</option><option value="750000">$750K</option></select>
+        <select id="f-max" aria-label="Max price"><option value="">Max price</option><option value="200000">$200K</option><option value="300000">$300K</option><option value="400000">$400K</option><option value="500000">$500K</option><option value="750000">$750K</option><option value="1000000">$1M</option></select>
+        <select id="f-beds" aria-label="Beds"><option value="">Beds</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
+        <select id="f-baths" aria-label="Baths"><option value="">Baths</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option></select>
+        <select id="f-type" aria-label="Home type"><option value="">Any type</option><option value="residential">House</option><option value="condominium">Condo</option><option value="multifamily">Multi-family</option><option value="land">Land</option></select>
+        </span>
+        <button type="button" class="sp-more-f" id="sp-more-f" aria-expanded="false">Filters</button>
         <button type="submit">Search</button>
       </form>
+      </div>
 
       <div class="sp-toggle"><button type="button" data-v="map" class="on">Map</button><button type="button" data-v="list">List</button></div>
 
@@ -332,6 +369,8 @@
       var d = u && new Date(u);
       if (d && !isNaN(d)) $('sp-updated').textContent = 'Listing data last updated ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
     }).catch(function () {});
+
+  $('sp-more-f').onclick = function () { var f = $('sp-form'), o = f.classList.toggle('open'); this.setAttribute('aria-expanded', o); };
 
   load(false);
 })();
