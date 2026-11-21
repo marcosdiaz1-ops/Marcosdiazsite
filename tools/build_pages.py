@@ -127,6 +127,7 @@ privacy_en = '''  <section class="page-hero">
       <ul>
         <li><strong>Form delivery:</strong> form submissions are delivered to my email by Web3Forms, a form-processing service.</li>
         <li><strong>Hosting:</strong> this website is hosted on GitHub Pages, which may log basic technical information (such as IP addresses) for security purposes.</li>
+        <li><strong>Showings:</strong> when you schedule a showing, the booking calendar on the page is provided by Calendly, which receives the name, email and other details you enter there and adds the showing to my calendar.</li>
         <li><strong>Listing alerts:</strong> alert sign-ups, the homes you open, and alert emails are handled with Google Sheets, Google Apps Script and Gmail. Listing data comes from the REALTOR® Association of the Sioux Empire MLS through SimplyRETS.</li>
         <li><strong>My brokerage:</strong> as a licensee of Keller Williams Realty Sioux Falls, I may keep your contact details in my brokerage's client management tools so I can serve you.</li>
       </ul>
@@ -161,6 +162,7 @@ privacy_es = '''  <section class="page-hero">
       <ul>
         <li><strong>Envío del formulario:</strong> los mensajes del formulario llegan a mi correo a través de Web3Forms, un servicio de procesamiento de formularios.</li>
         <li><strong>Alojamiento:</strong> este sitio está alojado en GitHub Pages, que puede registrar información técnica básica (como direcciones IP) por motivos de seguridad.</li>
+        <li><strong>Visitas:</strong> cuando agenda una visita, el calendario en la página es de Calendly, que recibe el nombre, correo y demás datos que escribe ahí y agrega la visita a mi calendario.</li>
         <li><strong>Alertas de casas:</strong> las inscripciones, las casas que abre y los correos de alertas se manejan con Google Sheets, Google Apps Script y Gmail. La información de las casas viene del MLS de la REALTOR® Association of the Sioux Empire a través de SimplyRETS.</li>
         <li><strong>Mi correduría:</strong> como agente de Keller Williams Realty Sioux Falls, puedo guardar sus datos de contacto en las herramientas de mi correduría para poder atenderle.</li>
       </ul>
