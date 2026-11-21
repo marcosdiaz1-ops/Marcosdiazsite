@@ -289,7 +289,7 @@
       <label>How often?</label>
       <div class="al-freq"><label><input type="radio" name="freq" value="Daily" checked>Daily</label><label><input type="radio" name="freq" value="Weekly">Weekly</label></div>
       <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-      <label class="al-ok"><input type="checkbox" name="consent" value="yes" required>Yes, email me new listings from Marcos Diaz. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime.</label>
+      <label class="al-ok"><input type="checkbox" name="consent" value="yes" required>Yes, email me new listings from Marcos Diaz, and use the homes I open on this site to fine-tune my alerts. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime. <a href="/privacy.html" target="_blank">Privacy</a></label>
       <button type="submit" class="al-send">Start my alerts</button>
       <p class="al-msg" id="al-msg" role="alert"></p>
     </form>
@@ -331,6 +331,31 @@
   var LIVE_API = 'https://listings.605homesearch.com';
   var LIVE = !!LIVE_API;
   // ALERTS_URL: the Listing Alert Leads Google Apps Script web app URL (automation/listing-alerts.gs). Empty = alerts button hidden.
+  // Who this visitor is, if they signed up for alerts (set at sign-up, or from ?a= in an alert email link).
+  // Only a random ID is kept in the browser; it lets the alerts learn from the homes they open.
+  var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function getAid() { try { var v = localStorage.getItem('mdAlertId'); return UUID_RE.test(v || '') ? v : ''; } catch (e) { return ''; } }
+  function setAid(v) { try { localStorage.setItem('mdAlertId', v); } catch (e) {} }
+  (function () {
+    var u = new URLSearchParams(location.search), a = u.get('a');
+    if (a && UUID_RE.test(a)) {
+      setAid(a.toLowerCase()); u.delete('a');
+      var qs = u.toString();
+      history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+    }
+  })();
+  function newId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+  }
+  var viewed = {};
+  function trackView(h) {
+    var aid = getAid();
+    if (!ALERTS_URL || !aid || !h || !h.mlsId || viewed[h.mlsId]) return;
+    viewed[h.mlsId] = 1;
+    var d = new URLSearchParams(); d.set('action', 'view'); d.set('id', aid); d.set('mlsId', String(h.mlsId));
+    fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d, keepalive: true }).catch(function () {});
+  }
   var ALERTS_URL = 'https://script.google.com/macros/s/AKfycbxklqP-b5JNN1e2hsuwLXQvC0P6_4ZmJBORJLDojLWMwqWiUx5JFn0oiKDVXvu4c-6-/exec';
   // RASE sends addresses like "508 E Plum Creek Rd Road" - drop the repeated spelled-out street type
   var SUFFIX = { rd:'road', dr:'drive', st:'street', ave:'avenue', av:'avenue', ln:'lane', ct:'court', cir:'circle', pl:'place', blvd:'boulevard', trl:'trail', pkwy:'parkway', ter:'terrace', hwy:'highway', cv:'cove', way:'way', pt:'point', sq:'square', xing:'crossing', loop:'loop' };
@@ -560,6 +585,7 @@
       '<div class="hd-dock"><a class="hd-btn hd-b1" href="' + sms + '">Text Marcos</a><a class="hd-btn hd-b3" href="tel:+16058389140">Call</a></div>';
 
     $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
+    trackView(h);
     if (h.mlsId && location.hash !== '#home=' + h.mlsId) history.pushState({ home: h.mlsId }, '', '#home=' + h.mlsId);
 
     $('hd-back').onclick = closeDetail;
@@ -664,6 +690,7 @@
     var d = new URLSearchParams();
     d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim());
     d.set('freq', f.freq.value); d.set('consent', 'yes'); d.set('botcheck', f.botcheck.value);
+    var aid = getAid() || newId(); d.set('id', aid);
     d.set('lang', document.documentElement.lang || 'en'); d.set('source', location.href.slice(0, 200));
     d.set('q', $('f-q').value.trim()); d.set('minprice', $('f-min').value); d.set('maxprice', $('f-max').value);
     d.set('minbeds', $('f-beds').value); d.set('minbaths', $('f-baths').value); d.set('type', $('f-type').value);
@@ -674,7 +701,7 @@
     }
     f.querySelector('.al-send').disabled = true;
     fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
-      alSent = true; $('al-form').hidden = true; $('al-done').hidden = false;
+      alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false;
     }).catch(function () {
       $('al-msg').textContent = 'That didn’t go through. Please try again, or text me at 605-838-9140.';
     }).then(function () { f.querySelector('.al-send').disabled = false; });
