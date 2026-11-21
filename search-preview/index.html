@@ -138,6 +138,32 @@
     .hd-dock a { margin: 0; padding: 12px 8px; font-size: 15px; }
   }
   @media (min-width: 901px) { .hd-dock, .hd-count { display: none; } .hd-galwrap { position: relative; } }
+  /* ===== New listing alerts ===== */
+  .sp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sp-head .sp-count { margin: 0; }
+  .al-open { font: inherit; font-size: 14px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid var(--gold); border-radius: 30px; padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .al-open:hover { background: var(--gold); color: #fff; }
+  .al-open svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .al { position: fixed; inset: 0; background: rgba(13,23,48,.6); z-index: 3200; display: none; align-items: center; justify-content: center; padding: 16px; }
+  .al.open { display: flex; }
+  .al-box { background: #fff; border-radius: 16px; max-width: 440px; width: 100%; padding: 24px 22px 20px; position: relative; max-height: 94vh; overflow-y: auto; }
+  .al-box h2 { font-size: 28px; margin-bottom: 4px; }
+  .al-what { font-size: 14px; color: var(--ink); background: var(--ivory); border-radius: 10px; padding: 9px 12px; margin: 10px 0 14px; }
+  .al-box label { display: block; font-size: 13px; font-weight: 500; color: var(--ink); margin: 10px 0 4px; }
+  .al-box input[type=text], .al-box input[type=email], .al-box input[type=tel] { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
+  .al-freq { display: flex; gap: 8px; }
+  .al-freq label { flex: 1; margin: 0; border: 1px solid var(--line); border-radius: 10px; padding: 9px; text-align: center; cursor: pointer; font-weight: 400; }
+  .al-freq input { position: absolute; opacity: 0; }
+  .al-freq label:has(input:checked) { border-color: var(--gold); background: #fbf5ee; font-weight: 500; }
+  .al-ok { display: flex; gap: 8px; align-items: flex-start; font-size: 13px !important; font-weight: 300 !important; line-height: 1.45; margin-top: 14px !important; }
+  .al-ok input { margin-top: 3px; accent-color: var(--gold); }
+  .al-send { width: 100%; font: inherit; font-size: 16px; font-weight: 500; background: var(--gold); color: #fff; border: 0; border-radius: 10px; padding: 13px; margin-top: 14px; cursor: pointer; }
+  .al-send:disabled { opacity: .6; }
+  .al-x { position: absolute; right: 10px; top: 8px; background: none; border: 0; font-size: 28px; cursor: pointer; color: var(--ink); }
+  .al-msg { font-size: 14px; margin-top: 10px; color: #b3261e; }
+  .al-done { text-align: center; padding: 10px 0; }
+  .al-done b { display: block; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+  .hd-alert { display: block; width: 100%; text-align: center; font: inherit; font-size: 15px; font-weight: 500; color: var(--gold-ink); background: none; border: 0; text-decoration: underline; margin-top: 12px; cursor: pointer; }
   .sp-disc { font-size: 12px; color: #666; margin-top: 18px; line-height: 1.5; }
   @media (max-width: 860px) {
     .sp-hero { padding: 96px 0 30px; }
@@ -212,7 +238,7 @@
       <div class="sp-body show-map" id="sp-body">
         <div id="sp-map"></div>
         <div class="sp-list">
-          <div class="sp-count" id="sp-count">Loading homes…</div>
+          <div class="sp-head"><div class="sp-count" id="sp-count">Loading homes…</div><button type="button" class="al-open" data-alert hidden><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>Get new listing alerts</button></div>
           <div class="sp-cards" id="sp-cards"></div>
           <button class="sp-more" id="sp-more" hidden>Show more homes</button>
         </div>
@@ -233,6 +259,26 @@
   <button type="button" class="hd-lb-nav hd-lb-next" id="hd-lb-next" aria-label="Next photo">&#8250;</button>
 </div>
 <div class="hd-toast" id="hd-toast" role="status"></div>
+<div class="al" id="al" role="dialog" aria-modal="true" aria-labelledby="al-h">
+  <div class="al-box">
+    <button type="button" class="al-x" id="al-x" aria-label="Close">&times;</button>
+    <form id="al-form" novalidate>
+      <h2 id="al-h">Get new listings first</h2>
+      <p style="font-size:15px;margin:0">I’ll email you new homes that match your search as soon as they hit the market.</p>
+      <div class="al-what" id="al-what"></div>
+      <label for="al-name">Name</label><input type="text" id="al-name" name="name" autocomplete="name" required maxlength="100">
+      <label for="al-email">Email</label><input type="email" id="al-email" name="email" autocomplete="email" required maxlength="120">
+      <label for="al-phone">Phone <span style="font-weight:300">(optional)</span></label><input type="tel" id="al-phone" name="phone" autocomplete="tel" maxlength="40">
+      <label>How often?</label>
+      <div class="al-freq"><label><input type="radio" name="freq" value="Daily" checked>Daily</label><label><input type="radio" name="freq" value="Weekly">Weekly</label></div>
+      <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+      <label class="al-ok"><input type="checkbox" name="consent" value="yes" required>Yes, email me new listings from Marcos Diaz. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime.</label>
+      <button type="submit" class="al-send">Start my alerts</button>
+      <p class="al-msg" id="al-msg" role="alert"></p>
+    </form>
+    <div class="al-done" id="al-done" hidden><b>You’re all set!</b>Check your email. I sent you the homes that match right now. New ones will come as soon as they’re listed.</div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="wrap legal">
@@ -251,6 +297,8 @@
   // Real keys never go in this file.
   var LIVE_API = 'https://listings.605homesearch.com';
   var LIVE = !!LIVE_API;
+  // ALERTS_URL: the Listing Alert Leads Google Apps Script web app URL (automation/listing-alerts.gs). Empty = alerts button hidden.
+  var ALERTS_URL = '';
   // RASE sends addresses like "508 E Plum Creek Rd Road" - drop the repeated spelled-out street type
   var SUFFIX = { rd:'road', dr:'drive', st:'street', ave:'avenue', av:'avenue', ln:'lane', ct:'court', cir:'circle', pl:'place', blvd:'boulevard', trl:'trail', pkwy:'parkway', ter:'terrace', hwy:'highway', cv:'cove', way:'way', pt:'point', sq:'square', xing:'crossing', loop:'loop' };
   function cleanAddr(full) {
@@ -473,6 +521,7 @@
         '<a class="hd-btn hd-b1" href="' + sms + '">Schedule a showing<small>Text me and I’ll set it up</small></a>' +
         '<a class="hd-btn hd-b2" href="tel:+16058389140">Call 605-838-9140</a>' +
         '<a class="hd-btn hd-b3" href="/calculators/affordability/">See what you can afford</a>' +
+        (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>Email me new homes like this</button>' : '') +
         '<p class="hd-note">Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.</p>' +
       '</div></aside></div>' +
       '<div class="hd-dock"><a class="hd-btn hd-b1" href="' + sms + '">Text Marcos</a><a class="hd-btn hd-b3" href="tel:+16058389140">Call</a></div>';
@@ -533,11 +582,69 @@
   $('hd-lb-prev').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' }); };
   $('hd-lb-next').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' }); };
   document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && $('al').classList.contains('open')) { closeAlert(); return; }
     if ($('hd-lb').classList.contains('open')) {
       if (e.key === 'Escape') closeLb();
       if (e.key === 'ArrowRight') $('hd-lb-next').click();
       if (e.key === 'ArrowLeft') $('hd-lb-prev').click();
     } else if (e.key === 'Escape' && $('sp-modal').classList.contains('open')) closeDetail();
+  });
+
+
+  // ===== New listing alerts (saved to Marcos's "Listing Alert Leads" Google Sheet) =====
+  function alertWhat() {
+    var bits = [], q = $('f-q').value.trim();
+    bits.push(q || 'Homes in this map area');
+    var mn = $('f-min').value, mx = $('f-max').value;
+    if (mn && mx) bits.push(short(+mn) + '–' + short(+mx)); else if (mx) bits.push('up to ' + short(+mx)); else if (mn) bits.push(short(+mn) + '+');
+    if ($('f-beds').value) bits.push($('f-beds').value + '+ beds');
+    if ($('f-baths').value) bits.push($('f-baths').value + '+ baths');
+    if ($('f-type').value) bits.push($('f-type').selectedOptions[0].textContent);
+    return bits.join(' · ');
+  }
+  var alSent = false;
+  function openAlert(h) {
+    // from a home page: use that home's city and a price range around it
+    if (h && h.address) {
+      if (!$('f-q').value.trim() && h.address.city) $('f-q').value = h.address.city;
+      if (!$('f-max').value && h.listPrice) { var mxv = String(Math.ceil(h.listPrice * 1.15 / 10000) * 10000); var sel = $('f-max'); if (![].some.call(sel.options, function (o) { return o.value === mxv; })) { var o = document.createElement('option'); o.value = mxv; o.textContent = short(+mxv); sel.appendChild(o); } sel.value = mxv; }
+      if (!$('f-beds').value && h.property && h.property.bedrooms) $('f-beds').value = String(Math.min(h.property.bedrooms, 5));
+    }
+    $('al-what').textContent = alertWhat();
+    $('al-form').hidden = alSent; $('al-done').hidden = !alSent; $('al-msg').textContent = '';
+    $('al').classList.add('open');
+    if (!alSent) setTimeout(function () { $('al-name').focus(); }, 50);
+  }
+  function closeAlert() { $('al').classList.remove('open'); }
+  if (ALERTS_URL) document.querySelectorAll('[data-alert]').forEach(function (b) { b.hidden = false; });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-alert]'); if (!b || !ALERTS_URL) return;
+    openAlert(b.closest('#sp-modal') ? cur : null);
+  });
+  $('al-x').onclick = closeAlert;
+  $('al').addEventListener('click', function (e) { if (e.target.id === 'al') closeAlert(); });
+  $('al-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target, name = f.name.value.trim(), email = f.email.value.trim();
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('al-msg').textContent = 'Please add your name and a good email.'; return; }
+    if (!f.consent.checked) { $('al-msg').textContent = 'Please check the box so I can email you.'; return; }
+    var d = new URLSearchParams();
+    d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim());
+    d.set('freq', f.freq.value); d.set('consent', 'yes'); d.set('botcheck', f.botcheck.value);
+    d.set('lang', document.documentElement.lang || 'en'); d.set('source', location.href.slice(0, 200));
+    d.set('q', $('f-q').value.trim()); d.set('minprice', $('f-min').value); d.set('maxprice', $('f-max').value);
+    d.set('minbeds', $('f-beds').value); d.set('minbaths', $('f-baths').value); d.set('type', $('f-type').value);
+    if (!$('f-q').value.trim()) {
+      var b = map.getBounds();
+      d.set('points', [[b.getNorth(), b.getWest()], [b.getNorth(), b.getEast()], [b.getSouth(), b.getEast()], [b.getSouth(), b.getWest()]]
+        .map(function (pt) { return pt[0].toFixed(5) + ',' + pt[1].toFixed(5); }).join('|'));
+    }
+    f.querySelector('.al-send').disabled = true;
+    fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
+      alSent = true; $('al-form').hidden = true; $('al-done').hidden = false;
+    }).catch(function () {
+      $('al-msg').textContent = 'That didn’t go through. Please try again, or text me at 605-838-9140.';
+    }).then(function () { f.querySelector('.al-send').disabled = false; });
   });
 
   $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); load(false); });
