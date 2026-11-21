@@ -1,0 +1,57 @@
+name: Update mortgage rate
+
+# Every Thursday and Friday afternoon: get this week's 30-year average rate from
+# Freddie Mac's survey, save it to data/rate.json (used by the affordability
+# calculator), and republish the site if it changed. Only data/rate.json is touched.
+on:
+  schedule:
+    - cron: '30 18 * * 4'
+    - cron: '30 15 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  rate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get the latest rate
+        run: |
+          python3 - <<'PY'
+          import csv, io, json, urllib.request, datetime
+          req = urllib.request.Request('https://www.freddiemac.com/pmms/docs/PMMS_history.csv', headers={'User-Agent': 'Mozilla/5.0'})
+          rows = list(csv.DictReader(io.StringIO(urllib.request.urlopen(req, timeout=30).read().decode('utf-8-sig'))))
+          best = None
+          for r in rows:
+              try:
+                  d = datetime.datetime.strptime(r['date'].strip(), '%m/%d/%Y').date(); v = float(r['pmms30'])
+              except Exception:
+                  continue
+              if 2 < v < 15 and (best is None or d > best[0]):
+                  best = (d, v)
+          if not best:
+              raise SystemExit('no rate found')
+          out = {'rate': round(best[1], 2), 'date': best[0].isoformat(),
+                 'source': 'Freddie Mac Primary Mortgage Market Survey, 30-year fixed national average'}
+          old = json.load(open('data/rate.json'))
+          if (old.get('rate'), old.get('date')) != (out['rate'], out['date']):
+              with open('data/rate.json', 'w') as f:
+                  json.dump(out, f); f.write('\n')
+              print('updated', out)
+          else:
+              print('no change', out)
+          PY
+      - name: Save and republish if it changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- data/rate.json; then exit 0; fi
+          git config user.name "rate-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/rate.json
+          git commit -m "Weekly mortgage rate update"
+          git push
+          gh workflow run deploy.yml --ref main

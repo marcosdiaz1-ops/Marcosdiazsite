@@ -1,0 +1,88 @@
+"""Build the Spanish home search page from the English one.
+
+  python3 tools/build_es_search.py preview   # search-preview/ -> es/buscar-casas-preview/ (noindex)
+  python3 tools/build_es_search.py live      # search/         -> es/buscar-casas/
+
+The Spanish page keeps its own <head> (title, description, canonical), menu and footer from the
+current es/buscar-casas/index.html, and translates the search's own text. The search script
+switches its words to Spanish by itself when the page says lang="es".
+"""
+import re, sys, os
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+mode = (sys.argv[1:] or ['preview'])[0]
+src = os.path.join(ROOT, 'search-preview/index.html' if mode == 'preview' else 'search/index.html')
+dst = os.path.join(ROOT, 'es/buscar-casas-preview/index.html' if mode == 'preview' else 'es/buscar-casas/index.html')
+shell = open(os.path.join(ROOT, 'es/buscar-casas/index.html')).read()
+en = open(src).read()
+
+def grab(pat, text):
+    m = re.search(pat, text, re.S); assert m, pat; return m.group(0)
+
+es = en.replace('<html lang="en">', '<html lang="es">', 1)
+# head: keep the English page's styles/scripts, use the Spanish title/description/links
+es_meta = grab(r'<title>.*?<link rel="alternate" hreflang="x-default"[^\n]*\n', shell)
+if mode == 'preview':
+    es = re.sub(r'<title>.*?<meta name="robots" content="noindex, nofollow">\n', lambda m: es_meta.split('<meta name="description"')[0] + '<meta name="robots" content="noindex, nofollow">\n', es, count=1, flags=re.S)
+else:
+    es = re.sub(r'<title>.*?<link rel="alternate" hreflang="x-default"[^\n]*\n', lambda m: es_meta, es, count=1, flags=re.S)
+es = re.sub(r'<header.*?</header>', lambda m: grab(r'<header.*?</header>', shell), es, count=1, flags=re.S)
+es = re.sub(r'<footer.*?</footer>', lambda m: grab(r'<footer.*?</footer>', shell), es, count=1, flags=re.S)
+
+T = [
+ ('DEMO DATA — these are sample listings, not real homes for sale. Private preview page.', 'DATOS DE PRUEBA — página privada de vista previa.'),
+ ('<h1>Search Homes for Sale</h1>', '<h1>Buscar casas en venta</h1>'),
+ ('<p>Live MLS listings for Sioux Falls and the surrounding area. See one you like? Call or text me at <a href="tel:+16058389140">605-838-9140</a>.</p>',
+  '<p>Casas del MLS en vivo en Sioux Falls y sus alrededores. ¿Le gusta una? Llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>.</p>'),
+ ('placeholder="City, ZIP, address, or MLS #"', 'placeholder="Ciudad, código postal, dirección o MLS #"'),
+ ('aria-label="Min price"><option value="">Min price</option>', 'aria-label="Precio mínimo"><option value="">Precio mín.</option>'),
+ ('aria-label="Max price"><option value="">Max price</option>', 'aria-label="Precio máximo"><option value="">Precio máx.</option>'),
+ ('aria-label="Beds"><option value="">Beds</option>', 'aria-label="Recámaras"><option value="">Recámaras</option>'),
+ ('aria-label="Baths"><option value="">Baths</option>', 'aria-label="Baños"><option value="">Baños</option>'),
+ ('aria-label="Home type"><option value="">Any type</option><option value="residential">House</option><option value="condominium">Condo</option><option value="multifamily">Multi-family</option><option value="land">Land</option>',
+  'aria-label="Tipo de casa"><option value="">Cualquier tipo</option><option value="residential">Casa</option><option value="condominium">Condominio</option><option value="multifamily">Multifamiliar</option><option value="land">Terreno</option>'),
+ ('aria-expanded="false">Filters</button>', 'aria-expanded="false">Filtros</button>'),
+ ('<button type="submit">Search</button>', '<button type="submit">Buscar</button>'),
+ ('data-v="map" class="on">Map</button><button type="button" data-v="list">List</button>', 'data-v="map" class="on">Mapa</button><button type="button" data-v="list">Lista</button>'),
+ ('id="sp-count">Loading homes…</div>', 'id="sp-count">Cargando casas…</div>'),
+ ('<span id="sp-savedn">Saved (0)</span>', '<span id="sp-savedn">Guardadas (0)</span>'),
+ ('Get new listing alerts</button>', 'Recibir alertas de casas nuevas</button>'),
+ ('<span id="sp-cmptxt">Pick 2 or 3 homes to compare</span><button type="button" id="sp-cmpgo" disabled>Compare</button>', '<span id="sp-cmptxt">Marque 2 o 3 casas para comparar</span><button type="button" id="sp-cmpgo" disabled>Comparar</button>'),
+ ('id="sp-more" hidden>Show more homes</button>', 'id="sp-more" hidden>Ver más casas</button>'),
+ ('<p class="sp-disc">Listing information is deemed reliable but not guaranteed and should be independently verified. <span id="sp-updated"></span> Listings shown are courtesy of the listing brokerage named on each listing. Listing data provided by the REALTOR® Association of the Sioux Empire MLS.</p>',
+  '<p class="sp-disc">La información de las casas se considera confiable pero no está garantizada y debe verificarse. <span id="sp-updated"></span> Las casas son cortesía de la correduría indicada en cada una. Información proporcionada por el MLS de la REALTOR® Association of the Sioux Empire.</p>'),
+ ('aria-label="Home details"', 'aria-label="Detalles de la casa"'),
+ ('aria-label="Photos"', 'aria-label="Fotos"'),
+ ('aria-label="Close photos"', 'aria-label="Cerrar fotos"'),
+ ('aria-label="Previous photo"', 'aria-label="Foto anterior"'),
+ ('aria-label="Next photo"', 'aria-label="Foto siguiente"'),
+ ('<h2 id="cmp-h">Compare homes</h2>', '<h2 id="cmp-h">Comparar casas</h2>'),
+ ('<p class="sp-disc">Listing information is deemed reliable but not guaranteed and should be independently verified. Listing data provided by the REALTOR® Association of the Sioux Empire MLS.</p>',
+  '<p class="sp-disc">La información se considera confiable pero no está garantizada y debe verificarse. Información proporcionada por el MLS de la REALTOR® Association of the Sioux Empire.</p>'),
+ ('<h2 id="al-h">Get new listings first</h2>', '<h2 id="al-h">Vea las casas nuevas primero</h2>'),
+ ('I’ll email you new homes that match your search as soon as they hit the market.', 'Le enviaré por correo las casas nuevas que coincidan con su búsqueda apenas salgan al mercado.'),
+ ('<label for="al-name">Name</label>', '<label for="al-name">Nombre</label>'),
+ ('<label for="al-email">Email</label>', '<label for="al-email">Correo electrónico</label>'),
+ ('<label for="al-phone">Phone <span style="font-weight:300">(optional)</span></label>', '<label for="al-phone">Teléfono <span style="font-weight:300">(opcional)</span></label>'),
+ ('<label>How often?</label>', '<label>¿Cada cuánto?</label>'),
+ ('value="Daily" checked>Daily</label><label><input type="radio" name="freq" value="Weekly">Weekly</label>', 'value="Daily" checked>Diario</label><label><input type="radio" name="freq" value="Weekly">Semanal</label>'),
+ ('Yes, email me new listings from Marcos Diaz, and use the homes I open on this site to fine-tune my alerts. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime. <a href="/privacy.html" target="_blank">Privacy</a>',
+  'Sí, envíenme casas nuevas de Marcos Diaz y usen las casas que abro en este sitio para ajustar mis alertas. Si agrego mi teléfono, Marcos me puede llamar o enviar textos sobre casas. Puedo cancelar cuando quiera. <a href="/es/privacidad.html" target="_blank">Privacidad</a>'),
+ ('class="al-send">Start my alerts</button>', 'class="al-send">Empezar mis alertas</button>'),
+ ('<b>You’re all set!</b>Check your email. I sent you the homes that match right now. New ones will come as soon as they’re listed.',
+  '<b>¡Listo!</b>Revise su correo. Le envié las casas que coinciden ahora mismo. Las nuevas le llegarán apenas salgan al mercado.'),
+ ('aria-label="Close"', 'aria-label="Cerrar"'),
+]
+for a, b in T:
+    if a in es: es = es.replace(a, b)
+    elif mode == 'preview' or 'DEMO DATA' not in a:
+        print('note: not found:', a[:60])
+# extra "more ways to search" cards on the live page come from the Spanish shell
+if mode == 'live':
+    m = re.search(r'<p class="map-cta-or".*?</div>\n', es, re.S)
+    sm = re.search(r'<p class="map-cta-or".*?</div>\n', shell, re.S)
+    if m and sm: es = es.replace(m.group(0), sm.group(0))
+left = [w for w in ['Search Homes for Sale', 'Get new listings first', 'Start my alerts', 'Compare homes'] if w in es]
+assert not left, left
+os.makedirs(os.path.dirname(dst), exist_ok=True)
+open(dst, 'w').write(es)
+print('wrote', os.path.relpath(dst, ROOT))

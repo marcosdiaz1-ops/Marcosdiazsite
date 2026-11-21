@@ -206,6 +206,13 @@
     }
     calc.addEventListener('input', update);
     calc.addEventListener('change', update);
+    // Opened from a home on the search (?price=289900#calculator): start at that price
+    const qp = parseInt(new URLSearchParams(location.search).get('price') || '', 10);
+    if (qp > 10000 && qp < 20000000) $('price').value = qp.toLocaleString(ES ? 'es-US' : 'en-US');
+    // This week's average rate (updated weekly from Freddie Mac)
+    let rateTouched = false;
+    $('rate').addEventListener('input', () => { rateTouched = true; });
+    fetch('/data/rate.json', { cache: 'no-cache' }).then(r => r.json()).then(d => { if (d && d.rate && !rateTouched) { $('rate').value = d.rate; update(); } }).catch(() => {});
     update();
   })();
 

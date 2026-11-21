@@ -113,23 +113,25 @@ privacy_en = '''  <section class="page-hero">
     <div class="wrap">
       <p class="crumbs"><a href="./">Home</a> &nbsp;/&nbsp; Privacy</p>
       <h1>Privacy Notice</h1>
-      <p class="lead">How information you share on 605homesearch.com is used. Effective November 4, 2026.</p>
+      <p class="lead">How information you share on 605homesearch.com is used. Updated November 21, 2026.</p>
     </div>
   </section>
   <section class="page-body">
     <div class="wrap narrow prose">
       <h2>What I collect</h2>
-      <p>When you fill out the contact form, I receive the answers you choose (for example, whether you're buying or selling and your timeline) along with your name, phone number, and email address. I don't collect anything else through this website.</p>
+      <p>When you fill out the contact form, I receive the answers you choose (for example, whether you're buying or selling and your timeline) along with your name, phone number, and email address.</p>
+      <p>If you sign up for new listing alerts on my home search, I receive your name, email, phone number (if you add it) and the search you saved. While you're signed up, the site also notes which homes you open (on this browser, or from a link in an alert email) and adjusts your alert search to match, for example the town, price range and bedrooms you keep looking at. I don't collect anything else through this website.</p>
       <h2>How I use it</h2>
       <p>I use your information only to respond to you and help with your real estate needs, such as calling, texting, or emailing you about your search or sale. Your information is never sold.</p>
       <h2>Who processes it</h2>
       <ul>
         <li><strong>Form delivery:</strong> form submissions are delivered to my email by Web3Forms, a form-processing service.</li>
         <li><strong>Hosting:</strong> this website is hosted on GitHub Pages, which may log basic technical information (such as IP addresses) for security purposes.</li>
+        <li><strong>Listing alerts:</strong> alert sign-ups, the homes you open, and alert emails are handled with Google Sheets, Google Apps Script and Gmail. Listing data comes from the REALTOR® Association of the Sioux Empire MLS through SimplyRETS.</li>
         <li><strong>My brokerage:</strong> as a licensee of Keller Williams Realty Sioux Falls, I may keep your contact details in my brokerage's client management tools so I can serve you.</li>
       </ul>
       <h2>Cookies and tracking</h2>
-      <p>This website does not use advertising cookies or analytics tracking. Fonts are hosted on this site, not loaded from third parties.</p>
+      <p>This website does not use advertising cookies or analytics tracking. If you sign up for listing alerts, your browser keeps a random ID (in local storage, not a cookie) so the homes you open can fine-tune your alerts. Homes you save with the ♥ and the place you enter for drive times are kept only in your browser; saving a home also counts as opening it for your alerts. To look up drive times, the place you type and the home's location are sent to OpenStreetMap's free map services (Nominatim and OSRM). To stop any of this, unsubscribe from the alerts or clear this site's data in your browser. Fonts are hosted on this site, not loaded from third parties.</p>
       <h2>Other websites</h2>
       <p>Links such as "Search Homes" (my Keller Williams home search) and Google reviews take you to other websites, which have their own privacy policies.</p>
       <h2>Your choices</h2>
@@ -145,23 +147,25 @@ privacy_es = '''  <section class="page-hero">
     <div class="wrap">
       <p class="crumbs"><a href="./">Inicio</a> &nbsp;/&nbsp; Privacidad</p>
       <h1>Aviso de Privacidad</h1>
-      <p class="lead">Cómo se usa la información que comparte en 605homesearch.com. Vigente desde el 4 de noviembre de 2026.</p>
+      <p class="lead">Cómo se usa la información que comparte en 605homesearch.com. Actualizado el 21 de noviembre de 2026.</p>
     </div>
   </section>
   <section class="page-body">
     <div class="wrap narrow prose">
       <h2>Qué información recibo</h2>
-      <p>Cuando llena el formulario de contacto, recibo las respuestas que elige (por ejemplo, si desea comprar o vender y cuándo planea mudarse), junto con su nombre, número de teléfono y correo electrónico. No recopilo ninguna otra información a través de este sitio web.</p>
+      <p>Cuando llena el formulario de contacto, recibo las respuestas que elige (por ejemplo, si desea comprar o vender y cuándo planea mudarse), junto con su nombre, número de teléfono y correo electrónico.</p>
+      <p>Si se inscribe para recibir alertas de casas nuevas en mi buscador, recibo su nombre, correo, teléfono (si lo agrega) y la búsqueda que guardó. Mientras esté inscrito, el sitio también anota qué casas abre (en este navegador o desde un enlace en un correo de alertas) y ajusta su búsqueda para que coincida, por ejemplo el pueblo, el rango de precio y las recámaras que más ve. No recopilo ninguna otra información a través de este sitio web.</p>
       <h2>Cómo la uso</h2>
       <p>Uso su información únicamente para responderle y ayudarle con sus necesidades de bienes raíces, por ejemplo, llamarle, enviarle un mensaje de texto o un correo sobre su búsqueda o su venta. Su información nunca se vende.</p>
       <h2>Quién la procesa</h2>
       <ul>
         <li><strong>Envío del formulario:</strong> los mensajes del formulario llegan a mi correo a través de Web3Forms, un servicio de procesamiento de formularios.</li>
         <li><strong>Alojamiento:</strong> este sitio está alojado en GitHub Pages, que puede registrar información técnica básica (como direcciones IP) por motivos de seguridad.</li>
+        <li><strong>Alertas de casas:</strong> las inscripciones, las casas que abre y los correos de alertas se manejan con Google Sheets, Google Apps Script y Gmail. La información de las casas viene del MLS de la REALTOR® Association of the Sioux Empire a través de SimplyRETS.</li>
         <li><strong>Mi correduría:</strong> como agente de Keller Williams Realty Sioux Falls, puedo guardar sus datos de contacto en las herramientas de mi correduría para poder atenderle.</li>
       </ul>
       <h2>Cookies y rastreo</h2>
-      <p>Este sitio no usa cookies de publicidad ni herramientas de análisis. Las fuentes tipográficas están alojadas en este mismo sitio, no se cargan desde terceros.</p>
+      <p>Este sitio no usa cookies de publicidad ni herramientas de análisis. Si se inscribe para alertas de casas, su navegador guarda un número de identificación al azar (en el almacenamiento local, no en una cookie) para que las casas que abre ajusten sus alertas. Las casas que guarda con el ♥ y el lugar que escribe para el tiempo de manejo se guardan solo en su navegador; guardar una casa también cuenta como abrirla para sus alertas. Para calcular el tiempo de manejo, el lugar que escribe y la ubicación de la casa se envían a los servicios gratuitos de mapas de OpenStreetMap (Nominatim y OSRM). Para detener todo esto, cancele las alertas o borre los datos de este sitio en su navegador. Las fuentes tipográficas están alojadas en este mismo sitio, no se cargan desde terceros.</p>
       <h2>Otros sitios web</h2>
       <p>Enlaces como "Buscar casas" (mi buscador de Keller Williams) y las reseñas de Google le llevan a otros sitios web, que tienen sus propias políticas de privacidad.</p>
       <h2>Sus opciones</h2>

@@ -11,59 +11,224 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
   .demo-banner { background: #b3261e; color: #fff; text-align: center; font-size: 14px; padding: 8px 12px; font-weight: 500; letter-spacing: .02em; }
-  .sp { padding: 18px 0 40px; }
-  .sp-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-bottom: 14px; }
-  .sp-filters input, .sp-filters select { font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
-  .sp-filters input[type=search] { flex: 1 1 200px; }
-  .sp-filters button { font: inherit; font-size: 15px; font-weight: 500; padding: 9px 16px; border: 0; border-radius: 8px; background: var(--navy); color: #fff; cursor: pointer; }
-  .sp-toggle { display: none; gap: 6px; margin-bottom: 10px; }
-  .sp-toggle button { flex: 1; font: inherit; padding: 8px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 8px; }
-  .sp-toggle button.on { background: var(--navy); color: #fff; }
-  .sp-body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; height: 74vh; min-height: 520px; }
-  #sp-map { border-radius: 10px; border: 1px solid var(--line); height: 100%; }
+  /* Top band: sits below the fixed menu so the heading is never hidden */
+  .sp-hero { background: var(--navy); color: #d9d2c6; padding: 118px 0 30px; }
+  .sp-hero h1 { color: #fff; font-size: clamp(2rem, 4.2vw, 3rem); font-weight: 400; margin-bottom: 6px; }
+  .sp-hero p { font-size: 1.02rem; margin: 0; }
+  .sp-hero a { color: var(--gold-soft); }
+  .sp { padding: 0 0 40px; }
+  /* Filter bar */
+  .sp-bar { position: sticky; top: 64px; z-index: 900; margin: -22px 0 16px; }
+  .sp-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(19,32,59,.10); }
+  .sp-filters input, .sp-filters select { font: inherit; font-size: 15px; font-weight: 400; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
+  .sp-filters input:focus, .sp-filters select:focus { outline: 2px solid var(--gold); outline-offset: 0; border-color: var(--gold); }
+  .sp-filters input[type=search] { flex: 1 1 220px; }
+  .sp-filters button { font: inherit; font-size: 15px; font-weight: 500; padding: 10px 20px; border: 0; border-radius: 10px; background: var(--gold); color: #fff; cursor: pointer; transition: background .2s; }
+  .sp-filters button:hover { background: var(--gold-ink); }
+  .sp-more-f { display: none !important; background: #fff !important; color: var(--navy) !important; border: 1px solid var(--line) !important; }
+  .sp-extra { display: contents; }
+  /* Map + list */
+  .sp-body { display: grid; grid-template-columns: 1fr 1.15fr; gap: 16px; height: 76vh; min-height: 560px; }
+  #sp-map { border-radius: 14px; border: 1px solid var(--line); height: 100%; }
   .sp-list { overflow-y: auto; padding-right: 4px; }
-  .sp-count { font-size: 14px; margin-bottom: 8px; color: var(--text); }
-  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
-  .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; cursor: pointer; transition: box-shadow .15s; }
-  .sp-card:hover, .sp-card.hi { box-shadow: 0 4px 16px rgba(19,32,59,.18); }
-  .sp-card .ph { aspect-ratio: 4/3; background: var(--sand) center/cover no-repeat; position: relative; }
-  .sp-card .ph span { position: absolute; left: 8px; top: 8px; background: var(--navy); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 20px; }
-  .sp-card .in { padding: 10px 12px; font-size: 14px; line-height: 1.45; }
-  .sp-card .pr { font-size: 20px; font-weight: 600; color: var(--ink); }
-  .sp-card .st { color: var(--ink); }
+  .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
+  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; transition: box-shadow .2s, transform .2s; }
+  .sp-card:hover, .sp-card.hi { box-shadow: 0 10px 28px rgba(19,32,59,.16); transform: translateY(-2px); }
+  .sp-card .ph { aspect-ratio: 3/2; background: var(--sand) center/cover no-repeat; position: relative; }
+  .sp-card .ph span { position: absolute; left: 10px; top: 10px; background: var(--navy); color: #fff; font-size: 12px; font-weight: 500; letter-spacing: .04em; padding: 3px 10px; border-radius: 20px; }
+  .sp-card .in { padding: 12px 14px 14px; font-size: 15px; line-height: 1.45; }
+  .sp-card .pr { font-size: 24px; font-weight: 600; color: var(--ink); }
+  .sp-card .st { color: var(--ink); font-weight: 400; }
   .sp-card .ad { color: var(--text); }
-  .sp-card .co { font-size: 14px; color: var(--ink); margin-top: 6px; line-height: 1.4; }
-  .pin { background: var(--navy); color: #fff; font: 600 12px var(--sans); padding: 3px 7px; border-radius: 14px; border: 2px solid #fff; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,.3); transform: translate(-50%,-50%); display: inline-block; }
-  .pin.hi { background: var(--gold); }
+  .sp-card .co { font-size: 14px; color: var(--ink); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--sand); line-height: 1.4; }
+  /* Price pins */
+  .pin { background: var(--navy); color: #fff; font: 600 12px var(--sans); padding: 4px 9px; border-radius: 14px; border: 2px solid #fff; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,.3); transform: translate(-50%,-50%); display: inline-block; transition: background .15s, transform .15s; }
+  .pin.hi, .pin:hover { background: var(--gold); transform: translate(-50%,-50%) scale(1.12); z-index: 999; position: relative; }
   .leaflet-div-icon { background: none; border: 0; }
-  .sp-more { display: block; margin: 14px auto; font: inherit; padding: 9px 18px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 8px; cursor: pointer; }
+  .sp-more { display: block; margin: 16px auto; font: inherit; font-weight: 500; padding: 10px 22px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 10px; cursor: pointer; }
+  .sp-more:hover { background: var(--navy); color: #fff; }
   .sp-msg { padding: 20px; text-align: center; color: var(--text); }
-  .sp-modal { position: fixed; inset: 0; background: rgba(13,23,48,.6); display: none; z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
-  .sp-modal.open { display: flex; }
-  .sp-box { background: #fff; border-radius: 12px; max-width: 860px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; }
-  .sp-x { position: absolute; right: 10px; top: 8px; z-index: 2; background: #fff; border: 0; border-radius: 50%; width: 36px; height: 36px; font-size: 22px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
-  .sp-gal { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 4px; background: #000; }
-  .sp-gal img { height: 340px; width: auto; max-width: none; scroll-snap-align: start; object-fit: cover; }
-  .sp-det { padding: 18px 20px 22px; font-size: 15px; }
-  .sp-det .pr { font-size: 28px; font-weight: 600; color: var(--ink); }
-  .sp-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 6px 16px; margin: 14px 0; font-size: 14px; }
-  .sp-facts b { color: var(--ink); font-weight: 500; }
-  .sp-cta { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
-  .sp-cta a { padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; }
-  .sp-cta .a1 { background: var(--navy); color: #fff; }
-  .sp-cta .a2 { background: var(--gold); color: #fff; }
-  .sp-attr { font-size: 15px; color: var(--ink); margin: 10px 0 0; line-height: 1.5; }
-  .sp-attr a { color: var(--ink); }
-  .sp-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 10px; }
+  /* Floating Map / List switch (phones) */
+  .sp-toggle { display: none; position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 1500; background: var(--navy); border-radius: 30px; padding: 4px; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+  .sp-toggle button { font: inherit; font-size: 15px; font-weight: 500; padding: 9px 22px; border: 0; background: transparent; color: #fff; border-radius: 26px; cursor: pointer; }
+  .sp-toggle button.on { background: var(--gold); }
+  /* ===== Home details (full page, Zillow-style) ===== */
+  .sp-modal { position: fixed; inset: 0; background: var(--ivory); display: none; z-index: 2000; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .sp-modal.open { display: block; }
+  body.sp-lock { overflow: hidden; }
+  .sp-box { max-width: 1180px; margin: 0 auto; padding: 0 24px 60px; }
+  .hd-top { position: sticky; top: 0; z-index: 5; background: rgba(248,245,240,.96); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+  .hd-top button { font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; }
+  .hd-top button:hover { background: var(--sand); }
+  .hd-top > span { display: flex; align-items: center; gap: 2px; }
+  .hd-top button { white-space: nowrap; }
+  .hd-top svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-gal { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; height: 470px; border-radius: 16px; overflow: hidden; position: relative; }
+  .hd-gal button { border: 0; padding: 0; cursor: zoom-in; background: var(--sand) center/cover no-repeat; }
+  .hd-gal button:first-child { grid-row: span 2; }
+  .hd-gal.n1 { grid-template-columns: 1fr; } .hd-gal.n1 button:first-child { grid-row: span 2; }
+  .hd-all { position: absolute; right: 14px; bottom: 14px; background: #fff; color: var(--ink); font: 500 14px var(--sans); border: 0; border-radius: 10px; padding: 9px 14px; box-shadow: 0 2px 10px rgba(0,0,0,.25); cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+  .hd-status { position: absolute; left: 14px; top: 14px; background: #fff; color: var(--ink); font: 500 13px var(--sans); border-radius: 20px; padding: 4px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.2); }
+  .hd-status i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #2e8b57; margin-right: 6px; }
+  .hd-status.new i { background: var(--gold); }
+  .hd-grid { display: grid; grid-template-columns: 1fr 340px; gap: 36px; margin-top: 26px; align-items: start; }
+  .hd-head { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
+  .hd-price { font-family: var(--sans); font-size: 40px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+  .hd-addr { font-size: 19px; color: var(--ink); font-weight: 400; margin-top: 4px; }
+  .hd-stats { display: flex; gap: 30px; }
+  .hd-stats div { font-size: 15px; color: var(--text); line-height: 1.2; }
+  .hd-stats b { display: block; font-size: 32px; font-weight: 600; color: var(--ink); }
+  .hd-attr { font-size: 15px; color: var(--ink); margin: 14px 0 0; padding: 10px 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; line-height: 1.5; }
+  .hd-attr a { color: var(--ink); }
+  .hd-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0; }
+  .hd-chip { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 15px; color: var(--ink); font-weight: 400; display: flex; gap: 10px; align-items: center; }
+  .hd-chip svg { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--gold-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-sec { border-top: 1px solid var(--line); padding: 24px 0 6px; }
+  .hd-sec h2 { font-size: 28px; margin-bottom: 12px; }
+  .hd-sec p { color: var(--ink); font-weight: 300; }
+  .hd-more { font: inherit; font-weight: 500; color: var(--gold-ink); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+  .hd-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 30px; }
+  .hd-facts h3 { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--ink); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .hd-facts ul { list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .hd-facts li { padding: 3px 0; color: var(--text); }
+  .hd-facts li b { color: var(--ink); font-weight: 500; }
+  #hd-map { height: 280px; border-radius: 14px; border: 1px solid var(--line); }
+  .hd-side { position: sticky; top: 80px; }
+  .hd-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 8px 26px rgba(19,32,59,.08); }
+  .hd-agent { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+  .hd-agent img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; }
+  .hd-agent b { display: block; color: var(--ink); font-weight: 500; font-size: 17px; }
+  .hd-agent span { font-size: 13px; color: var(--text); line-height: 1.3; display: block; }
+  .hd-btn { display: block; text-align: center; text-decoration: none; border-radius: 10px; padding: 13px 14px; font-weight: 500; font-size: 16px; margin-top: 10px; line-height: 1.3; }
+  .hd-btn small { display: block; font-weight: 300; font-size: 13px; opacity: .9; }
+  .hd-b1 { background: var(--navy); color: #fff; }
+  .hd-b1:hover { background: var(--navy-deep); }
+  .hd-b2 { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
+  .hd-b3 { background: var(--gold); color: #fff; }
+  .hd-note { font-size: 13px; color: var(--text); margin-top: 12px; line-height: 1.45; }
+  .hd-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 24px; line-height: 1.5; }
+  /* Photo viewer */
+  .hd-lb { position: fixed; inset: 0; background: #050a16; z-index: 3000; display: none; flex-direction: column; }
+  .hd-lb.open { display: flex; }
+  .hd-lb-top { display: flex; justify-content: space-between; align-items: center; color: #fff; padding: 12px 16px; font-size: 15px; }
+  .hd-lb-top button { background: none; border: 0; color: #fff; font-size: 30px; cursor: pointer; line-height: 1; }
+  .hd-lb-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .hd-lb-track::-webkit-scrollbar { display: none; }
+  .hd-lb-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; scroll-snap-align: center; }
+  .hd-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.9); border: 0; width: 46px; height: 46px; border-radius: 50%; font-size: 24px; cursor: pointer; }
+  .hd-lb-prev { left: 16px; } .hd-lb-next { right: 16px; }
+  .hd-toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 30px; font-size: 14px; z-index: 3500; display: none; }
+  @media (max-width: 900px) {
+    .sp-box { padding: 0 0 120px; }
+    .hd-top { padding: 8px 10px; margin: 0; }
+    .hd-top button { font-size: 14px; padding: 6px 7px; gap: 4px; }
+  }
+  @media (max-width: 440px) {
+    .hd-top .lbl { display: none; }
+    .hd-top .fav, #hd-share { padding: 8px 10px; }
+    .hd-top svg { width: 22px !important; height: 22px !important; }
+    .hd-gal { display: flex; height: 300px; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0; scrollbar-width: none; }
+    .hd-gal::-webkit-scrollbar { display: none; }
+    .hd-gal button { flex: 0 0 100%; scroll-snap-align: start; }
+    .hd-all { position: fixed; display: none; }
+    .hd-count { position: absolute; right: 12px; bottom: 12px; background: rgba(0,0,0,.65); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 20px; pointer-events: none; }
+    .hd-galwrap { position: relative; }
+    .hd-grid { display: block; padding: 0 18px; margin-top: 18px; }
+    .hd-price { font-size: 32px; }
+    .hd-stats { gap: 22px; } .hd-stats b { font-size: 24px; }
+    .hd-chips { grid-template-columns: 1fr 1fr; }
+    .hd-chip { font-size: 14px; padding: 10px; }
+    .hd-facts { grid-template-columns: 1fr; }
+    .hd-side { position: static; margin-top: 24px; }
+    .hd-lb-nav { display: none; }
+    .hd-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -4px 16px rgba(0,0,0,.12); }
+    .hd-dock a { margin: 0; padding: 12px 8px; font-size: 15px; }
+  }
+  @media (min-width: 901px) { .hd-dock, .hd-count { display: none; } .hd-galwrap { position: relative; } }
+  /* ===== New listing alerts ===== */
+  .sp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sp-head .sp-count { margin: 0; }
+  .al-open { font: inherit; font-size: 14px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid var(--gold); border-radius: 30px; padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .al-open:hover { background: var(--gold); color: #fff; }
+  .al-open svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .al { position: fixed; inset: 0; background: rgba(13,23,48,.6); z-index: 3200; display: none; align-items: center; justify-content: center; padding: 16px; }
+  .al.open { display: flex; }
+  .al-box { background: #fff; border-radius: 16px; max-width: 440px; width: 100%; padding: 24px 22px 20px; position: relative; max-height: 94vh; overflow-y: auto; }
+  .al-box h2 { font-size: 28px; margin-bottom: 4px; }
+  .al-what { font-size: 14px; color: var(--ink); background: var(--ivory); border-radius: 10px; padding: 9px 12px; margin: 10px 0 14px; }
+  .al-box label { display: block; font-size: 13px; font-weight: 500; color: var(--ink); margin: 10px 0 4px; }
+  .al-box input[type=text], .al-box input[type=email], .al-box input[type=tel] { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
+  .al-freq { display: flex; gap: 8px; }
+  .al-freq label { flex: 1; margin: 0; border: 1px solid var(--line); border-radius: 10px; padding: 9px; text-align: center; cursor: pointer; font-weight: 400; }
+  .al-freq input { position: absolute; opacity: 0; }
+  .al-freq label:has(input:checked) { border-color: var(--gold); background: #fbf5ee; font-weight: 500; }
+  .al-ok { display: flex; gap: 8px; align-items: flex-start; font-size: 13px !important; font-weight: 300 !important; line-height: 1.45; margin-top: 14px !important; }
+  .al-ok input { margin-top: 3px; accent-color: var(--gold); }
+  .al-send { width: 100%; font: inherit; font-size: 16px; font-weight: 500; background: var(--gold); color: #fff; border: 0; border-radius: 10px; padding: 13px; margin-top: 14px; cursor: pointer; }
+  .al-send:disabled { opacity: .6; }
+  .al-x { position: absolute; right: 10px; top: 8px; background: none; border: 0; font-size: 28px; cursor: pointer; color: var(--ink); }
+  .al-msg { font-size: 14px; margin-top: 10px; color: #b3261e; }
+  .al-done { text-align: center; padding: 10px 0; }
+  .al-done b { display: block; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+  .hd-alert { display: block; width: 100%; text-align: center; font: inherit; font-size: 15px; font-weight: 500; color: var(--gold-ink); background: none; border: 0; text-decoration: underline; margin-top: 12px; cursor: pointer; }
+  /* ===== Favorites, compare, tags, drive time ===== */
+  .sp-card .ph .fav { position: absolute; left: auto; right: 8px; top: 8px; background: rgba(255,255,255,.92); color: var(--navy); width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; border: 0; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .fav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+  .fav.on svg { fill: #c0392b; stroke: #c0392b; }
+  .sp-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .tag { font-size: 12px; font-weight: 500; border-radius: 20px; padding: 2px 9px; line-height: 1.5; }
+  .tag-cut { background: #fbeee6; color: #9a4a1c; }
+  .tag-dpa { background: #e9f1ea; color: #2f6b3a; }
+  .sp-saved { font: inherit; font-size: 14px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid var(--line); border-radius: 30px; padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .sp-saved svg { width: 16px; height: 16px; fill: #c0392b; stroke: #c0392b; stroke-width: 2; }
+  .sp-saved.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .sp-headr { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sp-cmpbar { display: none; align-items: center; justify-content: space-between; gap: 10px; background: var(--navy); color: #fff; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 14px; }
+  .sp-cmpbar.on { display: flex; }
+  .sp-cmpbar button { font: inherit; font-weight: 500; background: var(--gold); color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+  .sp-cmpbar button:disabled { opacity: .5; }
+  .sp-card .cmp { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink); margin-top: 8px; }
+  .sp-card .cmp input { accent-color: var(--gold); width: 16px; height: 16px; }
+  .cmp-wrap { overflow-x: auto; }
+  .cmp-t { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+  .cmp-t th, .cmp-t td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
+  .cmp-t th { color: var(--text); font-weight: 400; width: 130px; background: var(--ivory); }
+  .cmp-t td { color: var(--ink); }
+  .cmp-t img { width: 100%; max-width: 220px; aspect-ratio: 3/2; object-fit: cover; border-radius: 8px; display: block; }
+  .cmp-t .best { color: #2f6b3a; font-weight: 600; }
+  .cmp-t .co { font-size: 12px; color: var(--ink); }
+  .hd-hist { font-size: 15px; color: var(--ink); margin-top: 12px; }
+  .hd-hist b { color: #9a4a1c; font-weight: 600; }
+  .hd-dpa { margin-top: 14px; background: #e9f1ea; border: 1px solid #c7dccb; border-radius: 12px; padding: 12px 14px; font-size: 15px; color: #1f4a28; }
+  .hd-dpa a { color: #1f4a28; font-weight: 500; }
+  .hd-drive form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hd-drive input { flex: 1 1 220px; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  .hd-drive button { font: inherit; font-weight: 500; background: var(--navy); color: #fff; border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; }
+  .hd-drive .res { font-size: 18px; color: var(--ink); margin: 6px 0; }
+  .hd-drive .res b { font-size: 26px; }
+  .hd-drive .chg { font: inherit; font-size: 14px; background: none; color: var(--gold-ink); text-decoration: underline; padding: 0; }
+  .hd-drive .note { font-size: 12px; color: #777; }
+  .hd-top .fav { background: none; box-shadow: none; width: auto; height: auto; border-radius: 8px; padding: 8px 10px; display: inline-flex; gap: 6px; }
+  .hd-top .fav svg { width: 18px; height: 18px; }
+  .hd-link { display: block; text-align: center; font-size: 14px; color: var(--gold-ink); margin-top: 10px; }
   .sp-disc { font-size: 12px; color: #666; margin-top: 18px; line-height: 1.5; }
   @media (max-width: 860px) {
-    .sp-toggle { display: flex; }
+    .sp-hero { padding: 96px 0 30px; }
+    .sp-bar { top: 58px; }
+    .sp-toggle { display: flex; bottom: calc(74px + env(safe-area-inset-bottom)); }
+    .sp-more-f { display: inline-block !important; }
+    .sp-extra { display: none; }
+    .sp-filters.open .sp-extra { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+    .sp-extra select { flex: 1 1 45%; }
+    .sp-filters input[type=search] { flex: 1 1 100%; }
+    .sp-filters > button { flex: 1; }
     .sp-body { display: block; height: auto; min-height: 0; }
-    #sp-map { height: 62vh; }
-    .sp-list { overflow: visible; }
+    #sp-map { height: 68vh; }
+    .sp-list { overflow: visible; padding: 0 0 140px; }
+    .sp-cards { grid-template-columns: 1fr; }
     .sp-body.show-list #sp-map { display: none; }
     .sp-body.show-map .sp-list { display: none; }
-    .sp-gal img { height: 240px; }
   }
 </style>
 </head>
@@ -93,26 +258,36 @@
 </header>
 
 <main>
+  <section class="sp-hero">
+    <div class="wrap">
+      <h1>Search Homes for Sale</h1>
+      <p>Live MLS listings for Sioux Falls and the surrounding area. See one you like? Call or text me at <a href="tel:+16058389140">605-838-9140</a>.</p>
+    </div>
+  </section>
   <section class="sp">
     <div class="wrap">
-      <h1 style="font-size:clamp(1.8rem,3.4vw,2.6rem);margin-bottom:12px">Search Homes for Sale</h1>
-
+      <div class="sp-bar">
       <form class="sp-filters" id="sp-form">
         <input type="search" id="f-q" placeholder="City, ZIP, address, or MLS #">
-        <select id="f-min"><option value="">Min price</option><option>100000</option><option>200000</option><option>300000</option><option>400000</option><option>500000</option><option>750000</option></select>
-        <select id="f-max"><option value="">Max price</option><option>200000</option><option>300000</option><option>400000</option><option>500000</option><option>750000</option><option>1000000</option></select>
-        <select id="f-beds"><option value="">Beds</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
-        <select id="f-baths"><option value="">Baths</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option></select>
-        <select id="f-type"><option value="">Any type</option><option value="residential">House</option><option value="condominium">Condo</option><option value="multifamily">Multi-family</option><option value="land">Land</option></select>
+        <span class="sp-extra">
+        <select id="f-min" aria-label="Min price"><option value="">Min price</option><option value="100000">$100K</option><option value="200000">$200K</option><option value="300000">$300K</option><option value="400000">$400K</option><option value="500000">$500K</option><option value="750000">$750K</option></select>
+        <select id="f-max" aria-label="Max price"><option value="">Max price</option><option value="200000">$200K</option><option value="300000">$300K</option><option value="400000">$400K</option><option value="500000">$500K</option><option value="750000">$750K</option><option value="1000000">$1M</option></select>
+        <select id="f-beds" aria-label="Beds"><option value="">Beds</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
+        <select id="f-baths" aria-label="Baths"><option value="">Baths</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option></select>
+        <select id="f-type" aria-label="Home type"><option value="">Any type</option><option value="residential">House</option><option value="condominium">Condo</option><option value="multifamily">Multi-family</option><option value="land">Land</option></select>
+        </span>
+        <button type="button" class="sp-more-f" id="sp-more-f" aria-expanded="false">Filters</button>
         <button type="submit">Search</button>
       </form>
+      </div>
 
       <div class="sp-toggle"><button type="button" data-v="map" class="on">Map</button><button type="button" data-v="list">List</button></div>
 
       <div class="sp-body show-map" id="sp-body">
         <div id="sp-map"></div>
         <div class="sp-list">
-          <div class="sp-count" id="sp-count">Loading homes…</div>
+          <div class="sp-head"><div class="sp-count" id="sp-count">Loading homes…</div><span class="sp-headr"><button type="button" class="sp-saved" id="sp-saved"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg><span id="sp-savedn">Saved (0)</span></button><button type="button" class="al-open" data-alert hidden><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>Get new listing alerts</button></span></div>
+          <div class="sp-cmpbar" id="sp-cmpbar"><span id="sp-cmptxt">Pick 2 or 3 homes to compare</span><button type="button" id="sp-cmpgo" disabled>Compare</button></div>
           <div class="sp-cards" id="sp-cards"></div>
           <button class="sp-more" id="sp-more" hidden>Show more homes</button>
         </div>
@@ -123,10 +298,42 @@
   </section>
 </main>
 
-<div class="sp-modal" id="sp-modal" role="dialog" aria-modal="true">
-  <div class="sp-box">
-    <button class="sp-x" id="sp-x" aria-label="Close">&times;</button>
-    <div id="sp-detail"></div>
+<div class="sp-modal" id="sp-modal" role="dialog" aria-modal="true" aria-label="Home details">
+  <div class="sp-box"><div id="sp-detail"></div></div>
+</div>
+<div class="hd-lb" id="hd-lb" role="dialog" aria-modal="true" aria-label="Photos">
+  <div class="hd-lb-top"><span id="hd-lb-n"></span><button type="button" id="hd-lb-x" aria-label="Close photos">&times;</button></div>
+  <div class="hd-lb-track" id="hd-lb-track"></div>
+  <button type="button" class="hd-lb-nav hd-lb-prev" id="hd-lb-prev" aria-label="Previous photo">&#8249;</button>
+  <button type="button" class="hd-lb-nav hd-lb-next" id="hd-lb-next" aria-label="Next photo">&#8250;</button>
+</div>
+<div class="hd-toast" id="hd-toast" role="status"></div>
+<div class="al" id="cmp" role="dialog" aria-modal="true" aria-labelledby="cmp-h">
+  <div class="al-box" style="max-width:900px">
+    <button type="button" class="al-x" id="cmp-x" aria-label="Close">&times;</button>
+    <h2 id="cmp-h">Compare homes</h2>
+    <div class="cmp-wrap" id="cmp-body"></div>
+    <p class="sp-disc">Listing information is deemed reliable but not guaranteed and should be independently verified. Listing data provided by the REALTOR® Association of the Sioux Empire MLS.</p>
+  </div>
+</div>
+<div class="al" id="al" role="dialog" aria-modal="true" aria-labelledby="al-h">
+  <div class="al-box">
+    <button type="button" class="al-x" id="al-x" aria-label="Close">&times;</button>
+    <form id="al-form" novalidate>
+      <h2 id="al-h">Get new listings first</h2>
+      <p style="font-size:15px;margin:0">I’ll email you new homes that match your search as soon as they hit the market.</p>
+      <div class="al-what" id="al-what"></div>
+      <label for="al-name">Name</label><input type="text" id="al-name" name="name" autocomplete="name" required maxlength="100">
+      <label for="al-email">Email</label><input type="email" id="al-email" name="email" autocomplete="email" required maxlength="120">
+      <label for="al-phone">Phone <span style="font-weight:300">(optional)</span></label><input type="tel" id="al-phone" name="phone" autocomplete="tel" maxlength="40">
+      <label>How often?</label>
+      <div class="al-freq"><label><input type="radio" name="freq" value="Daily" checked>Daily</label><label><input type="radio" name="freq" value="Weekly">Weekly</label></div>
+      <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+      <label class="al-ok"><input type="checkbox" name="consent" value="yes" required>Yes, email me new listings from Marcos Diaz, and use the homes I open on this site to fine-tune my alerts. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime. <a href="/privacy.html" target="_blank">Privacy</a></label>
+      <button type="submit" class="al-send">Start my alerts</button>
+      <p class="al-msg" id="al-msg" role="alert"></p>
+    </form>
+    <div class="al-done" id="al-done" hidden><b>You’re all set!</b>Check your email. I sent you the homes that match right now. New ones will come as soon as they’re listed.</div>
   </div>
 </div>
 
@@ -147,6 +354,35 @@
   // Real keys never go in this file.
   var LIVE_API = 'https://listings.605homesearch.com';
   var LIVE = !!LIVE_API;
+  var ES = document.documentElement.lang === 'es';
+  function t(en, es) { return ES ? es : en; }
+  // ALERTS_URL: the Listing Alert Leads Google Apps Script web app URL (automation/listing-alerts.gs). Empty = alerts button hidden.
+  // Who this visitor is, if they signed up for alerts (set at sign-up, or from ?a= in an alert email link).
+  // Only a random ID is kept in the browser; it lets the alerts learn from the homes they open.
+  var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function getAid() { try { var v = localStorage.getItem('mdAlertId'); return UUID_RE.test(v || '') ? v : ''; } catch (e) { return ''; } }
+  function setAid(v) { try { localStorage.setItem('mdAlertId', v); } catch (e) {} }
+  (function () {
+    var u = new URLSearchParams(location.search), a = u.get('a');
+    if (a && UUID_RE.test(a)) {
+      setAid(a.toLowerCase()); u.delete('a');
+      var qs = u.toString();
+      history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+    }
+  })();
+  function newId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+  }
+  var viewed = {};
+  function trackView(h) {
+    var aid = getAid();
+    if (!ALERTS_URL || !aid || !h || !h.mlsId || viewed[h.mlsId]) return;
+    viewed[h.mlsId] = 1;
+    var d = new URLSearchParams(); d.set('action', 'view'); d.set('id', aid); d.set('mlsId', String(h.mlsId));
+    fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d, keepalive: true }).catch(function () {});
+  }
+  var ALERTS_URL = 'https://script.google.com/macros/s/AKfycbxklqP-b5JNN1e2hsuwLXQvC0P6_4ZmJBORJLDojLWMwqWiUx5JFn0oiKDVXvu4c-6-/exec';
   // RASE sends addresses like "508 E Plum Creek Rd Road" - drop the repeated spelled-out street type
   var SUFFIX = { rd:'road', dr:'drive', st:'street', ave:'avenue', av:'avenue', ln:'lane', ct:'court', cir:'circle', pl:'place', blvd:'boulevard', trl:'trail', pkwy:'parkway', ter:'terrace', hwy:'highway', cv:'cove', way:'way', pt:'point', sq:'square', xing:'crossing', loop:'loop' };
   function cleanAddr(full) {
@@ -200,19 +436,20 @@
   }
 
   function load(more) {
-    if (!more) { offset = 0; results = []; $('sp-count').textContent = 'Loading homes…'; }
+    if (!more && savedMode) { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); }
+    if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); }
     fetch(query(more), { headers: HEADERS })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
         if (!more) results = LIVE ? [] : [sampleListing()];
-        results = results.concat(data);
+        results = results.concat(data.filter(function (h) { return h.internetEntireListingDisplay !== false; }));
         offset = results.length - (LIVE ? 0 : 1);
         render(!more && $('f-q').value.trim());
         $('sp-more').hidden = data.length < PAGE;
       })
       .catch(function () {
         $('sp-count').textContent = '';
-        $('sp-cards').innerHTML = '<div class="sp-msg">Couldn’t load listings right now. Please try again in a minute.</div>';
+        $('sp-cards').innerHTML = '<div class="sp-msg">' + t('Couldn’t load listings right now. Please try again in a minute.', 'No se pudieron cargar las casas. Intente de nuevo en un minuto.') + '</div>';
       });
   }
 
@@ -246,14 +483,15 @@
     var x = attr(h), c = x.contact;
     if (c && links) c = /@/.test(c) ? '<a href="mailto:' + esc(c) + '">' + esc(c) + '</a>' : '<a href="tel:' + esc(c.replace(/[^0-9+]/g, '')) + '">' + esc(c) + '</a>';
     else c = esc(c);
-    return 'Listing courtesy of ' + esc(x.office) + (x.agent ? ' · ' + esc(x.agent) : '') + (c ? ' · ' + c : '');
+    return t('Listing courtesy of ', 'Cortesía de ') + esc(x.office) + (x.agent ? ' · ' + esc(x.agent) : '') + (c ? ' · ' + c : '');
   }
 
+  function statusTxt(h) { var st = String((h.mls && (h.mls.statusText || h.mls.status)) || 'Active'); return ES ? ({ Active: 'Activa', Pending: 'Pendiente', ActiveUnderContract: 'Bajo contrato', 'Active Under Contract': 'Bajo contrato' }[st] || st) : st; }
   function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
 
   function render(fit) {
     var real = results.filter(function (h) { return !h._sample; }).length;
-    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + ' homes in this area' + (LIVE ? '' : ' (plus 1 test listing)') : 'No homes match. Try zooming out or changing filters.';
+    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + t(' homes in this area', ' casas en esta área') + (LIVE ? '' : ' (plus 1 test listing)') : t('No homes match. Try zooming out or changing filters.', 'No hay casas que coincidan. Aleje el mapa o cambie los filtros.');
     layer.clearLayers(); markers = {};
     var pts = [];
     $('sp-cards').innerHTML = results.map(function (h, i) {
@@ -265,11 +503,14 @@
       }
       var photo = (h.photos && h.photos[0]) || '';
       return '<div class="sp-card" data-i="' + i + '">' +
-        '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc((h.mls && h.mls.status) || 'Active') + '</span></div>' +
+        '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc(statusTxt(h)) + '</span>' + favBtn(h) + '</div>' +
         '<div class="in"><div class="pr">' + money(h.listPrice) + '</div>' +
-        '<div class="st">' + (p.bedrooms || 0) + ' bd · ' + baths(h) + ' ba · ' + (p.area ? p.area.toLocaleString() + ' sq ft' : '') + '</div>' +
-        '<div class="ad">' + esc(cleanAddr(a.full)) + ', ' + esc(a.city) + '</div>' +
-        '<div class="co">' + attrHtml(h, false) + '</div></div></div>';
+        '<div class="st">' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba · ', ' baños · ') + (p.area ? p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + '</div>' +
+        '<div class="ad">' + (showAddr(h) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city) + '</div>' +
+        cardTags(h) +
+        '<div class="co">' + attrHtml(h, false) + '</div>' +
+        (savedMode ? '<label class="cmp"><input type="checkbox" data-cmp="' + esc(h.mlsId) + '"' + (cmpSel.indexOf(String(h.mlsId)) > -1 ? ' checked' : '') + '>' + t('Compare', 'Comparar') + '</label>' : '') +
+        '</div></div>';
     }).join('');
     if (fit && pts.length) { skipMove = true; map.fitBounds(pts, { padding: [30, 30], maxZoom: 15 }); }
   }
@@ -279,39 +520,388 @@
     var pin = document.querySelector('.pin[data-i="' + i + '"]'); if (pin) pin.classList.toggle('hi', on);
   }
 
-  $('sp-cards').addEventListener('click', function (e) { var c = e.target.closest('.sp-card'); if (c) openDetail(+c.dataset.i); });
+  $('sp-cards').addEventListener('click', function (e) {
+    var f = e.target.closest('.fav'); if (f) { e.stopPropagation(); toggleFav(f.dataset.fav, results[+f.closest('.sp-card').dataset.i]); return; }
+    if (e.target.closest('.cmp')) return;
+    var c = e.target.closest('.sp-card'); if (c) openDetail(+c.dataset.i);
+  });
+  $('sp-cards').addEventListener('change', function (e) { var x = e.target.closest('[data-cmp]'); if (x) pickCmp(x.dataset.cmp, x.checked, x); });
   $('sp-cards').addEventListener('mouseover', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, true); });
   $('sp-cards').addEventListener('mouseout', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, false); });
 
-  function openDetail(i) {
-    var h = results[i], p = h.property || {}, a = h.address || {}, s = h.school || {}, t = h.tax || {};
-    var facts = [
-      ['Beds', p.bedrooms], ['Baths', baths(h)], ['Sq ft', p.area && p.area.toLocaleString()], ['Lot', p.lotSizeArea && (Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? 'sq ft' : 'acres')))],
-      ['Year built', p.yearBuilt], ['Type', p.subTypeText || p.type], ['Garage', p.garageSpaces && Math.round(p.garageSpaces)], ['Heating', p.heating], ['Cooling', p.cooling],
-      ['Taxes', t.taxAnnualAmount && money(t.taxAnnualAmount)], ['School district', s.district], ['MLS #', h.listingId]
-    ].filter(function (f) { return f[1]; });
-    var addr = cleanAddr(a.full) + ', ' + (a.city || '') + ' ' + (a.state || '') + ' ' + (a.postalCode || '');
-    var sms = 'sms:+16058389140?&body=' + encodeURIComponent("Hi Marcos, I'd like to see " + addr);
-    $('sp-detail').innerHTML =
-      '<div class="sp-gal">' + (h.photos || []).map(function (u) { return '<img src="' + esc(u) + '" alt="" loading="lazy">'; }).join('') + '</div>' +
-      '<div class="sp-det"><div class="pr">' + money(h.listPrice) + '</div><div>' + esc(addr) + '</div>' +
-      '<p class="sp-attr">' + attrHtml(h, true) + '</p>' +
-      '<div class="sp-cta"><a class="a1" href="' + sms + '">Text Marcos to see it</a><a class="a2" href="tel:+16058389140">Call 605-838-9140</a></div>' +
-      '<div class="sp-facts">' + facts.map(function (f) { return '<div>' + f[0] + ': <b>' + esc(f[1]) + '</b></div>'; }).join('') + '</div>' +
-      (h.remarks ? '<p style="margin-bottom:14px">' + esc(h.remarks) + '</p>' : '') +
-      '<div class="sp-courtesy">' + esc(h.disclaimer || 'Information deemed reliable but not guaranteed.') + (h.mls && h.mls.daysOnMarket != null ? ' Days on market: ' + h.mls.daysOnMarket + '.' : '') + '</div></div>';
-    $('sp-modal').classList.add('open');
+  // ===== Home details page (Zillow-style) =====
+  var ICON = {
+    home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    lot: '<path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M3 14h4M17 14h4"/>',
+    tag: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+    car: '<path d="M5 17h14M6 17v2M18 17v2M4 13l2-6h12l2 6v4H4z"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    hoa: '<path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-5h6v5M4 21h16"/>',
+    temp: '<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/>',
+    snow: '<path d="M12 2v20M4.9 6l14.2 12M4.9 18L19.1 6"/>'
+  };
+  function ic(n) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[n] + '</svg>'; }
+  function list(s) { return String(s || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean).join(', '); }
+  function lotText(p) {
+    if (p.lotSizeArea) return Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? t('sq ft', 'pies²') : t('acres', 'acres'))) + t(' lot', ' de terreno');
+    if (p.acres) return p.acres + t(' acre lot', ' acres de terreno');
+    return '';
   }
-  function closeDetail() { $('sp-modal').classList.remove('open'); }
-  $('sp-x').onclick = closeDetail;
-  $('sp-modal').addEventListener('click', function (e) { if (e.target.id === 'sp-modal') closeDetail(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDetail(); });
+  function showAddr(h) { return h.internetAddressDisplay !== false; }
+  var cur = null, hdMap = null;
+
+  function openDetail(i) { show(results[i]); }
+  function show(h) {
+    cur = h;
+    var p = h.property || {}, a = h.address || {}, s = h.school || {}, tx = h.tax || {}, as = h.association || {}, m = h.mls || {};
+    var street = showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible');
+    var addr = street + ', ' + (a.city || '') + ', ' + (a.state || '') + ' ' + (a.postalCode || '');
+    var photos = h.photos || [];
+    var n = photos.length;
+    var ppsf = h.listPrice && p.area ? money(h.listPrice / p.area) + t('/sq ft', ' por pie²') : '';
+    var dom = m.daysOnMarket;
+    var chips = [
+      ['home', p.subTypeText || p.style || ''],
+      ['cal', p.yearBuilt && t('Built in ', 'Construida en ') + p.yearBuilt],
+      ['lot', lotText(p)],
+      ['tag', ppsf],
+      ['car', p.garageSpaces && t('', 'Garaje para ') + Math.round(p.garageSpaces) + t('-car garage', ' autos')],
+      ['clock', dom != null && (dom === 0 ? t('Listed today', 'Salió hoy') : dom + (dom === 1 ? t(' day', ' día') : t(' days', ' días')) + t(' on market', ' en el mercado'))],
+      ['hoa', as.fee ? money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '') + t(' HOA', ' cuota HOA') : t('No HOA listed', 'Sin cuota HOA')],
+      ['temp', p.heating],
+      ['snow', p.cooling]
+    ].filter(function (c) { return c[1]; });
+    var groups = [
+      [t('Interior', 'Interior'), [[t('Bedrooms', 'Recámaras'), p.bedrooms], [t('Full baths', 'Baños completos'), p.bathsFull], [t('3/4 baths', 'Baños 3/4'), p.bathsThreeQuarter], [t('Half baths', 'Medios baños'), p.bathsHalf], [t('Finished sq ft', 'Pies² terminados'), p.area && p.area.toLocaleString()], [t('Flooring', 'Pisos'), list(p.flooring)], [t('Fireplaces', 'Chimeneas'), p.fireplaces], [t('Features', 'Detalles'), list(p.interiorFeatures)], [t('Laundry', 'Lavandería'), list(p.laundryFeatures)]]],
+      [t('Heating &amp; cooling', 'Calefacción y aire'), [[t('Heating', 'Calefacción'), p.heating], [t('Cooling', 'Aire acondicionado'), p.cooling]]],
+      [t('Building', 'Construcción'), [[t('Style', 'Estilo'), p.style], [t('Type', 'Tipo'), p.subTypeText], [t('Year built', 'Año de construcción'), p.yearBuilt], [t('Siding', 'Exterior'), list(p.construction)], [t('Roof', 'Techo'), list(p.roof)], [t('Foundation', 'Cimientos'), p.foundation], [t('Stories', 'Pisos'), p.stories]]],
+      [t('Lot &amp; outside', 'Terreno y exterior'), [[t('Lot', 'Terreno'), lotText(p).replace(/ lot$| de terreno$/, '')], [t('Lot description', 'Tipo de terreno'), list(p.lotDescription)], [t('Outside', 'Afuera'), list(p.exteriorFeatures)], [t('Garage', 'Garaje'), p.garageSpaces && Math.round(p.garageSpaces) + t(' spaces', ' espacios')], [t('Parking', 'Estacionamiento'), p.parking && p.parking.description], [t('Water', 'Agua'), p.water]]],
+      [t('Schools', 'Escuelas'), [[t('District', 'Distrito'), s.district], [t('Elementary', 'Primaria'), s.elementarySchool], [t('Middle', 'Secundaria'), s.middleSchool], [t('High', 'Preparatoria'), s.highSchool]]],
+      [t('Taxes &amp; area', 'Impuestos y zona'), [[t('Yearly taxes', 'Impuestos al año'), tx.taxAnnualAmount && money(tx.taxAnnualAmount) + (tx.taxYear ? ' (' + tx.taxYear + ')' : '')], [t('HOA', 'Cuota HOA'), as.fee && money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '')], [t('Subdivision', 'Fraccionamiento'), p.subdivision], [t('County', 'Condado'), h.geo && h.geo.county], ['MLS #', h.listingId]]]
+    ].map(function (g) { return [g[0], g[1].filter(function (r) { return r[1] !== undefined && r[1] !== null && r[1] !== '' && r[1] !== 0; })]; })
+     .filter(function (g) { return g[1].length; });
+
+    var msg = t("Hi Marcos, I'd like to see ", 'Hola Marcos, quiero ver ') + street + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
+    var sms = 'sms:+16058389140?&body=' + encodeURIComponent(msg);
+    var book = BOOK_URL + '?a1=' + encodeURIComponent(t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : ''));
+    var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="' + t('Open photo ', 'Abrir foto ') + (k + 1) + '"></button>'; }).join('');
+    var mobileTiles = photos.map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
+    var isNew = dom != null && dom <= 7;
+    var remarks = h.remarks || '';
+
+    $('sp-detail').innerHTML =
+      '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>' + t('Back to search', 'Volver a la búsqueda') + '</button>' +
+      '<span>' + favBtn(h, true) + '<button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg><span class="lbl">' + t('Share', 'Compartir') + '</span></button></span></div>' +
+      '<div class="hd-galwrap">' +
+        '<div class="hd-gal n' + Math.min(n, 5) + '" id="hd-gal">' + (window.innerWidth <= 900 ? mobileTiles : tiles) + '</div>' +
+        '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? t('New listing', 'Nueva en el mercado') : esc(statusTxt(h))) + '</span>' +
+        (n > 5 ? '<button type="button" class="hd-all" id="hd-all">▦ ' + t('See all ', 'Ver las ') + n + t(' photos', ' fotos') + '</button>' : '') +
+        (n > 1 ? '<span class="hd-count" id="hd-count">1 / ' + n + '</span>' : '') +
+      '</div>' +
+      '<div class="hd-grid"><div>' +
+        '<div class="hd-head"><div><div class="hd-price">' + money(h.listPrice) + '</div><div class="hd-addr">' + esc(addr) + '</div></div>' +
+        '<div class="hd-stats"><div><b>' + (p.bedrooms || 0) + '</b>' + t('beds', 'recámaras') + '</div><div><b>' + baths(h) + '</b>' + t('baths', 'baños') + '</div>' + (p.area ? '<div><b>' + p.area.toLocaleString() + '</b>' + t('sq ft', 'pies²') + '</div>' : '') + '</div></div>' +
+        '<p class="hd-attr">' + attrHtml(h, true) + '</p>' +
+        histHtml(h) + dpaHtml(h) +
+        '<div class="hd-chips">' + chips.map(function (c) { return '<div class="hd-chip">' + ic(c[0]) + '<span>' + esc(c[1]) + '</span></div>'; }).join('') + '</div>' +
+        (remarks ? '<div class="hd-sec"><h2>' + t('About this home', 'Sobre esta casa') + '</h2><p id="hd-rem">' + esc(remarks.length > 420 ? remarks.slice(0, 420).replace(/\s+\S*$/, '') + '…' : remarks) + '</p>' + (remarks.length > 420 ? '<button type="button" class="hd-more" id="hd-remmore">' + t('Show more', 'Ver más') + '</button>' : '') + '</div>' : '') +
+        '<div class="hd-sec"><h2>' + t('Facts &amp; features', 'Detalles de la casa') + '</h2><div class="hd-facts">' + groups.map(function (g) {
+          return '<div><h3>' + g[0] + '</h3><ul>' + g[1].map(function (r) { return '<li>' + r[0] + ': <b>' + esc(r[1]) + '</b></li>'; }).join('') + '</ul></div>';
+        }).join('') + '</div></div>' +
+        (showAddr(h) && h.geo && h.geo.lat ? '<div class="hd-sec"><h2>' + t('Location', 'Ubicación') + '</h2><div id="hd-map"></div></div>' +
+          '<div class="hd-sec hd-drive"><h2>' + t('Drive time', 'Tiempo de manejo') + '</h2><div id="hd-drive"></div></div>' : '') +
+        '<div class="hd-courtesy">' + attrHtml(h, false) + '. ' + esc(h.disclaimer || t('Information deemed reliable but not guaranteed.', 'Información considerada confiable pero no garantizada.')) + ' ' + t('Listing data provided by the REALTOR® Association of the Sioux Empire MLS. Information is deemed reliable but not guaranteed and should be independently verified.', 'Información de las casas proporcionada por el MLS de la REALTOR® Association of the Sioux Empire. La información se considera confiable pero no está garantizada y debe verificarse.') + '</div>' +
+      '</div>' +
+      '<aside class="hd-side"><div class="hd-card">' +
+        '<div class="hd-agent"><img src="/images/marcos-headshot.jpg" alt=""><div><b>Marcos Diaz</b><span>Broker Associate · Keller Williams Realty Sioux Falls</span></div></div>' +
+        '<a class="hd-btn hd-b1" href="' + book + '" target="_blank" rel="noopener">' + t('Schedule a showing', 'Agendar una visita') + '<small>' + t('Pick a time on my calendar', 'Escoja una hora en mi calendario') + '</small></a>' +
+        '<a class="hd-btn hd-b2" href="tel:+16058389140">' + t('Call', 'Llamar') + ' 605-838-9140</a>' +
+        '<a class="hd-btn hd-b3" href="' + payUrl(h) + '">' + t('What would my payment be?', '¿Cuánto sería mi pago?') + '</a>' +
+        '<a class="hd-link" href="' + sms + '">' + t('Or text me about this home', 'O envíeme un texto sobre esta casa') + '</a>' +
+        (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>' + t('Email me new homes like this', 'Envíenme casas nuevas como esta') + '</button>' : '') +
+        '<p class="hd-note">' + t('Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.', '¿No está seguro? Le puedo decir qué hay cerca, en cuánto se vendieron casas parecidas y si el precio es justo.') + '</p>' +
+      '</div></aside></div>' +
+      '<div class="hd-dock"><a class="hd-btn hd-b1" href="' + book + '" target="_blank" rel="noopener">' + t('Book a showing', 'Agendar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
+
+    $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
+    trackView(h);
+    if (h.mlsId && location.hash !== '#home=' + h.mlsId) history.pushState({ home: h.mlsId }, '', '#home=' + h.mlsId);
+
+    $('hd-back').onclick = closeDetail;
+    drive(h);
+    $('hd-share').onclick = share;
+    $('hd-gal').onclick = function (e) { var b = e.target.closest('button'); if (b) openLb(+b.dataset.k); };
+    if ($('hd-all')) $('hd-all').onclick = function () { openLb(0); };
+    if ($('hd-remmore')) $('hd-remmore').onclick = function () { $('hd-rem').textContent = remarks; this.remove(); };
+    var g = $('hd-gal');
+    if ($('hd-count')) g.addEventListener('scroll', function () { $('hd-count').textContent = (Math.round(g.scrollLeft / g.clientWidth) + 1) + ' / ' + n; }, { passive: true });
+    if ($('hd-map')) {
+      if (hdMap) { hdMap.remove(); hdMap = null; }
+      hdMap = L.map('hd-map', { scrollWheelZoom: false }).setView([h.geo.lat, h.geo.lng], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(hdMap);
+      L.marker([h.geo.lat, h.geo.lng], { icon: L.divIcon({ className: '', html: '<span class="pin hi">' + short(h.listPrice) + '</span>' }) }).addTo(hdMap);
+    }
+  }
+  function closeDetail(fromPop) {
+    $('sp-modal').classList.remove('open'); document.body.classList.remove('sp-lock'); closeLb();
+    if (fromPop !== true && /^#home=/.test(location.hash)) history.pushState({}, '', location.pathname + location.search);
+  }
+  window.addEventListener('popstate', function () {
+    var id = (location.hash.match(/^#home=(\d+)/) || [])[1];
+    if (id && cur && String(cur.mlsId) === id) return;
+    if (id) openById(id); else closeDetail(true);
+  });
+  function openById(id) {
+    var hit = results.filter(function (h) { return String(h.mlsId) === String(id); })[0];
+    if (hit) return show(hit);
+    if (!LIVE) return;
+    fetch(API + '/' + encodeURIComponent(id)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (h) { if (h && h.internetEntireListingDisplay !== false) show(h); }).catch(function () {});
+  }
+  function toast(t) { var el = $('hd-toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(el._t); el._t = setTimeout(function () { el.style.display = 'none'; }, 2200); }
+  function share() {
+    var url = location.origin + location.pathname + '#home=' + cur.mlsId;
+    var title = money(cur.listPrice) + ' · ' + (showAddr(cur) ? cleanAddr((cur.address || {}).full) + ', ' : '') + ((cur.address || {}).city || '');
+    if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+    try { navigator.clipboard.writeText(url).then(function () { toast(t('Link copied', 'Enlace copiado')); }, function () { prompt(t('Copy this link:', 'Copie este enlace:'), url); }); }
+    catch (e) { prompt(t('Copy this link:', 'Copie este enlace:'), url); }
+  }
+  // Photo viewer
+  function openLb(k) {
+    var ph = (cur && cur.photos) || []; if (!ph.length) return;
+    $('hd-lb-track').innerHTML = ph.map(function (u) { return '<img src="' + esc(u) + '" alt="" loading="lazy">'; }).join('');
+    $('hd-lb').classList.add('open');
+    var tr = $('hd-lb-track');
+    requestAnimationFrame(function () { tr.scrollLeft = k * tr.clientWidth; lbCount(); });
+  }
+  function closeLb() { $('hd-lb').classList.remove('open'); }
+  function lbCount() { var tr = $('hd-lb-track'); $('hd-lb-n').textContent = (Math.round(tr.scrollLeft / tr.clientWidth) + 1) + ' / ' + tr.children.length; }
+  $('hd-lb-track').addEventListener('scroll', lbCount, { passive: true });
+  $('hd-lb-x').onclick = closeLb;
+  $('hd-lb-prev').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' }); };
+  $('hd-lb-next').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' }); };
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && $('cmp').classList.contains('open')) { $('cmp').classList.remove('open'); return; }
+    if (e.key === 'Escape' && $('al').classList.contains('open')) { closeAlert(); return; }
+    if ($('hd-lb').classList.contains('open')) {
+      if (e.key === 'Escape') closeLb();
+      if (e.key === 'ArrowRight') $('hd-lb-next').click();
+      if (e.key === 'ArrowLeft') $('hd-lb-prev').click();
+    } else if (e.key === 'Escape' && $('sp-modal').classList.contains('open')) closeDetail();
+  });
+
+
+  // ===== Showings, Give Me Five, price history, favorites, compare, drive time =====
+  var BOOK_URL = 'https://calendly.com/marcosdiaz1-kw/home-showing';
+  var DPA_LIMIT = 410000;   // Give Me Five purchase price limit (South Dakota Housing)
+  var DPA_URL = ES ? '/es/blog/give-me-five-ayuda-pago-inicial/' : '/blog/give-me-five-down-payment-assistance/';
+  function isDpa(h) { var ty = String((h.property || {}).type || ''); return h.listPrice && h.listPrice <= DPA_LIMIT && !/LND|land/i.test(ty) && !/MLF|multi/i.test(ty); }
+  function cut(h) { return h.originalListPrice && h.listPrice && h.originalListPrice > h.listPrice ? h.originalListPrice - h.listPrice : 0; }
+  function cardTags(h) {
+    var c = cut(h), tags = [];
+    if (c) tags.push('<span class="tag tag-cut">↓ ' + short(c) + ' ' + t('price cut', 'menos') + '</span>');
+    if (isDpa(h)) tags.push('<span class="tag tag-dpa">' + t('Give Me Five eligible price', 'Precio para Give Me Five') + '</span>');
+    return tags.length ? '<div class="tags">' + tags.join('') + '</div>' : '';
+  }
+  function histHtml(h) {
+    var c = cut(h), dom = (h.mls || {}).daysOnMarket, bits = [];
+    if (c) bits.push(t('Listed at ', 'Salió a la venta en ') + money(h.originalListPrice) + ' · <b>' + t('price cut ', 'bajó ') + money(c) + ' (' + Math.round(c / h.originalListPrice * 100) + '%)</b>');
+    else if (h.originalListPrice) bits.push(t('No price changes since listed', 'Sin cambios de precio desde que salió'));
+    if (dom != null) bits.push(dom + (ES ? (dom === 1 ? ' día' : ' días') : (dom === 1 ? ' day' : ' days')) + t(' on market', ' en el mercado'));
+    if (h.listDate) bits.push(t('listed ', 'desde el ') + new Date(h.listDate).toLocaleDateString(ES ? 'es-US' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }));
+    return bits.length ? '<p class="hd-hist">' + bits.join(' · ') + '</p>' : '';
+  }
+  function dpaHtml(h) {
+    if (!isDpa(h)) return '';
+    var five = Math.round((h.listPrice * 0.95) * 0.05 / 100) * 100;
+    return '<div class="hd-dpa">' + t('<b>First-time buyer?</b> This price is under the $410,000 limit for South Dakota’s <b>Give Me Five</b> program: up to 5% of your loan (about ', '<b>¿Primera casa?</b> Este precio está bajo el límite de $410,000 del programa <b>Give Me Five</b> de Dakota del Sur: hasta 5% de su préstamo (unos ') + money(five) + t(') toward your down payment, if you qualify. ', ') para su pago inicial, si califica. ') + '<a href="' + DPA_URL + '">' + t('See who qualifies →', 'Vea quién califica →') + '</a></div>';
+  }
+  function payUrl(h) { return (ES ? '/es/' : '/') + '?price=' + Math.round(h.listPrice || 0) + '#calculator'; }
+
+  // Favorites (kept only in this browser; no account needed)
+  function favs() { try { var v = JSON.parse(localStorage.getItem('mdSaved') || '[]'); return Array.isArray(v) ? v.map(String) : []; } catch (e) { return []; } }
+  function setFavs(v) { try { localStorage.setItem('mdSaved', JSON.stringify(v.slice(0, 40))); } catch (e) {} updSaved(); }
+  function isFav(id) { return favs().indexOf(String(id)) > -1; }
+  var HEART = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg>';
+  function favBtn(h, big) {
+    if (!h.mlsId) return '';
+    var on = isFav(h.mlsId);
+    return '<button type="button" class="fav' + (on ? ' on' : '') + '" data-fav="' + esc(h.mlsId) + '" aria-pressed="' + on + '" aria-label="' + t('Save home', 'Guardar casa') + '">' + HEART + (big ? '<span class="lbl">' + (on ? t('Saved', 'Guardada') : t('Save', 'Guardar')) + '</span>' : '') + '</button>';
+  }
+  function toggleFav(id, h) {
+    id = String(id); var v = favs(), i = v.indexOf(id);
+    if (i > -1) v.splice(i, 1); else { v.unshift(id); if (h) trackView(h); }
+    setFavs(v);
+    document.querySelectorAll('.fav[data-fav="' + id + '"]').forEach(function (b) {
+      var on = i === -1; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+      var sp = b.querySelector('span'); if (sp) sp.textContent = on ? t('Saved', 'Guardada') : t('Save', 'Guardar');
+    });
+    toast(i === -1 ? t('Saved. Tap “Saved” to see your homes.', 'Guardada. Toque “Guardadas” para verlas.') : t('Removed from saved', 'Quitada de guardadas'));
+    if (savedMode && i > -1) showSaved();
+  }
+  function updSaved() { var n = favs().length; $('sp-savedn').textContent = t('Saved', 'Guardadas') + ' (' + n + ')'; }
+  document.addEventListener('click', function (e) { var b = e.target.closest('.hd-top .fav'); if (b && cur) toggleFav(b.dataset.fav, cur); });
+
+  var savedMode = false, cmpSel = [];
+  function showSaved() {
+    var ids = favs();
+    savedMode = true; cmpSel = cmpSel.filter(function (x) { return ids.indexOf(x) > -1; });
+    $('sp-saved').classList.add('on'); $('sp-more').hidden = true;
+    $('sp-cmpbar').classList.toggle('on', ids.length > 1); updCmp();
+    if (!ids.length) { results = []; render(false); $('sp-count').textContent = t('No saved homes yet. Tap the ♥ on any home to save it.', 'Aún no hay casas guardadas. Toque el ♥ en cualquier casa para guardarla.'); return; }
+    $('sp-count').textContent = t('Loading your saved homes…', 'Cargando sus casas guardadas…');
+    Promise.all(ids.map(function (id) { return fetch(API + '/' + encodeURIComponent(id)).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }))
+      .then(function (list) {
+        results = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false; });
+        render(true);
+        var gone = ids.length - results.length;
+        $('sp-count').textContent = results.length + ' ' + t('saved', 'guardadas') + (gone ? ' · ' + gone + t(' no longer for sale', ' ya no están en venta') : '') + ' · ';
+        var back = document.createElement('button'); back.type = 'button'; back.className = 'hd-more'; back.textContent = t('Back to all homes', 'Ver todas las casas');
+        back.onclick = leaveSaved; $('sp-count').appendChild(back);
+      });
+  }
+  function leaveSaved() { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); load(false); }
+  $('sp-saved').onclick = function () { if (savedMode) leaveSaved(); else showSaved(); };
+  updSaved();
+
+  function pickCmp(id, on, box) {
+    var i = cmpSel.indexOf(id);
+    if (on && i === -1) { if (cmpSel.length >= 3) { box.checked = false; toast(t('Compare up to 3 homes', 'Compare hasta 3 casas')); return; } cmpSel.push(id); }
+    if (!on && i > -1) cmpSel.splice(i, 1);
+    updCmp();
+  }
+  function updCmp() {
+    $('sp-cmpgo').disabled = cmpSel.length < 2;
+    $('sp-cmptxt').textContent = cmpSel.length < 2 ? t('Check 2 or 3 homes to compare', 'Marque 2 o 3 casas para comparar') : cmpSel.length + t(' homes picked', ' casas escogidas');
+  }
+  $('sp-cmpgo').onclick = function () {
+    var hs = cmpSel.map(function (id) { return results.filter(function (h) { return String(h.mlsId) === id; })[0]; }).filter(Boolean);
+    var num = function (f) { return hs.map(function (h) { var v = f(h); return typeof v === 'number' && isFinite(v) ? v : null; }); };
+    var best = function (vals, low) { var ok = vals.filter(function (v) { return v != null; }); if (ok.length < 2) return -1; var b = low ? Math.min.apply(null, ok) : Math.max.apply(null, ok); return ok.filter(function (v) { return v === b; }).length === 1 ? vals.indexOf(b) : -1; };
+    var rows = [
+      ['', hs.map(function (h) { return (h.photos && h.photos[0] ? '<img src="' + esc(h.photos[0]) + '" alt="">' : ''); })],
+      [t('Price', 'Precio'), num(function (h) { return h.listPrice; }), money, true],
+      ['$/sq ft', num(function (h) { return h.listPrice && (h.property || {}).area ? h.listPrice / h.property.area : null; }), money, true],
+      [t('Beds', 'Recámaras'), num(function (h) { return (h.property || {}).bedrooms; }), String, false],
+      [t('Baths', 'Baños'), num(function (h) { return Number(baths(h)) || null; }), String, false],
+      [t('Sq ft', 'Pies²'), num(function (h) { return (h.property || {}).area; }), function (v) { return v.toLocaleString(); }, false],
+      [t('Year built', 'Año'), num(function (h) { return (h.property || {}).yearBuilt; }), String, false],
+      [t('Garage', 'Garaje'), num(function (h) { return (h.property || {}).garageSpaces; }), function (v) { return Math.round(v) + t('-car', ' autos'); }, false],
+      [t('Yearly taxes', 'Impuestos al año'), num(function (h) { return (h.tax || {}).taxAnnualAmount; }), money, true],
+      [t('Days on market', 'Días en el mercado'), num(function (h) { return (h.mls || {}).daysOnMarket; }), String, null],
+      [t('Price cut', 'Bajó de precio'), num(function (h) { return cut(h) || 0; }), function (v) { return v ? money(v) : '—'; }, null],
+      [t('School district', 'Distrito escolar'), hs.map(function (h) { return esc((h.school || {}).district || '—'); })],
+      [t('Address', 'Dirección'), hs.map(function (h) { return esc((showAddr(h) ? cleanAddr((h.address || {}).full) + ', ' : '') + ((h.address || {}).city || '')); })],
+      ['', hs.map(function (h) { return '<span class="co">' + attrHtml(h, false) + '</span>'; })]
+    ];
+    $('cmp-body').innerHTML = '<table class="cmp-t">' + rows.map(function (r) {
+      var cells;
+      if (r.length > 2) { var bi = r[3] == null ? -1 : best(r[1], r[3]); cells = r[1].map(function (v, k) { return '<td' + (k === bi ? ' class="best"' : '') + '>' + (v == null ? '—' : r[2](v)) + '</td>'; }); }
+      else cells = r[1].map(function (v) { return '<td>' + v + '</td>'; });
+      return '<tr><th>' + r[0] + '</th>' + cells.join('') + '</tr>';
+    }).join('') + '</table>';
+    $('cmp').classList.add('open');
+  };
+  $('cmp-x').onclick = function () { $('cmp').classList.remove('open'); };
+  $('cmp').addEventListener('click', function (e) { if (e.target.id === 'cmp') $('cmp').classList.remove('open'); });
+
+  // Drive time to the buyer's work (OpenStreetMap geocoding + OSRM routing, free; place kept in this browser)
+  function getWork() { try { return JSON.parse(localStorage.getItem('mdWork') || 'null'); } catch (e) { return null; } }
+  function setWork(w) { try { if (w) localStorage.setItem('mdWork', JSON.stringify(w)); else localStorage.removeItem('mdWork'); } catch (e) {} }
+  function drive(h) {
+    var box = $('hd-drive'); if (!box || !h.geo || !h.geo.lat) return;
+    var w = getWork();
+    if (!w) {
+      box.innerHTML = '<form id="dv-f"><input id="dv-q" type="text" maxlength="120" placeholder="' + t('Your work or school (e.g. Sanford Hospital)', 'Su trabajo o escuela (ej. Sanford Hospital)') + '" aria-label="' + t('Your work or school', 'Su trabajo o escuela') + '"><button type="submit">' + t('Show drive time', 'Ver tiempo') + '</button></form>' +
+        '<p class="note">' + t('We look up the place with OpenStreetMap. It’s saved only in this browser.', 'Buscamos el lugar con OpenStreetMap. Solo se guarda en este navegador.') + '</p>';
+      $('dv-f').onsubmit = function (e) {
+        e.preventDefault(); var q = $('dv-q').value.trim(); if (!q) return;
+        box.querySelector('button').disabled = true;
+        fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&viewbox=-97.4,43.9,-96.2,43.2&q=' + encodeURIComponent(q))
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (!d || !d[0]) { box.querySelector('button').disabled = false; box.querySelector('.note').textContent = t('Couldn’t find that place. Try adding the city, like “Sanford Hospital Sioux Falls”.', 'No encontramos ese lugar. Agregue la ciudad, como “Sanford Hospital Sioux Falls”.'); return; }
+            setWork({ name: q, lat: +d[0].lat, lng: +d[0].lon }); drive(h);
+          }).catch(function () { box.querySelector('button').disabled = false; });
+      };
+      return;
+    }
+    box.innerHTML = '<p class="res">' + t('Calculating…', 'Calculando…') + '</p>';
+    fetch('https://router.project-osrm.org/route/v1/driving/' + h.geo.lng + ',' + h.geo.lat + ';' + w.lng + ',' + w.lat + '?overview=false')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var rt = d && d.routes && d.routes[0]; if (!rt) throw 0;
+        var mins = Math.max(1, Math.round(rt.duration / 60)), mi = (rt.distance / 1609.34).toFixed(1);
+        box.innerHTML = '<p class="res"><b>' + mins + ' min</b> · ' + mi + ' mi ' + t('to ', 'a ') + esc(w.name) + '</p>' +
+          '<p class="note">' + t('Typical drive without traffic. ', 'Manejo normal sin tráfico. ') + '<button type="button" class="chg" id="dv-c">' + t('Change place', 'Cambiar lugar') + '</button></p>';
+        $('dv-c').onclick = function () { setWork(null); drive(h); };
+      }).catch(function () { box.innerHTML = '<p class="note">' + t('Drive time isn’t available right now.', 'El tiempo de manejo no está disponible ahora.') + ' <button type="button" class="chg" id="dv-c">' + t('Change place', 'Cambiar lugar') + '</button></p>'; $('dv-c').onclick = function () { setWork(null); drive(h); }; });
+  }
+
+  // ===== New listing alerts (saved to Marcos's "Listing Alert Leads" Google Sheet) =====
+  function alertWhat() {
+    var bits = [], q = $('f-q').value.trim();
+    bits.push(q || t('Homes in this map area', 'Casas en esta área del mapa'));
+    var mn = $('f-min').value, mx = $('f-max').value;
+    if (mn && mx) bits.push(short(+mn) + '–' + short(+mx)); else if (mx) bits.push(t('up to ', 'hasta ') + short(+mx)); else if (mn) bits.push(short(+mn) + '+');
+    if ($('f-beds').value) bits.push($('f-beds').value + t('+ beds', '+ recámaras'));
+    if ($('f-baths').value) bits.push($('f-baths').value + t('+ baths', '+ baños'));
+    if ($('f-type').value) bits.push($('f-type').selectedOptions[0].textContent);
+    return bits.join(' · ');
+  }
+  var alSent = false;
+  function openAlert(h) {
+    // from a home page: use that home's city and a price range around it
+    if (h && h.address) {
+      if (!$('f-q').value.trim() && h.address.city) $('f-q').value = h.address.city;
+      if (!$('f-max').value && h.listPrice) { var mxv = String(Math.ceil(h.listPrice * 1.15 / 10000) * 10000); var sel = $('f-max'); if (![].some.call(sel.options, function (o) { return o.value === mxv; })) { var o = document.createElement('option'); o.value = mxv; o.textContent = short(+mxv); sel.appendChild(o); } sel.value = mxv; }
+      if (!$('f-beds').value && h.property && h.property.bedrooms) $('f-beds').value = String(Math.min(h.property.bedrooms, 5));
+    }
+    $('al-what').textContent = alertWhat();
+    $('al-form').hidden = alSent; $('al-done').hidden = !alSent; $('al-msg').textContent = '';
+    $('al').classList.add('open');
+    if (!alSent) setTimeout(function () { $('al-name').focus(); }, 50);
+  }
+  function closeAlert() { $('al').classList.remove('open'); }
+  if (ALERTS_URL) document.querySelectorAll('[data-alert]').forEach(function (b) { b.hidden = false; });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-alert]'); if (!b || !ALERTS_URL) return;
+    openAlert(b.closest('#sp-modal') ? cur : null);
+  });
+  $('al-x').onclick = closeAlert;
+  $('al').addEventListener('click', function (e) { if (e.target.id === 'al') closeAlert(); });
+  $('al-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target, name = f.name.value.trim(), email = f.email.value.trim();
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('al-msg').textContent = t('Please add your name and a good email.', 'Escriba su nombre y un correo válido.'); return; }
+    if (!f.consent.checked) { $('al-msg').textContent = t('Please check the box so I can email you.', 'Marque la casilla para poder enviarle correos.'); return; }
+    var d = new URLSearchParams();
+    d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim());
+    d.set('freq', f.freq.value); d.set('consent', 'yes'); d.set('botcheck', f.botcheck.value);
+    var aid = getAid() || newId(); d.set('id', aid);
+    d.set('lang', document.documentElement.lang || 'en'); d.set('source', location.href.slice(0, 200));
+    d.set('q', $('f-q').value.trim()); d.set('minprice', $('f-min').value); d.set('maxprice', $('f-max').value);
+    d.set('minbeds', $('f-beds').value); d.set('minbaths', $('f-baths').value); d.set('type', $('f-type').value);
+    if (!$('f-q').value.trim()) {
+      var b = map.getBounds();
+      d.set('points', [[b.getNorth(), b.getWest()], [b.getNorth(), b.getEast()], [b.getSouth(), b.getEast()], [b.getSouth(), b.getWest()]]
+        .map(function (pt) { return pt[0].toFixed(5) + ',' + pt[1].toFixed(5); }).join('|'));
+    }
+    f.querySelector('.al-send').disabled = true;
+    fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
+      alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false;
+    }).catch(function () {
+      $('al-msg').textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.');
+    }).then(function () { f.querySelector('.al-send').disabled = false; });
+  });
 
   $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); load(false); });
   ['f-min', 'f-max', 'f-beds', 'f-baths', 'f-type'].forEach(function (id) { $(id).addEventListener('change', function () { load(false); }); });
   $('sp-more').onclick = function () { load(true); };
   map.on('moveend', function () {
     if (skipMove) { skipMove = false; return; }
+    if (savedMode) return;
     if ($('f-q').value.trim()) return;
     clearTimeout(moveTimer); moveTimer = setTimeout(function () { load(false); }, 350);
   });
@@ -330,10 +920,31 @@
     .then(function (o) {
       var u = o.lastUpdate || (o.updates && Object.keys(o.updates).map(function (k) { return o.updates[k]; }).filter(Boolean).sort().pop());
       var d = u && new Date(u);
-      if (d && !isNaN(d)) $('sp-updated').textContent = 'Listing data last updated ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
+      if (d && !isNaN(d)) $('sp-updated').textContent = t('Listing data last updated ', 'Información actualizada el ') + d.toLocaleString(ES ? 'es-US' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
     }).catch(function () {});
 
+  $('sp-more-f').onclick = function () { var f = $('sp-form'), o = f.classList.toggle('open'); this.setAttribute('aria-expanded', o); };
+
+  // Start from a link like ?maxprice=272000&minbeds=3 (used by the affordability calculator)
+  (function () {
+    var u = new URLSearchParams(location.search);
+    function setSel(id, v) {
+      if (!v || !/^\d+$/.test(v)) return;
+      var el = $(id);
+      if (![].some.call(el.options, function (o) { return o.value === v; })) {
+        var o = document.createElement('option'); o.value = v; o.textContent = id === 'f-min' || id === 'f-max' ? short(+v) : v + '+';
+        el.appendChild(o);
+      }
+      el.value = v;
+    }
+    setSel('f-min', u.get('minprice')); setSel('f-max', u.get('maxprice'));
+    setSel('f-beds', u.get('minbeds')); setSel('f-baths', u.get('minbaths'));
+    if (u.get('q')) $('f-q').value = u.get('q').slice(0, 80);
+  })();
+
   load(false);
+  var deep = (location.hash.match(/^#home=(\d+)/) || [])[1];
+  if (deep) openById(deep);
 })();
 </script>
 </body>
