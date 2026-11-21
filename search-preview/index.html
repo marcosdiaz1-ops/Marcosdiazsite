@@ -212,6 +212,26 @@
   .hd-top .fav { background: none; box-shadow: none; width: auto; height: auto; border-radius: 8px; padding: 8px 10px; display: inline-flex; gap: 6px; }
   .hd-top .fav svg { width: 18px; height: 18px; }
   .hd-link { display: block; text-align: center; font-size: 14px; color: var(--gold-ink); margin-top: 10px; }
+  /* ===== Tour booking window (Calendly inside the page) ===== */
+  .tr { position: fixed; inset: 0; background: rgba(13,23,48,.6); z-index: 3300; display: none; align-items: center; justify-content: center; padding: 16px; }
+  .tr.open { display: flex; }
+  .tr-box { background: #fff; border-radius: 16px; width: 100%; max-width: 720px; max-height: 94vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .tr-head { display: flex; gap: 14px; align-items: center; padding: 16px 52px 14px 18px; border-bottom: 1px solid var(--line); }
+  .tr-head img { width: 96px; height: 68px; object-fit: cover; border-radius: 8px; flex: none; }
+  .tr-head h2 { font-size: 24px; margin: 0 0 2px; }
+  .tr-head p { margin: 0; font-size: 14px; color: var(--ink); line-height: 1.4; }
+  .tr-body { flex: 1; min-height: 520px; overflow: auto; position: relative; }
+  .tr-body .calendly-inline-widget, .tr-body iframe { width: 100%; min-height: 640px; border: 0; }
+  .tr-load { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text); font-size: 15px; }
+  .tr-done { padding: 40px 24px; text-align: center; }
+  .tr-done b { display: block; font-size: 24px; color: var(--ink); margin-bottom: 8px; }
+  .tr-note { font-size: 12px; color: #777; padding: 8px 18px 12px; border-top: 1px solid var(--line); }
+  @media (max-width: 600px) {
+    .tr { padding: 0; align-items: stretch; }
+    .tr-box { max-height: none; height: 100%; border-radius: 0; }
+    .tr-head img { width: 72px; height: 54px; }
+    .tr-head h2 { font-size: 20px; }
+  }
   .sp-disc { font-size: 12px; color: #666; margin-top: 18px; line-height: 1.5; }
   @media (max-width: 860px) {
     .sp-hero { padding: 96px 0 30px; }
@@ -308,6 +328,14 @@
   <button type="button" class="hd-lb-nav hd-lb-next" id="hd-lb-next" aria-label="Next photo">&#8250;</button>
 </div>
 <div class="hd-toast" id="hd-toast" role="status"></div>
+<div class="tr" id="tr" role="dialog" aria-modal="true" aria-labelledby="tr-h">
+  <div class="tr-box">
+    <button type="button" class="al-x" id="tr-x" aria-label="Close">&times;</button>
+    <div class="tr-head" id="tr-head"></div>
+    <div class="tr-body" id="tr-body"></div>
+    <p class="tr-note" id="tr-note"></p>
+  </div>
+</div>
 <div class="al" id="cmp" role="dialog" aria-modal="true" aria-labelledby="cmp-h">
   <div class="al-box" style="max-width:900px">
     <button type="button" class="al-x" id="cmp-x" aria-label="Close">&times;</button>
@@ -615,14 +643,14 @@
       '</div>' +
       '<aside class="hd-side"><div class="hd-card">' +
         '<div class="hd-agent"><img src="/images/marcos-headshot.jpg" alt=""><div><b>Marcos Diaz</b><span>Broker Associate · Keller Williams Realty Sioux Falls</span></div></div>' +
-        '<a class="hd-btn hd-b1" href="' + book + '" target="_blank" rel="noopener">' + t('Schedule a showing', 'Agendar una visita') + '<small>' + t('Pick a time on my calendar', 'Escoja una hora en mi calendario') + '</small></a>' +
+        '<a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Schedule a showing', 'Agendar una visita') + '<small>' + t('Pick a time on my calendar', 'Escoja una hora en mi calendario') + '</small></a>' +
         '<a class="hd-btn hd-b2" href="tel:+16058389140">' + t('Call', 'Llamar') + ' 605-838-9140</a>' +
         '<a class="hd-btn hd-b3" href="' + payUrl(h) + '">' + t('What would my payment be?', '¿Cuánto sería mi pago?') + '</a>' +
         '<a class="hd-link" href="' + sms + '">' + t('Or text me about this home', 'O envíeme un texto sobre esta casa') + '</a>' +
         (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>' + t('Email me new homes like this', 'Envíenme casas nuevas como esta') + '</button>' : '') +
         '<p class="hd-note">' + t('Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.', '¿No está seguro? Le puedo decir qué hay cerca, en cuánto se vendieron casas parecidas y si el precio es justo.') + '</p>' +
       '</div></aside></div>' +
-      '<div class="hd-dock"><a class="hd-btn hd-b1" href="' + book + '" target="_blank" rel="noopener">' + t('Book a showing', 'Agendar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
+      '<div class="hd-dock"><a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Book a showing', 'Agendar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
 
     $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
     trackView(h);
@@ -682,6 +710,7 @@
   $('hd-lb-prev').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' }); };
   $('hd-lb-next').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' }); };
   document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && $('tr').classList.contains('open')) { closeTour(); return; }
     if (e.key === 'Escape' && $('cmp').classList.contains('open')) { $('cmp').classList.remove('open'); return; }
     if (e.key === 'Escape' && $('al').classList.contains('open')) { closeAlert(); return; }
     if ($('hd-lb').classList.contains('open')) {
@@ -838,6 +867,52 @@
         $('dv-c').onclick = function () { setWork(null); drive(h); };
       }).catch(function () { box.innerHTML = '<p class="note">' + t('Drive time isn’t available right now.', 'El tiempo de manejo no está disponible ahora.') + ' <button type="button" class="chg" id="dv-c">' + t('Change place', 'Cambiar lugar') + '</button></p>'; $('dv-c').onclick = function () { setWork(null); drive(h); }; });
   }
+
+  // Tour booking: Marcos's Calendly "Home Showing" calendar, shown inside the page
+  var tourHome = null, calLoaded = null;
+  function loadCalendly() {
+    if (calLoaded) return calLoaded;
+    calLoaded = new Promise(function (ok, bad) {
+      var sc = document.createElement('script'); sc.src = 'https://assets.calendly.com/assets/external/widget.js'; sc.async = true;
+      sc.onload = function () { ok(); }; sc.onerror = function () { calLoaded = null; bad(); };
+      document.head.appendChild(sc);
+    });
+    return calLoaded;
+  }
+  function openTour(h, href) {
+    tourHome = h;
+    var p = h.property || {}, a = h.address || {};
+    var street = showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible');
+    var photo = (h.photos && h.photos[0]) || '';
+    $('tr-head').innerHTML = (photo ? '<img src="' + esc(photo) + '" alt="">' : '') +
+      '<div><h2 id="tr-h">' + t('Schedule a showing', 'Agendar una visita') + '</h2>' +
+      '<p><b>' + esc(street) + '</b>, ' + esc(a.city || '') + '<br>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba', ' baños') + (p.area ? ' · ' + p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + ' · ' + money(h.listPrice) + '</p></div>';
+    $('tr-note').textContent = t('Pick a time and I’ll meet you at the home. Questions? Call or text 605-838-9140.', 'Escoja una hora y lo veo en la casa. ¿Preguntas? Llame o envíe un texto al 605-838-9140.');
+    $('tr-body').innerHTML = '<div class="tr-load">' + t('Loading my calendar…', 'Cargando mi calendario…') + '</div>';
+    $('tr').classList.add('open'); document.body.classList.add('sp-lock');
+    var home = t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
+    loadCalendly().then(function () {
+      $('tr-body').innerHTML = '';
+      window.Calendly.initInlineWidget({
+        url: BOOK_URL + '?hide_event_type_details=1&hide_gdpr_banner=1&primary_color=b98b5c&text_color=1a2237',
+        parentElement: $('tr-body'),
+        prefill: { customAnswers: { a1: home } }
+      });
+    }).catch(function () { window.open(href, '_blank', 'noopener'); closeTour(); });
+  }
+  function closeTour() { $('tr').classList.remove('open'); if (!$('sp-modal').classList.contains('open')) document.body.classList.remove('sp-lock'); }
+  $('tr-x').onclick = closeTour;
+  $('tr').addEventListener('click', function (e) { if (e.target.id === 'tr') closeTour(); });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tour]'); if (!b || !cur) return;
+    e.preventDefault(); openTour(cur, b.href);
+  });
+  // When the booking is done, show a thank-you and count it as strong interest for their alerts
+  window.addEventListener('message', function (e) {
+    if (e.origin !== 'https://calendly.com' || !e.data || e.data.event !== 'calendly.event_scheduled') return;
+    if (tourHome) trackView(tourHome);
+    $('tr-note').textContent = t('You’re booked! Check your email for the details. I’ll reach out to confirm.', '¡Listo! Revise su correo para ver los detalles. Me comunicaré con usted para confirmar.');
+  });
 
   // ===== New listing alerts (saved to Marcos's "Listing Alert Leads" Google Sheet) =====
   function alertWhat() {
