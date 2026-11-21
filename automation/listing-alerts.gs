@@ -36,6 +36,7 @@ const OWNER_NAME = 'Marcos Diaz';
 const PHONE = '605-838-9140';
 const SITE = 'https://605homesearch.com';
 const SEARCH_PAGE = SITE + '/search/';           // where "See this home" links go
+const SEARCH_PAGE_ES = SITE + '/es/buscar-casas/';  // same, for Spanish-speaking subscribers
 const LISTINGS_API = 'https://listings.605homesearch.com/properties';
 // Public web app link (used for the unsubscribe link in every email)
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxklqP-b5JNN1e2hsuwLXQvC0P6_4ZmJBORJLDojLWMwqWiUx5JFn0oiKDVXvu4c-6-/exec';
@@ -384,7 +385,7 @@ function sendEmail_(a, id, homes, welcome, total, allHomes) {
           : 'Hi ' + first + ', here’s what changed in your search (<b>' + esc_(what) + '</b>): ' + summary_(allHomes || homes, false) + '.');
   const cards = homes.map(function (h) { return card_(h, es, id); }).join('');
   const more = total && total > homes.length
-    ? '<p><a href="' + SEARCH_PAGE + '?a=' + encodeURIComponent(id) + '" style="color:#8a6236">' + (es ? 'Ver más casas →' : 'See more homes →') + '</a></p>' : '';
+    ? '<p><a href="' + (es ? SEARCH_PAGE_ES : SEARCH_PAGE) + '?a=' + encodeURIComponent(id) + '" style="color:#8a6236">' + (es ? 'Ver más casas →' : 'See more homes →') + '</a></p>' : '';
   const html =
     '<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#1a2237;font-size:15px;line-height:1.5">' +
     '<div style="background:#13203b;color:#fff;padding:16px 20px"><b style="font-size:18px">Marcos Diaz</b><br><span style="color:#d7b48c;font-size:12px;letter-spacing:2px">KELLER WILLIAMS REALTY SIOUX FALLS</span></div>' +
@@ -419,7 +420,7 @@ function card_(h, es, id) {
   const street = showAddr ? cleanAddr_(ad.full) + ', ' : '';
   const baths = (p.bathsFull || 0) + (p.bathsHalf ? 0.5 * p.bathsHalf : 0) || p.bathrooms || '';
   const photo = h.photos && h.photos[0];
-  const link = SEARCH_PAGE + (id ? '?a=' + encodeURIComponent(id) : '') + '#home=' + h.mlsId;
+  const link = (es ? SEARCH_PAGE_ES : SEARCH_PAGE) + (id ? '?a=' + encodeURIComponent(id) : '') + '#home=' + h.mlsId;
   const contact = (of.contact && (of.contact.office || of.contact.email)) || '';
   const courtesy = (es ? 'Cortesía de ' : 'Listing courtesy of ') + esc_(of.name || '') + ([ag.firstName, ag.lastName].filter(Boolean).length ? ' · ' + esc_([ag.firstName, ag.lastName].filter(Boolean).join(' ')) : '') + (contact ? ' · ' + esc_(contact) : '');
   return '<table cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #e2d8ca;border-radius:10px;margin:14px 0;border-collapse:separate;overflow:hidden"><tr><td>' +
