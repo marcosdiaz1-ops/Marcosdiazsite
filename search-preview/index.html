@@ -75,7 +75,7 @@
   @media (max-width: 860px) {
     .sp-hero { padding: 96px 0 30px; }
     .sp-bar { top: 58px; }
-    .sp-toggle { display: flex; }
+    .sp-toggle { display: flex; bottom: calc(74px + env(safe-area-inset-bottom)); }
     .sp-more-f { display: inline-block !important; }
     .sp-extra { display: none; }
     .sp-filters.open .sp-extra { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
@@ -84,7 +84,7 @@
     .sp-filters > button { flex: 1; }
     .sp-body { display: block; height: auto; min-height: 0; }
     #sp-map { height: 68vh; }
-    .sp-list { overflow: visible; padding: 0 0 70px; }
+    .sp-list { overflow: visible; padding: 0 0 140px; }
     .sp-cards { grid-template-columns: 1fr; }
     .sp-body.show-list #sp-map { display: none; }
     .sp-body.show-map .sp-list { display: none; }
