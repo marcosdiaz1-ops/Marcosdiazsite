@@ -123,6 +123,11 @@
     .sp-box { padding: 0 0 120px; }
     .hd-top { padding: 8px 10px; margin: 0; }
     .hd-top button { font-size: 14px; padding: 6px 7px; gap: 4px; }
+  }
+  @media (max-width: 440px) {
+    .hd-top .lbl { display: none; }
+    .hd-top .fav, #hd-share { padding: 8px 10px; }
+    .hd-top svg { width: 22px !important; height: 22px !important; }
     .hd-gal { display: flex; height: 300px; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0; scrollbar-width: none; }
     .hd-gal::-webkit-scrollbar { display: none; }
     .hd-gal button { flex: 0 0 100%; scroll-snap-align: start; }
@@ -587,7 +592,7 @@
 
     $('sp-detail').innerHTML =
       '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>' + t('Back to search', 'Volver a la búsqueda') + '</button>' +
-      '<span>' + favBtn(h, true) + '<button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg>' + t('Share', 'Compartir') + '</button></span></div>' +
+      '<span>' + favBtn(h, true) + '<button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg><span class="lbl">' + t('Share', 'Compartir') + '</span></button></span></div>' +
       '<div class="hd-galwrap">' +
         '<div class="hd-gal n' + Math.min(n, 5) + '" id="hd-gal">' + (window.innerWidth <= 900 ? mobileTiles : tiles) + '</div>' +
         '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? t('New listing', 'Nueva en el mercado') : esc(statusTxt(h))) + '</span>' +
@@ -722,7 +727,7 @@
   function favBtn(h, big) {
     if (!h.mlsId) return '';
     var on = isFav(h.mlsId);
-    return '<button type="button" class="fav' + (on ? ' on' : '') + '" data-fav="' + esc(h.mlsId) + '" aria-pressed="' + on + '" aria-label="' + t('Save home', 'Guardar casa') + '">' + HEART + (big ? '<span>' + (on ? t('Saved', 'Guardada') : t('Save', 'Guardar')) + '</span>' : '') + '</button>';
+    return '<button type="button" class="fav' + (on ? ' on' : '') + '" data-fav="' + esc(h.mlsId) + '" aria-pressed="' + on + '" aria-label="' + t('Save home', 'Guardar casa') + '">' + HEART + (big ? '<span class="lbl">' + (on ? t('Saved', 'Guardada') : t('Save', 'Guardar')) + '</span>' : '') + '</button>';
   }
   function toggleFav(id, h) {
     id = String(id); var v = favs(), i = v.indexOf(id);
