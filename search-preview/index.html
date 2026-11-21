@@ -429,7 +429,7 @@
 
   function load(more) {
     if (!more && savedMode) { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); }
-    if (!more) { offset = 0; results = []; $('sp-count').textContent = 'Loading homes…'; }
+    if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); }
     fetch(query(more), { headers: HEADERS })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
@@ -441,7 +441,7 @@
       })
       .catch(function () {
         $('sp-count').textContent = '';
-        $('sp-cards').innerHTML = '<div class="sp-msg">Couldn’t load listings right now. Please try again in a minute.</div>';
+        $('sp-cards').innerHTML = '<div class="sp-msg">' + t('Couldn’t load listings right now. Please try again in a minute.', 'No se pudieron cargar las casas. Intente de nuevo en un minuto.') + '</div>';
       });
   }
 
@@ -475,14 +475,15 @@
     var x = attr(h), c = x.contact;
     if (c && links) c = /@/.test(c) ? '<a href="mailto:' + esc(c) + '">' + esc(c) + '</a>' : '<a href="tel:' + esc(c.replace(/[^0-9+]/g, '')) + '">' + esc(c) + '</a>';
     else c = esc(c);
-    return 'Listing courtesy of ' + esc(x.office) + (x.agent ? ' · ' + esc(x.agent) : '') + (c ? ' · ' + c : '');
+    return t('Listing courtesy of ', 'Cortesía de ') + esc(x.office) + (x.agent ? ' · ' + esc(x.agent) : '') + (c ? ' · ' + c : '');
   }
 
+  function statusTxt(h) { var st = String((h.mls && (h.mls.statusText || h.mls.status)) || 'Active'); return ES ? ({ Active: 'Activa', Pending: 'Pendiente', ActiveUnderContract: 'Bajo contrato', 'Active Under Contract': 'Bajo contrato' }[st] || st) : st; }
   function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
 
   function render(fit) {
     var real = results.filter(function (h) { return !h._sample; }).length;
-    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + ' homes in this area' + (LIVE ? '' : ' (plus 1 test listing)') : 'No homes match. Try zooming out or changing filters.';
+    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + t(' homes in this area', ' casas en esta área') + (LIVE ? '' : ' (plus 1 test listing)') : t('No homes match. Try zooming out or changing filters.', 'No hay casas que coincidan. Aleje el mapa o cambie los filtros.');
     layer.clearLayers(); markers = {};
     var pts = [];
     $('sp-cards').innerHTML = results.map(function (h, i) {
@@ -494,9 +495,9 @@
       }
       var photo = (h.photos && h.photos[0]) || '';
       return '<div class="sp-card" data-i="' + i + '">' +
-        '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc((h.mls && h.mls.status) || 'Active') + '</span>' + favBtn(h) + '</div>' +
+        '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc(statusTxt(h)) + '</span>' + favBtn(h) + '</div>' +
         '<div class="in"><div class="pr">' + money(h.listPrice) + '</div>' +
-        '<div class="st">' + (p.bedrooms || 0) + ' bd · ' + baths(h) + ' ba · ' + (p.area ? p.area.toLocaleString() + ' sq ft' : '') + '</div>' +
+        '<div class="st">' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba · ', ' baños · ') + (p.area ? p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + '</div>' +
         '<div class="ad">' + (showAddr(h) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city) + '</div>' +
         cardTags(h) +
         '<div class="co">' + attrHtml(h, false) + '</div>' +
@@ -535,8 +536,8 @@
   function ic(n) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[n] + '</svg>'; }
   function list(s) { return String(s || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean).join(', '); }
   function lotText(p) {
-    if (p.lotSizeArea) return Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? 'sq ft' : 'acres')) + ' lot';
-    if (p.acres) return p.acres + ' acre lot';
+    if (p.lotSizeArea) return Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? t('sq ft', 'pies²') : t('acres', 'acres'))) + t(' lot', ' de terreno');
+    if (p.acres) return p.acres + t(' acre lot', ' acres de terreno');
     return '';
   }
   function showAddr(h) { return h.internetAddressDisplay !== false; }
@@ -545,8 +546,8 @@
   function openDetail(i) { show(results[i]); }
   function show(h) {
     cur = h;
-    var p = h.property || {}, a = h.address || {}, s = h.school || {}, t = h.tax || {}, as = h.association || {}, m = h.mls || {};
-    var street = showAddr(h) ? cleanAddr(a.full) : 'Address not shown';
+    var p = h.property || {}, a = h.address || {}, s = h.school || {}, tx = h.tax || {}, as = h.association || {}, m = h.mls || {};
+    var street = showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible');
     var addr = street + ', ' + (a.city || '') + ', ' + (a.state || '') + ' ' + (a.postalCode || '');
     var photos = h.photos || [];
     var n = photos.length;
@@ -554,55 +555,55 @@
     var dom = m.daysOnMarket;
     var chips = [
       ['home', p.subTypeText || p.style || ''],
-      ['cal', p.yearBuilt && 'Built in ' + p.yearBuilt],
+      ['cal', p.yearBuilt && t('Built in ', 'Construida en ') + p.yearBuilt],
       ['lot', lotText(p)],
       ['tag', ppsf],
-      ['car', p.garageSpaces && Math.round(p.garageSpaces) + '-car garage'],
-      ['clock', dom != null && (dom === 0 ? 'Listed today' : dom + (dom === 1 ? ' day' : ' days') + ' on market')],
-      ['hoa', as.fee ? money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '') + ' HOA' : 'No HOA listed'],
+      ['car', p.garageSpaces && t('', 'Garaje para ') + Math.round(p.garageSpaces) + t('-car garage', ' autos')],
+      ['clock', dom != null && (dom === 0 ? t('Listed today', 'Salió hoy') : dom + (dom === 1 ? t(' day', ' día') : t(' days', ' días')) + t(' on market', ' en el mercado'))],
+      ['hoa', as.fee ? money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '') + t(' HOA', ' cuota HOA') : t('No HOA listed', 'Sin cuota HOA')],
       ['temp', p.heating],
       ['snow', p.cooling]
     ].filter(function (c) { return c[1]; });
     var groups = [
-      ['Interior', [['Bedrooms', p.bedrooms], ['Full baths', p.bathsFull], ['3/4 baths', p.bathsThreeQuarter], ['Half baths', p.bathsHalf], ['Finished sq ft', p.area && p.area.toLocaleString()], ['Flooring', list(p.flooring)], ['Fireplaces', p.fireplaces], ['Features', list(p.interiorFeatures)], ['Laundry', list(p.laundryFeatures)]]],
-      ['Heating &amp; cooling', [['Heating', p.heating], ['Cooling', p.cooling]]],
-      ['Building', [['Style', p.style], ['Type', p.subTypeText], ['Year built', p.yearBuilt], ['Siding', list(p.construction)], ['Roof', list(p.roof)], ['Foundation', p.foundation], ['Stories', p.stories]]],
-      ['Lot &amp; outside', [['Lot', lotText(p).replace(/ lot$/, '')], ['Lot description', list(p.lotDescription)], ['Outside', list(p.exteriorFeatures)], ['Garage', p.garageSpaces && Math.round(p.garageSpaces) + ' spaces'], ['Parking', p.parking && p.parking.description], ['Water', p.water]]],
-      ['Schools', [['District', s.district], ['Elementary', s.elementarySchool], ['Middle', s.middleSchool], ['High', s.highSchool]]],
-      ['Taxes &amp; area', [['Yearly taxes', t.taxAnnualAmount && money(t.taxAnnualAmount) + (t.taxYear ? ' (' + t.taxYear + ')' : '')], ['HOA', as.fee && money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '')], ['Subdivision', p.subdivision], ['County', h.geo && h.geo.county], ['MLS #', h.listingId]]]
+      [t('Interior', 'Interior'), [[t('Bedrooms', 'Recámaras'), p.bedrooms], [t('Full baths', 'Baños completos'), p.bathsFull], [t('3/4 baths', 'Baños 3/4'), p.bathsThreeQuarter], [t('Half baths', 'Medios baños'), p.bathsHalf], [t('Finished sq ft', 'Pies² terminados'), p.area && p.area.toLocaleString()], [t('Flooring', 'Pisos'), list(p.flooring)], [t('Fireplaces', 'Chimeneas'), p.fireplaces], [t('Features', 'Detalles'), list(p.interiorFeatures)], [t('Laundry', 'Lavandería'), list(p.laundryFeatures)]]],
+      [t('Heating &amp; cooling', 'Calefacción y aire'), [[t('Heating', 'Calefacción'), p.heating], [t('Cooling', 'Aire acondicionado'), p.cooling]]],
+      [t('Building', 'Construcción'), [[t('Style', 'Estilo'), p.style], [t('Type', 'Tipo'), p.subTypeText], [t('Year built', 'Año de construcción'), p.yearBuilt], [t('Siding', 'Exterior'), list(p.construction)], [t('Roof', 'Techo'), list(p.roof)], [t('Foundation', 'Cimientos'), p.foundation], [t('Stories', 'Pisos'), p.stories]]],
+      [t('Lot &amp; outside', 'Terreno y exterior'), [[t('Lot', 'Terreno'), lotText(p).replace(/ lot$| de terreno$/, '')], [t('Lot description', 'Tipo de terreno'), list(p.lotDescription)], [t('Outside', 'Afuera'), list(p.exteriorFeatures)], [t('Garage', 'Garaje'), p.garageSpaces && Math.round(p.garageSpaces) + t(' spaces', ' espacios')], [t('Parking', 'Estacionamiento'), p.parking && p.parking.description], [t('Water', 'Agua'), p.water]]],
+      [t('Schools', 'Escuelas'), [[t('District', 'Distrito'), s.district], [t('Elementary', 'Primaria'), s.elementarySchool], [t('Middle', 'Secundaria'), s.middleSchool], [t('High', 'Preparatoria'), s.highSchool]]],
+      [t('Taxes &amp; area', 'Impuestos y zona'), [[t('Yearly taxes', 'Impuestos al año'), tx.taxAnnualAmount && money(tx.taxAnnualAmount) + (tx.taxYear ? ' (' + tx.taxYear + ')' : '')], [t('HOA', 'Cuota HOA'), as.fee && money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '')], [t('Subdivision', 'Fraccionamiento'), p.subdivision], [t('County', 'Condado'), h.geo && h.geo.county], ['MLS #', h.listingId]]]
     ].map(function (g) { return [g[0], g[1].filter(function (r) { return r[1] !== undefined && r[1] !== null && r[1] !== '' && r[1] !== 0; })]; })
      .filter(function (g) { return g[1].length; });
 
-    var msg = "Hi Marcos, I'd like to see " + street + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
+    var msg = t("Hi Marcos, I'd like to see ", 'Hola Marcos, quiero ver ') + street + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
     var sms = 'sms:+16058389140?&body=' + encodeURIComponent(msg);
     var book = BOOK_URL + '?a1=' + encodeURIComponent(t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : ''));
-    var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
+    var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="' + t('Open photo ', 'Abrir foto ') + (k + 1) + '"></button>'; }).join('');
     var mobileTiles = photos.map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
     var isNew = dom != null && dom <= 7;
     var remarks = h.remarks || '';
 
     $('sp-detail').innerHTML =
-      '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Back to search</button>' +
-      '<span>' + favBtn(h, true) + '<button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg>Share</button></span></div>' +
+      '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>' + t('Back to search', 'Volver a la búsqueda') + '</button>' +
+      '<span>' + favBtn(h, true) + '<button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg>' + t('Share', 'Compartir') + '</button></span></div>' +
       '<div class="hd-galwrap">' +
         '<div class="hd-gal n' + Math.min(n, 5) + '" id="hd-gal">' + (window.innerWidth <= 900 ? mobileTiles : tiles) + '</div>' +
-        '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? 'New listing' : esc(m.statusText || m.status || 'For sale')) + '</span>' +
-        (n > 5 ? '<button type="button" class="hd-all" id="hd-all">▦ See all ' + n + ' photos</button>' : '') +
+        '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? t('New listing', 'Nueva en el mercado') : esc(statusTxt(h))) + '</span>' +
+        (n > 5 ? '<button type="button" class="hd-all" id="hd-all">▦ ' + t('See all ', 'Ver las ') + n + t(' photos', ' fotos') + '</button>' : '') +
         (n > 1 ? '<span class="hd-count" id="hd-count">1 / ' + n + '</span>' : '') +
       '</div>' +
       '<div class="hd-grid"><div>' +
         '<div class="hd-head"><div><div class="hd-price">' + money(h.listPrice) + '</div><div class="hd-addr">' + esc(addr) + '</div></div>' +
-        '<div class="hd-stats"><div><b>' + (p.bedrooms || 0) + '</b>beds</div><div><b>' + baths(h) + '</b>baths</div>' + (p.area ? '<div><b>' + p.area.toLocaleString() + '</b>sq ft</div>' : '') + '</div></div>' +
+        '<div class="hd-stats"><div><b>' + (p.bedrooms || 0) + '</b>' + t('beds', 'recámaras') + '</div><div><b>' + baths(h) + '</b>' + t('baths', 'baños') + '</div>' + (p.area ? '<div><b>' + p.area.toLocaleString() + '</b>' + t('sq ft', 'pies²') + '</div>' : '') + '</div></div>' +
         '<p class="hd-attr">' + attrHtml(h, true) + '</p>' +
         histHtml(h) + dpaHtml(h) +
         '<div class="hd-chips">' + chips.map(function (c) { return '<div class="hd-chip">' + ic(c[0]) + '<span>' + esc(c[1]) + '</span></div>'; }).join('') + '</div>' +
-        (remarks ? '<div class="hd-sec"><h2>About this home</h2><p id="hd-rem">' + esc(remarks.length > 420 ? remarks.slice(0, 420).replace(/\s+\S*$/, '') + '…' : remarks) + '</p>' + (remarks.length > 420 ? '<button type="button" class="hd-more" id="hd-remmore">Show more</button>' : '') + '</div>' : '') +
-        '<div class="hd-sec"><h2>Facts &amp; features</h2><div class="hd-facts">' + groups.map(function (g) {
+        (remarks ? '<div class="hd-sec"><h2>' + t('About this home', 'Sobre esta casa') + '</h2><p id="hd-rem">' + esc(remarks.length > 420 ? remarks.slice(0, 420).replace(/\s+\S*$/, '') + '…' : remarks) + '</p>' + (remarks.length > 420 ? '<button type="button" class="hd-more" id="hd-remmore">' + t('Show more', 'Ver más') + '</button>' : '') + '</div>' : '') +
+        '<div class="hd-sec"><h2>' + t('Facts &amp; features', 'Detalles de la casa') + '</h2><div class="hd-facts">' + groups.map(function (g) {
           return '<div><h3>' + g[0] + '</h3><ul>' + g[1].map(function (r) { return '<li>' + r[0] + ': <b>' + esc(r[1]) + '</b></li>'; }).join('') + '</ul></div>';
         }).join('') + '</div></div>' +
-        (showAddr(h) && h.geo && h.geo.lat ? '<div class="hd-sec"><h2>Location</h2><div id="hd-map"></div></div>' +
+        (showAddr(h) && h.geo && h.geo.lat ? '<div class="hd-sec"><h2>' + t('Location', 'Ubicación') + '</h2><div id="hd-map"></div></div>' +
           '<div class="hd-sec hd-drive"><h2>' + t('Drive time', 'Tiempo de manejo') + '</h2><div id="hd-drive"></div></div>' : '') +
-        '<div class="hd-courtesy">' + attrHtml(h, false) + '. ' + esc(h.disclaimer || 'Information deemed reliable but not guaranteed.') + ' Listing data provided by the REALTOR® Association of the Sioux Empire MLS. Information is deemed reliable but not guaranteed and should be independently verified.</div>' +
+        '<div class="hd-courtesy">' + attrHtml(h, false) + '. ' + esc(h.disclaimer || t('Information deemed reliable but not guaranteed.', 'Información considerada confiable pero no garantizada.')) + ' ' + t('Listing data provided by the REALTOR® Association of the Sioux Empire MLS. Information is deemed reliable but not guaranteed and should be independently verified.', 'Información de las casas proporcionada por el MLS de la REALTOR® Association of the Sioux Empire. La información se considera confiable pero no está garantizada y debe verificarse.') + '</div>' +
       '</div>' +
       '<aside class="hd-side"><div class="hd-card">' +
         '<div class="hd-agent"><img src="/images/marcos-headshot.jpg" alt=""><div><b>Marcos Diaz</b><span>Broker Associate · Keller Williams Realty Sioux Falls</span></div></div>' +
@@ -610,8 +611,8 @@
         '<a class="hd-btn hd-b2" href="tel:+16058389140">' + t('Call', 'Llamar') + ' 605-838-9140</a>' +
         '<a class="hd-btn hd-b3" href="' + payUrl(h) + '">' + t('What would my payment be?', '¿Cuánto sería mi pago?') + '</a>' +
         '<a class="hd-link" href="' + sms + '">' + t('Or text me about this home', 'O envíeme un texto sobre esta casa') + '</a>' +
-        (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>Email me new homes like this</button>' : '') +
-        '<p class="hd-note">Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.</p>' +
+        (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>' + t('Email me new homes like this', 'Envíenme casas nuevas como esta') + '</button>' : '') +
+        '<p class="hd-note">' + t('Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.', '¿No está seguro? Le puedo decir qué hay cerca, en cuánto se vendieron casas parecidas y si el precio es justo.') + '</p>' +
       '</div></aside></div>' +
       '<div class="hd-dock"><a class="hd-btn hd-b1" href="' + book + '" target="_blank" rel="noopener">' + t('Book a showing', 'Agendar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
 
@@ -655,8 +656,8 @@
     var url = location.origin + location.pathname + '#home=' + cur.mlsId;
     var title = money(cur.listPrice) + ' · ' + (showAddr(cur) ? cleanAddr((cur.address || {}).full) + ', ' : '') + ((cur.address || {}).city || '');
     if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
-    try { navigator.clipboard.writeText(url).then(function () { toast('Link copied'); }, function () { prompt('Copy this link:', url); }); }
-    catch (e) { prompt('Copy this link:', url); }
+    try { navigator.clipboard.writeText(url).then(function () { toast(t('Link copied', 'Enlace copiado')); }, function () { prompt(t('Copy this link:', 'Copie este enlace:'), url); }); }
+    catch (e) { prompt(t('Copy this link:', 'Copie este enlace:'), url); }
   }
   // Photo viewer
   function openLb(k) {
@@ -833,11 +834,11 @@
   // ===== New listing alerts (saved to Marcos's "Listing Alert Leads" Google Sheet) =====
   function alertWhat() {
     var bits = [], q = $('f-q').value.trim();
-    bits.push(q || 'Homes in this map area');
+    bits.push(q || t('Homes in this map area', 'Casas en esta área del mapa'));
     var mn = $('f-min').value, mx = $('f-max').value;
-    if (mn && mx) bits.push(short(+mn) + '–' + short(+mx)); else if (mx) bits.push('up to ' + short(+mx)); else if (mn) bits.push(short(+mn) + '+');
-    if ($('f-beds').value) bits.push($('f-beds').value + '+ beds');
-    if ($('f-baths').value) bits.push($('f-baths').value + '+ baths');
+    if (mn && mx) bits.push(short(+mn) + '–' + short(+mx)); else if (mx) bits.push(t('up to ', 'hasta ') + short(+mx)); else if (mn) bits.push(short(+mn) + '+');
+    if ($('f-beds').value) bits.push($('f-beds').value + t('+ beds', '+ recámaras'));
+    if ($('f-baths').value) bits.push($('f-baths').value + t('+ baths', '+ baños'));
     if ($('f-type').value) bits.push($('f-type').selectedOptions[0].textContent);
     return bits.join(' · ');
   }
@@ -865,8 +866,8 @@
   $('al-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var f = e.target, name = f.name.value.trim(), email = f.email.value.trim();
-    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('al-msg').textContent = 'Please add your name and a good email.'; return; }
-    if (!f.consent.checked) { $('al-msg').textContent = 'Please check the box so I can email you.'; return; }
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('al-msg').textContent = t('Please add your name and a good email.', 'Escriba su nombre y un correo válido.'); return; }
+    if (!f.consent.checked) { $('al-msg').textContent = t('Please check the box so I can email you.', 'Marque la casilla para poder enviarle correos.'); return; }
     var d = new URLSearchParams();
     d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim());
     d.set('freq', f.freq.value); d.set('consent', 'yes'); d.set('botcheck', f.botcheck.value);
@@ -883,7 +884,7 @@
     fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
       alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false;
     }).catch(function () {
-      $('al-msg').textContent = 'That didn’t go through. Please try again, or text me at 605-838-9140.';
+      $('al-msg').textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.');
     }).then(function () { f.querySelector('.al-send').disabled = false; });
   });
 
@@ -911,7 +912,7 @@
     .then(function (o) {
       var u = o.lastUpdate || (o.updates && Object.keys(o.updates).map(function (k) { return o.updates[k]; }).filter(Boolean).sort().pop());
       var d = u && new Date(u);
-      if (d && !isNaN(d)) $('sp-updated').textContent = 'Listing data last updated ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
+      if (d && !isNaN(d)) $('sp-updated').textContent = t('Listing data last updated ', 'Información actualizada el ') + d.toLocaleString(ES ? 'es-US' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
     }).catch(function () {});
 
   $('sp-more-f').onclick = function () { var f = $('sp-form'), o = f.classList.toggle('open'); this.setAttribute('aria-expanded', o); };
