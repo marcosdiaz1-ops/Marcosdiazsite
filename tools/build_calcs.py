@@ -50,8 +50,6 @@ AFFORD_CSS = '''<style>
   .af-tune { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 8px; }
   .af-tune summary { cursor: pointer; font-weight: 500; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 8px; }
   .af-tune summary::-webkit-details-marker { display: none; }
-  .af-tune summary::before { content: "+"; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--gold); color: var(--gold-ink); font-size: 15px; }
-  .af-tune[open] summary::before { content: "−"; }
   .af-tune .af-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 18px; }
   .af-tune .af-f input { font-size: 1.1rem; }
   .af-rate { font-size: .85rem; color: var(--text); margin-top: 6px; }
