@@ -9,6 +9,11 @@
  *   2. It emails the person a welcome with homes that match right now.
  *   3. Every morning it checks the MLS for NEW homes matching each person's search and emails
  *      them (daily or weekly, their choice). Each email has an unsubscribe link.
+ *   4. Learns from them: when a signed-up person opens homes on the website (or from an alert
+ *      email), each view is saved on the "Activity" tab. After 3+ views it updates their search
+ *      (city, price range, beds) to match what they actually look at. Set "Auto-adjust" to No on
+ *      a row to stop that for one person.
+ *   5. Hot lead notice: if someone opens the same home 3 times, Marcos gets a 🔥 email.
  *
  * Setup (one time, about 5 minutes):
  *   - Open the Listing Alert Leads sheet → Extensions → Apps Script → delete what's there,
@@ -37,7 +42,10 @@ const MAX_SIGNUPS_PER_DAY = 40;                   // safety limit against spam a
 const OFFICE = 'Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · 605-275-0555';
 
 const HEADERS = ['Signed up', 'Name', 'Email', 'Phone', 'Search', 'Min price', 'Max price', 'Beds', 'Baths', 'Type',
-                 'Map area', 'How often', 'Language', 'Status', 'Last sent', 'Homes sent', 'Source', 'Notes', 'ID'];
+                 'Map area', 'How often', 'Language', 'Status', 'Last sent', 'Homes sent', 'Source', 'Notes', 'ID',
+                 'Auto-adjust', 'Views', 'Learned'];
+const ACT_HEADERS = ['Date', 'Name', 'Email', 'MLS #', 'Price', 'Beds', 'Baths', 'City', 'Address', 'ID'];
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const C = {}; HEADERS.forEach(function (h, i) { C[h] = i; });
 const TYPES = { residential: 'House', condominium: 'Condo', multifamily: 'Multi-family', land: 'Land' };
 
@@ -45,6 +53,7 @@ const TYPES = { residential: 'House', condominium: 'Condo', multifamily: 'Multi-
 function doPost(e) {
   const p = (e && e.parameter) || {};
   if (p.botcheck) return json_({ ok: true });          // spam trap
+  if (p.action === 'view') { try { handleView_(p); } catch (err) { console.error('view failed', err); } return json_({ ok: true }); }
   const a = {
     name: clean_(p.name, 100),
     email: clean_(p.email, 120).toLowerCase(),
@@ -67,9 +76,10 @@ function doPost(e) {
   let id;
   try {
     const sh = sheet_();
-    id = Utilities.getUuid();
+    ensureHeaders_(sh);
+    id = UUID_RE.test(p.id || '') && !findRow_(sh, p.id) ? String(p.id).toLowerCase() : Utilities.getUuid();
     sh.appendRow([new Date(), a.name, a.email, a.phone ? "'" + a.phone : '', a.q, a.minprice, a.maxprice, a.minbeds, a.minbaths,
-                  a.type ? TYPES[a.type] : '', a.points, a.freq, a.lang, 'Active', new Date(), 0, a.source, '', id]);
+                  a.type ? TYPES[a.type] : '', a.points, a.freq, a.lang, 'Active', new Date(), 0, a.source, '', id, 'Yes', 0, '']);
   } finally {
     lock.releaseLock();
   }
@@ -123,6 +133,129 @@ function sendAlerts() {
   console.log('alert emails sent: ' + sent);
 }
 
+// ---------- Learning from what they view ----------
+function handleView_(p) {
+  const id = String(p.id || '').toLowerCase(), mlsId = String(p.mlsId || '').replace(/[^0-9]/g, '').slice(0, 12);
+  if (!UUID_RE.test(id) || !mlsId) return;
+  const cache = CacheService.getScriptCache();
+  const dayKey = 'v_' + id.slice(0, 8) + '_' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd');
+  const today = Number(cache.get(dayKey) || 0);
+  if (today >= 60) return;                               // safety limit per person per day
+  cache.put(dayKey, String(today + 1), 21600);
+
+  const lock = LockService.getScriptLock();
+  lock.tryLock(10000);
+  try {
+    const sh = sheet_(); ensureHeaders_(sh);
+    const rowNum = findRow_(sh, id); if (!rowNum) return;
+    const r = sh.getRange(rowNum, 1, 1, HEADERS.length).getValues()[0];
+    if (String(r[C.Status]).trim() !== 'Active') return;
+
+    // look the home up on the MLS (don't trust details sent by the browser)
+    const res = UrlFetchApp.fetch(LISTINGS_API + '/' + mlsId, { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) return;
+    const h = JSON.parse(res.getContentText()), hp = h.property || {}, ad = h.address || {};
+    const baths = (hp.bathsFull || 0) + (hp.bathsHalf ? 0.5 * hp.bathsHalf : 0) || hp.bathrooms || '';
+    const addr = h.internetAddressDisplay === false ? '' : cleanAddr_(ad.full);
+    const act = activity_();
+    act.appendRow([new Date(), r[C.Name], r[C.Email], h.listingId || mlsId, h.listPrice || '', hp.bedrooms || '', baths, ad.city || '', addr, id]);
+    const views = (Number(r[C.Views]) || 0) + 1;
+    sh.getRange(rowNum, C.Views + 1).setValue(views);
+
+    const mine = myViews_(act, id);
+    hotLead_(r, id, mlsId, mine, h, addr);
+    if (String(r[C['Auto-adjust']] || 'Yes').trim().toLowerCase() !== 'no' && mine.length >= 3) learn_(sh, rowNum, mine);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// last 12 homes this person viewed (newest first), one entry per home
+function myViews_(act, id) {
+  const last = act.getLastRow(); if (last < 2) return [];
+  const start = Math.max(2, last - 3000);
+  const rows = act.getRange(start, 1, last - start + 1, ACT_HEADERS.length).getValues();
+  const seen = {}, out = [], counts = {};
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const x = rows[i]; if (String(x[9]) !== id) continue;
+    const k = String(x[3]); counts[k] = (counts[k] || 0) + 1;
+    if (seen[k]) continue; seen[k] = true;
+    if (out.length < 12) out.push({ mls: k, price: Number(x[4]) || 0, beds: Number(x[5]) || 0, city: String(x[7] || '') });
+  }
+  out.counts = counts;
+  return out;
+}
+
+function learn_(sh, rowNum, v) {
+  const prices = v.map(function (x) { return x.price; }).filter(Boolean).sort(function (a, b) { return a - b; });
+  if (!prices.length) return;
+  const lo = Math.max(0, Math.floor(prices[0] * 0.9 / 10000) * 10000);
+  const hi = Math.ceil(prices[prices.length - 1] * 1.1 / 10000) * 10000;
+  const beds = v.map(function (x) { return x.beds; }).filter(Boolean);
+  const minBeds = beds.length ? Math.min(5, Math.min.apply(null, beds)) : '';
+  const byCity = {}; v.forEach(function (x) { if (x.city) byCity[x.city] = (byCity[x.city] || 0) + 1; });
+  const top = Object.keys(byCity).sort(function (a, b) { return byCity[b] - byCity[a]; })[0];
+  const cityShare = top ? byCity[top] / v.length : 0;
+  const cities = Object.keys(byCity);
+
+  sh.getRange(rowNum, C['Min price'] + 1, 1, 3).setValues([[lo || '', hi, minBeds]]);
+  if (cityShare >= 0.6) {
+    sh.getRange(rowNum, C.Search + 1).setValue(top);
+    sh.getRange(rowNum, C['Map area'] + 1).setValue('');
+  } else if (cities.length > 1) {
+    // looking in several towns: search the whole area they've been browsing, by price and beds
+    sh.getRange(rowNum, C.Search + 1).setValue('');
+  }
+  const tz = Session.getScriptTimeZone();
+  sh.getRange(rowNum, C.Learned + 1).setValue(Utilities.formatDate(new Date(), tz, 'MMM d') + ': from ' + v.length + ' homes viewed · ' +
+    (cityShare >= 0.6 ? top : cities.join(', ')) + ' · ' + money_(lo) + '–' + money_(hi) + (minBeds ? ' · ' + minBeds + '+ beds' : ''));
+}
+
+function hotLead_(r, id, mlsId, mine, h, addr) {
+  const listingId = String(h.listingId || mlsId);
+  const n = (mine.counts && mine.counts[listingId]) || 0;
+  if (n < 3) return;
+  const props = PropertiesService.getScriptProperties(), key = 'hot_' + id.slice(0, 8) + '_' + listingId;
+  if (props.getProperty(key)) return;
+  props.setProperty(key, '1');
+  const name = String(r[C.Name]), first = name.split(' ')[0];
+  const tel = String(r[C.Phone] || '').replace(/[^0-9+]/g, '');
+  const where = (addr ? addr + ', ' : '') + ((h.address || {}).city || '');
+  const subject = '🔥 HOT LEAD: ' + name + ' keeps looking at ' + where;
+  const html = '<div style="font-family:Arial,sans-serif;font-size:15px;color:#1a2237">' +
+    '<h2 style="margin:0 0 12px;color:#13203b">' + esc_(name) + ' has opened this home ' + n + ' times</h2>' +
+    '<p><b>' + esc_(money_(h.listPrice)) + '</b> · ' + esc_(where) + ' · MLS #' + esc_(listingId) + '<br>' +
+    '<a href="' + SEARCH_PAGE + '#home=' + encodeURIComponent(mlsId) + '">See the home</a></p>' +
+    '<p><b>Email:</b> ' + esc_(String(r[C.Email])) + '<br><b>Phone:</b> ' + (tel ? '<a href="tel:' + tel + '">' + esc_(String(r[C.Phone])) + '</a>' : '(not given)') + '</p>' +
+    (tel ? '<p><a href="tel:' + tel + '" style="background:#b98b5c;color:#fff;padding:10px 18px;text-decoration:none">Call ' + esc_(first) + '</a> &nbsp; <a href="sms:' + tel + '" style="background:#13203b;color:#fff;padding:10px 18px;text-decoration:none">Text ' + esc_(first) + '</a></p>' : '') +
+    '<p style="color:#8a8579;font-size:12px">From your Listing Alert Leads sheet (Activity tab): ' + SpreadsheetApp.getActive().getUrl() + '</p></div>';
+  GmailApp.sendEmail(OWNER_EMAIL, subject, subject, { htmlBody: html, name: '605homesearch Alerts' });
+}
+
+function activity_() {
+  const ss = SpreadsheetApp.getActive();
+  let act = ss.getSheetByName('Activity');
+  if (!act) {
+    act = ss.insertSheet('Activity');
+    act.getRange(1, 1, 1, ACT_HEADERS.length).setValues([ACT_HEADERS]).setFontWeight('bold').setBackground('#13203b').setFontColor('#ffffff');
+    act.setFrozenRows(1); act.hideColumns(ACT_HEADERS.length);
+  }
+  return act;
+}
+
+function findRow_(sh, id) {
+  const last = sh.getLastRow(); if (last < 2) return 0;
+  const ids = sh.getRange(2, C.ID + 1, last - 1, 1).getValues();
+  for (let i = 0; i < ids.length; i++) if (String(ids[i][0]).toLowerCase() === String(id).toLowerCase()) return i + 2;
+  return 0;
+}
+
+function ensureHeaders_(sh) {
+  const cur = sh.getRange(1, 1, 1, HEADERS.length).getValues()[0];
+  if (cur.join('|') === HEADERS.join('|')) return;
+  sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight('bold').setBackground('#13203b').setFontColor('#ffffff');
+}
+
 // ---------- Listing search ----------
 function search_(a, since) {
   const q = [];
@@ -143,7 +276,7 @@ function search_(a, since) {
 
 function rowToSearch_(r) {
   const typeKey = Object.keys(TYPES).filter(function (k) { return TYPES[k] === r[C.Type]; })[0] || '';
-  return { name: String(r[C.Name]), email: String(r[C.Email]), q: String(r[C.Search] || ''), minprice: r[C['Min price']], maxprice: r[C['Max price']],
+  return { id: String(r[C.ID]), name: String(r[C.Name]), email: String(r[C.Email]), q: String(r[C.Search] || ''), minprice: r[C['Min price']], maxprice: r[C['Max price']],
            minbeds: r[C.Beds], minbaths: r[C.Baths], type: typeKey, points: String(r[C['Map area']] || ''),
            freq: String(r[C['How often']]), lang: r[C.Language] === 'Español' ? 'Español' : 'English' };
 }
@@ -189,9 +322,9 @@ function sendEmail_(a, id, homes, welcome, total) {
           : 'Hi ' + first + ', you’re all set. I’ll send you new homes as soon as they hit the market that match: <b>' + esc_(what) + '</b>.' + (homes.length ? ' Here’s what’s for sale right now:' : ''))
     : (es ? 'Hola ' + first + ', estas casas nuevas salieron al mercado y coinciden con su búsqueda (<b>' + esc_(what) + '</b>):'
           : 'Hi ' + first + ', these new homes just hit the market and match your search (<b>' + esc_(what) + '</b>):');
-  const cards = homes.map(function (h) { return card_(h, es); }).join('');
+  const cards = homes.map(function (h) { return card_(h, es, id); }).join('');
   const more = total && total > homes.length
-    ? '<p><a href="' + SEARCH_PAGE + '" style="color:#8a6236">' + (es ? 'Ver las ' + total + ' casas nuevas →' : 'See all ' + total + ' new homes →') + '</a></p>' : '';
+    ? '<p><a href="' + SEARCH_PAGE + '?a=' + encodeURIComponent(id) + '" style="color:#8a6236">' + (es ? 'Ver las ' + total + ' casas nuevas →' : 'See all ' + total + ' new homes →') + '</a></p>' : '';
   const html =
     '<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#1a2237;font-size:15px;line-height:1.5">' +
     '<div style="background:#13203b;color:#fff;padding:16px 20px"><b style="font-size:18px">Marcos Diaz</b><br><span style="color:#d7b48c;font-size:12px;letter-spacing:2px">KELLER WILLIAMS REALTY SIOUX FALLS</span></div>' +
@@ -200,7 +333,7 @@ function sendEmail_(a, id, homes, welcome, total) {
     '<a href="tel:+16058389140" style="color:#8a6236"><b>' + PHONE + '</b></a>.</p>' +
     '<p>Marcos Diaz<br><span style="color:#4a5063;font-size:13px">Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls</span></p></div>' +
     '<div style="padding:14px 20px;border-top:1px solid #e2d8ca;font-size:11px;color:#777;line-height:1.5">' +
-    (es ? 'Recibe este correo porque pidió alertas de casas en 605homesearch.com. ' : 'You’re getting this because you asked for home alerts on 605homesearch.com. ') +
+    (es ? 'Recibe este correo porque pidió alertas de casas en 605homesearch.com. Sus alertas se ajustan según las casas que abre. ' : 'You’re getting this because you asked for home alerts on 605homesearch.com. Your alerts adjust to the homes you open. ') +
     '<a href="' + unsub + '" style="color:#777">' + (es ? 'Cancelar alertas' : 'Unsubscribe') + '</a>.<br>' +
     (es ? 'La información de las casas se considera confiable pero no está garantizada y debe verificarse. ' : 'Listing information is deemed reliable but not guaranteed and should be independently verified. ') +
     (es ? 'Las casas son cortesía de la correduría indicada en cada una. ' : 'Listings are courtesy of the listing brokerage named on each listing. ') +
@@ -210,13 +343,13 @@ function sendEmail_(a, id, homes, welcome, total) {
     { htmlBody: html, name: OWNER_NAME, replyTo: OWNER_EMAIL });
 }
 
-function card_(h, es) {
+function card_(h, es, id) {
   const p = h.property || {}, ad = h.address || {}, ag = h.agent || {}, of = h.office || {};
   const showAddr = h.internetAddressDisplay !== false;
   const street = showAddr ? cleanAddr_(ad.full) + ', ' : '';
   const baths = (p.bathsFull || 0) + (p.bathsHalf ? 0.5 * p.bathsHalf : 0) || p.bathrooms || '';
   const photo = h.photos && h.photos[0];
-  const link = SEARCH_PAGE + '#home=' + h.mlsId;
+  const link = SEARCH_PAGE + (id ? '?a=' + encodeURIComponent(id) : '') + '#home=' + h.mlsId;
   const contact = (of.contact && (of.contact.office || of.contact.email)) || '';
   const courtesy = (es ? 'Cortesía de ' : 'Listing courtesy of ') + esc_(of.name || '') + ([ag.firstName, ag.lastName].filter(Boolean).length ? ' · ' + esc_([ag.firstName, ag.lastName].filter(Boolean).join(' ')) : '') + (contact ? ' · ' + esc_(contact) : '');
   return '<table cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #e2d8ca;border-radius:10px;margin:14px 0;border-collapse:separate;overflow:hidden"><tr><td>' +
@@ -240,7 +373,10 @@ function setup() {
     SpreadsheetApp.newDataValidation().requireValueInList(['Active', 'Paused', 'Unsubscribed'], true).build());
   sh.getRange(2, C['How often'] + 1, 1000, 1).setDataValidation(
     SpreadsheetApp.newDataValidation().requireValueInList(['Daily', 'Weekly'], true).build());
+  sh.getRange(2, C['Auto-adjust'] + 1, 1000, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(['Yes', 'No'], true).build());
   sh.hideColumns(C['Map area'] + 1); sh.hideColumns(C.ID + 1);
+  activity_();
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'sendAlerts') ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('sendAlerts').timeBased().everyDays(1).atHour(8).create();
   // quick test that the listings connection works
