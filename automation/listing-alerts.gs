@@ -14,6 +14,9 @@
  *      (city, price range, beds) to match what they actually look at. Set "Auto-adjust" to No on
  *      a row to stop that for one person.
  *   5. Hot lead notice: if someone opens the same home 3 times, Marcos gets a 🔥 email.
+ *   6. Besides new listings, alert emails include PRICE DROPS on homes that match and homes
+ *      BACK ON THE MARKET. A hidden "Snapshots" tab remembers each person's matching homes and
+ *      prices so it can spot the changes.
  *
  * Setup (one time, about 5 minutes):
  *   - Open the Listing Alert Leads sheet → Extensions → Apps Script → delete what's there,
@@ -85,6 +88,7 @@ function doPost(e) {
   }
   let homes = [];
   try { homes = search_(a, null).slice(0, 6); } catch (err) { console.error('search failed', err); }
+  try { changes_(a, id, new Date()); } catch (err) { console.error('snapshot failed', err); }
   try { notifyOwner_(a); } catch (err) { console.error('owner alert failed', err); }
   try { sendEmail_(a, id, homes, true); } catch (err) { console.error('welcome failed', err); }
   return json_({ ok: true });
@@ -122,15 +126,71 @@ function sendAlerts() {
     if (weekly && now - last < 6.5 * 86400000) continue;
     const a = rowToSearch_(r);
     let homes;
-    try { homes = search_(a, last); } catch (err) { console.error('search failed for row ' + (i + 1), err); continue; }
+    try { homes = changes_(a, String(r[C.ID]), last); } catch (err) { console.error('search failed for row ' + (i + 1), err); continue; }
     if (!homes.length) continue;
     try {
-      sendEmail_(a, r[C.ID], homes.slice(0, MAX_HOMES_PER_EMAIL), false, homes.length);
+      sendEmail_(a, r[C.ID], homes.slice(0, MAX_HOMES_PER_EMAIL), false, homes.length, homes);
       sh.getRange(i + 1, C['Last sent'] + 1, 1, 2).setValues([[now, (Number(r[C['Homes sent']]) || 0) + homes.length]]);
       sent++;
     } catch (err) { console.error('email failed for row ' + (i + 1), err); }
   }
   console.log('alert emails sent: ' + sent);
+}
+
+// New listings, price drops and back-on-market homes for one person since their last email.
+// Each home gets h._kind = 'new' | 'drop' | 'back' (and h._was = old price for drops).
+function changes_(a, id, since) {
+  const all = search_(a, null, 500);
+  const full = all.length < 500;                        // did we get every matching home?
+  const key = criteriaKey_(a);
+  const snap = getSnapshot_(id);
+  const out = [];
+  const prevKnown = snap && snap.key === key ? snap.data : null;   // search changed? start fresh, no drops/back
+  all.forEach(function (h) {
+    const t = new Date((h.mls && h.mls.originalEntryTimestamp) || h.listDate || 0);
+    const was = prevKnown ? prevKnown[h.mlsId] : undefined;
+    if (t > since) { h._kind = 'new'; out.push(h); return; }
+    if (!prevKnown) return;
+    if (was !== undefined && h.listPrice && was && h.listPrice < was) { h._kind = 'drop'; h._was = was; out.push(h); return; }
+    if (was === undefined && full && prevKnown._full) {
+      // wasn't a match last time: either its price came down into their range, or it came back on the market
+      if (h.originalListPrice && h.listPrice && h.listPrice < h.originalListPrice) { h._kind = 'drop'; h._was = h.originalListPrice; }
+      else h._kind = 'back';
+      out.push(h);
+    }
+  });
+  const data = {}; all.forEach(function (h) { data[h.mlsId] = h.listPrice || 0; }); data._full = full;
+  saveSnapshot_(id, key, data);
+  const order = { 'new': 0, drop: 1, back: 2 };
+  return out.sort(function (x, y) { return order[x._kind] - order[y._kind]; });
+}
+
+function criteriaKey_(a) {
+  return [a.q, a.minprice, a.maxprice, a.minbeds, a.minbaths, a.type, a.q ? '' : a.points].join('~');
+}
+function snapSheet_() {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName('Snapshots');
+  if (!sh) { sh = ss.insertSheet('Snapshots'); sh.getRange(1, 1, 1, 4).setValues([['ID', 'Search', 'Homes', 'Updated']]); sh.hideSheet(); }
+  return sh;
+}
+function getSnapshot_(id) {
+  const sh = snapSheet_(), last = sh.getLastRow(); if (last < 2) return null;
+  const rows = sh.getRange(2, 1, last - 1, 3).getValues();
+  for (let i = 0; i < rows.length; i++) if (String(rows[i][0]) === id) {
+    try { return { key: String(rows[i][1]), data: JSON.parse(rows[i][2]) }; } catch (e) { return null; }
+  }
+  return null;
+}
+function saveSnapshot_(id, key, data) {
+  const sh = snapSheet_(), last = sh.getLastRow();
+  let json = JSON.stringify(data);
+  if (json.length > 49000) json = JSON.stringify({ _full: false });   // too big for one cell: skip drop/back for this person
+  if (last >= 2) {
+    const ids = sh.getRange(2, 1, last - 1, 1).getValues();
+    for (let i = 0; i < ids.length; i++) if (String(ids[i][0]) === id) { sh.getRange(i + 2, 2, 1, 3).setValues([[key, json, new Date()]]); return; }
+  }
+  sh.appendRow([id, key, json, new Date()]);
 }
 
 // ---------- Learning from what they view ----------
@@ -257,13 +317,13 @@ function ensureHeaders_(sh) {
 }
 
 // ---------- Listing search ----------
-function search_(a, since) {
+function search_(a, since, limit) {
   const q = [];
   const add = function (k, v) { if (v !== '' && v != null) q.push(k + '=' + encodeURIComponent(v)); };
   add('q', a.q); add('minprice', a.minprice); add('maxprice', a.maxprice);
   add('minbeds', a.minbeds); add('minbaths', a.minbaths); add('type', a.type);
   if (!a.q && a.points) a.points.split('|').forEach(function (pt) { add('points', pt); });
-  add('status', 'Active'); add('sort', '-listdate'); add('limit', 50);
+  add('status', 'Active'); add('sort', '-listdate'); add('limit', limit || 50);
   const res = UrlFetchApp.fetch(LISTINGS_API + '?' + q.join('&'), { muteHttpExceptions: true });
   if (res.getResponseCode() !== 200) throw new Error('listings ' + res.getResponseCode());
   return JSON.parse(res.getContentText()).filter(function (h) {
@@ -308,7 +368,7 @@ function notifyOwner_(a) {
   GmailApp.sendEmail(OWNER_EMAIL, subject, subject, { htmlBody: html, name: '605homesearch Alerts' });
 }
 
-function sendEmail_(a, id, homes, welcome, total) {
+function sendEmail_(a, id, homes, welcome, total, allHomes) {
   const es = a.lang === 'Español';
   const first = a.name.split(' ')[0];
   const unsub = WEBAPP_URL + '?unsub=' + encodeURIComponent(id);
@@ -316,15 +376,15 @@ function sendEmail_(a, id, homes, welcome, total) {
   const n = total || homes.length;
   const subject = welcome
     ? (es ? 'Sus alertas de casas están listas, ' + first : 'Your home alerts are set up, ' + first)
-    : (es ? n + (n === 1 ? ' casa nueva' : ' casas nuevas') + ': ' + what : n + ' new ' + (n === 1 ? 'home' : 'homes') + ': ' + what);
+    : summary_(allHomes || homes, es) + ': ' + what;
   const intro = welcome
     ? (es ? 'Hola ' + first + ', listo. Le enviaré casas nuevas apenas salgan al mercado que coincidan con: <b>' + esc_(what) + '</b>.' + (homes.length ? ' Estas están en venta ahora mismo:' : '')
           : 'Hi ' + first + ', you’re all set. I’ll send you new homes as soon as they hit the market that match: <b>' + esc_(what) + '</b>.' + (homes.length ? ' Here’s what’s for sale right now:' : ''))
-    : (es ? 'Hola ' + first + ', estas casas nuevas salieron al mercado y coinciden con su búsqueda (<b>' + esc_(what) + '</b>):'
-          : 'Hi ' + first + ', these new homes just hit the market and match your search (<b>' + esc_(what) + '</b>):');
+    : (es ? 'Hola ' + first + ', hay novedades en su búsqueda (<b>' + esc_(what) + '</b>): ' + summary_(allHomes || homes, true) + '.'
+          : 'Hi ' + first + ', here’s what changed in your search (<b>' + esc_(what) + '</b>): ' + summary_(allHomes || homes, false) + '.');
   const cards = homes.map(function (h) { return card_(h, es, id); }).join('');
   const more = total && total > homes.length
-    ? '<p><a href="' + SEARCH_PAGE + '?a=' + encodeURIComponent(id) + '" style="color:#8a6236">' + (es ? 'Ver las ' + total + ' casas nuevas →' : 'See all ' + total + ' new homes →') + '</a></p>' : '';
+    ? '<p><a href="' + SEARCH_PAGE + '?a=' + encodeURIComponent(id) + '" style="color:#8a6236">' + (es ? 'Ver más casas →' : 'See more homes →') + '</a></p>' : '';
   const html =
     '<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#1a2237;font-size:15px;line-height:1.5">' +
     '<div style="background:#13203b;color:#fff;padding:16px 20px"><b style="font-size:18px">Marcos Diaz</b><br><span style="color:#d7b48c;font-size:12px;letter-spacing:2px">KELLER WILLIAMS REALTY SIOUX FALLS</span></div>' +
@@ -343,6 +403,16 @@ function sendEmail_(a, id, homes, welcome, total) {
     { htmlBody: html, name: OWNER_NAME, replyTo: OWNER_EMAIL });
 }
 
+function summary_(homes, es) {
+  const c = { 'new': 0, drop: 0, back: 0 };
+  homes.forEach(function (h) { c[h._kind || 'new']++; });
+  const bits = [];
+  if (c['new']) bits.push(c['new'] + (es ? (c['new'] === 1 ? ' casa nueva' : ' casas nuevas') : (c['new'] === 1 ? ' new home' : ' new homes')));
+  if (c.drop) bits.push(c.drop + (es ? (c.drop === 1 ? ' bajó de precio' : ' bajaron de precio') : (c.drop === 1 ? ' price drop' : ' price drops')));
+  if (c.back) bits.push(c.back + (es ? ' de vuelta en el mercado' : ' back on the market'));
+  return bits.join(', ');
+}
+
 function card_(h, es, id) {
   const p = h.property || {}, ad = h.address || {}, ag = h.agent || {}, of = h.office || {};
   const showAddr = h.internetAddressDisplay !== false;
@@ -355,12 +425,23 @@ function card_(h, es, id) {
   return '<table cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #e2d8ca;border-radius:10px;margin:14px 0;border-collapse:separate;overflow:hidden"><tr><td>' +
     (photo ? '<a href="' + link + '"><img src="' + esc_(photo) + '" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0" alt=""></a>' : '') +
     '<div style="padding:12px 14px">' +
-    '<div style="font-size:22px;font-weight:bold;color:#1a2237">' + money_(h.listPrice) + '</div>' +
+    badge_(h, es) +
+    '<div style="font-size:22px;font-weight:bold;color:#1a2237">' + money_(h.listPrice) +
+    (h._kind === 'drop' && h._was ? ' <span style="font-size:15px;font-weight:normal;color:#8a8579;text-decoration:line-through">' + money_(h._was) + '</span>' : '') + '</div>' +
     '<div>' + (p.bedrooms || 0) + (es ? ' rec · ' : ' bd · ') + baths + (es ? ' baños' : ' ba') + (p.area ? ' · ' + Number(p.area).toLocaleString() + (es ? ' pies²' : ' sq ft') : '') + '</div>' +
     '<div style="color:#4a5063">' + esc_(street + (ad.city || '')) + '</div>' +
     '<div style="font-size:13px;color:#1a2237;margin-top:6px">' + courtesy + '</div>' +
     '<a href="' + link + '" style="display:inline-block;margin-top:10px;background:#b98b5c;color:#fff;padding:9px 16px;text-decoration:none;border-radius:6px">' + (es ? 'Ver esta casa' : 'See this home') + '</a>' +
     '</div></td></tr></table>';
+}
+
+function badge_(h, es) {
+  const k = h._kind;
+  if (!k) return '';
+  const label = k === 'drop' ? (es ? 'BAJÓ DE PRECIO' : 'PRICE DROP') + (h._was ? ' · ' + money_(h._was - h.listPrice) + (es ? ' menos' : ' off') : '')
+    : k === 'back' ? (es ? 'DE VUELTA EN EL MERCADO' : 'BACK ON THE MARKET') : (es ? 'NUEVA' : 'NEW');
+  const bg = k === 'drop' ? '#b98b5c' : '#13203b';
+  return '<span style="display:inline-block;background:' + bg + ';color:#fff;font-size:11px;font-weight:bold;letter-spacing:1px;padding:3px 8px;border-radius:12px;margin-bottom:6px">' + label + '</span><br>';
 }
 
 // ---------- One-time setup ----------
@@ -376,7 +457,7 @@ function setup() {
   sh.getRange(2, C['Auto-adjust'] + 1, 1000, 1).setDataValidation(
     SpreadsheetApp.newDataValidation().requireValueInList(['Yes', 'No'], true).build());
   sh.hideColumns(C['Map area'] + 1); sh.hideColumns(C.ID + 1);
-  activity_();
+  activity_(); snapSheet_();
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'sendAlerts') ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('sendAlerts').timeBased().everyDays(1).atHour(8).create();
   // quick test that the listings connection works
