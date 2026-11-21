@@ -568,6 +568,23 @@
 
   $('sp-more-f').onclick = function () { var f = $('sp-form'), o = f.classList.toggle('open'); this.setAttribute('aria-expanded', o); };
 
+  // Start from a link like ?maxprice=272000&minbeds=3 (used by the affordability calculator)
+  (function () {
+    var u = new URLSearchParams(location.search);
+    function setSel(id, v) {
+      if (!v || !/^\d+$/.test(v)) return;
+      var el = $(id);
+      if (![].some.call(el.options, function (o) { return o.value === v; })) {
+        var o = document.createElement('option'); o.value = v; o.textContent = id === 'f-min' || id === 'f-max' ? short(+v) : v + '+';
+        el.appendChild(o);
+      }
+      el.value = v;
+    }
+    setSel('f-min', u.get('minprice')); setSel('f-max', u.get('maxprice'));
+    setSel('f-beds', u.get('minbeds')); setSel('f-baths', u.get('minbaths'));
+    if (u.get('q')) $('f-q').value = u.get('q').slice(0, 80);
+  })();
+
   load(false);
   var deep = (location.hash.match(/^#home=(\d+)/) || [])[1];
   if (deep) openById(deep);
