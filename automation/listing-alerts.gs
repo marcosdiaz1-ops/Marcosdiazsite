@@ -29,6 +29,8 @@ const PHONE = '605-838-9140';
 const SITE = 'https://605homesearch.com';
 const SEARCH_PAGE = SITE + '/search/';           // where "See this home" links go
 const LISTINGS_API = 'https://listings.605homesearch.com/properties';
+// Public web app link (used for the unsubscribe link in every email)
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxklqP-b5JNN1e2hsuwLXQvC0P6_4ZmJBORJLDojLWMwqWiUx5JFn0oiKDVXvu4c-6-/exec';
 const MAX_HOMES_PER_EMAIL = 12;
 const MAX_EMAILS_PER_RUN = 80;                    // stay well under Gmail's daily sending limit
 const MAX_SIGNUPS_PER_DAY = 40;                   // safety limit against spam abuse
@@ -176,7 +178,7 @@ function notifyOwner_(a) {
 function sendEmail_(a, id, homes, welcome, total) {
   const es = a.lang === 'Español';
   const first = a.name.split(' ')[0];
-  const unsub = ScriptApp.getService().getUrl() + '?unsub=' + encodeURIComponent(id);
+  const unsub = WEBAPP_URL + '?unsub=' + encodeURIComponent(id);
   const what = describe_(a, es);
   const n = total || homes.length;
   const subject = welcome
