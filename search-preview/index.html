@@ -19,14 +19,46 @@
   .sp { padding: 0 0 40px; }
   /* Filter bar */
   .sp-bar { position: sticky; top: 64px; z-index: 900; margin: -22px 0 16px; }
-  .sp-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(19,32,59,.10); }
-  .sp-filters input, .sp-filters select { font: inherit; font-size: 15px; font-weight: 400; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
-  .sp-filters input:focus, .sp-filters select:focus { outline: 2px solid var(--gold); outline-offset: 0; border-color: var(--gold); }
-  .sp-filters input[type=search] { flex: 1 1 220px; }
-  .sp-filters button { font: inherit; font-size: 15px; font-weight: 500; padding: 10px 20px; border: 0; border-radius: 10px; background: var(--gold); color: #fff; cursor: pointer; transition: background .2s; }
-  .sp-filters button:hover { background: var(--gold-ink); }
-  .sp-more-f { display: none !important; background: #fff !important; color: var(--navy) !important; border: 1px solid var(--line) !important; }
-  .sp-extra { display: contents; }
+  .sp-filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(19,32,59,.10); }
+  .sp-q { position: relative; flex: 1 1 280px; min-width: 200px; }
+  .sp-q input { width: 100%; font: inherit; font-size: 15px; padding: 10px 44px 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
+  .sp-q input:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+  .sp-qgo { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 0; border-radius: 8px; background: none; color: var(--navy); cursor: pointer; display: grid; place-items: center; }
+  .sp-qgo svg, .pl-ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .fpills { display: flex; gap: 8px; align-items: center; flex: 0 1 auto; }
+  .fpill { position: relative; }
+  .pill-b { font: inherit; font-size: 15px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid #c9c2b5; border-radius: 10px; padding: 9px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .pill-b i { width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
+  .pill-b[aria-expanded="true"] i { transform: rotate(-135deg) translateY(-1px); }
+  .pill-b:hover { border-color: var(--navy); }
+  .pill-b.on { background: #eef1f7; border-color: var(--navy); }
+  .pill-b .n { background: var(--navy); color: #fff; font-size: 12px; border-radius: 10px; padding: 0 6px; line-height: 18px; }
+  .sp-savebtn { font: inherit; font-size: 15px; font-weight: 500; color: #fff; background: var(--gold); border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; white-space: nowrap; }
+  .sp-savebtn:hover { background: var(--gold-ink); }
+  .pop { display: none; position: absolute; left: 0; top: calc(100% + 8px); z-index: 950; width: 340px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 14px 36px rgba(19,32,59,.2); padding: 16px; }
+  .pop.open { display: block; }
+  .pop-r { left: auto; right: 0; }
+  .pop-h { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); margin: 4px 0 8px; }
+  .pop-2 { display: flex; align-items: flex-end; gap: 8px; }
+  .pop-2 label { flex: 1; font-size: 13px; color: var(--text); }
+  .pop-2 input, .pop select { display: block; width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid #c9c2b5; border-radius: 10px; background: #fff; color: var(--ink); margin-top: 4px; }
+  .pop select { margin: 0 0 12px; }
+  .pop-2 span { padding-bottom: 12px; color: var(--text); }
+  .pop-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px; }
+  .pop-chips button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--ivory); color: var(--ink); border-radius: 20px; padding: 4px 10px; cursor: pointer; }
+  .pop-chips button:hover { border-color: var(--gold); }
+  .seg { display: flex; border: 1.5px solid #c9c2b5; border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+  .seg button { flex: 1; font: inherit; font-size: 15px; background: #fff; color: var(--ink); border: 0; border-left: 1px solid #ddd6ca; padding: 9px 0; cursor: pointer; }
+  .seg button:first-child { border-left: 0; }
+  .seg button.on { background: var(--navy); color: #fff; font-weight: 500; }
+  .radios label { display: flex; align-items: center; gap: 10px; padding: 8px 4px; font-size: 15px; color: var(--ink); cursor: pointer; border-radius: 8px; }
+  .radios label:hover { background: var(--ivory); }
+  .radios input { accent-color: var(--navy); width: 18px; height: 18px; }
+  .pop-f { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 10px; }
+  .pop-apply { flex: 1; font: inherit; font-size: 16px; font-weight: 500; color: #fff; background: var(--navy); border: 0; border-radius: 10px; padding: 11px; cursor: pointer; }
+  .pop-apply:hover { background: var(--navy-deep); }
+  .pop-reset { font: inherit; font-size: 14px; color: var(--gold-ink); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 6px; }
+  .pop-shade { display: none; }
   /* Map + list */
   .sp-body { display: grid; grid-template-columns: 1fr 1.15fr; gap: 16px; height: 76vh; min-height: 560px; }
   #sp-map { border-radius: 14px; border: 1px solid var(--line); height: 100%; }
@@ -236,12 +268,17 @@
   @media (max-width: 860px) {
     .sp-hero { padding: 96px 0 30px; }
     .sp-bar { top: 58px; }
+    .sp-filters { flex-wrap: wrap; padding: 8px; }
+    .sp-q { flex: 1 1 100%; }
+    .fpills { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .fpills::-webkit-scrollbar { display: none; }
+    .pill-b, .sp-savebtn { font-size: 14px; padding: 8px 11px; }
+    .fpill { position: static; }
+    .pop { position: fixed; left: 0 !important; right: 0 !important; top: auto; bottom: 0; width: auto; border-radius: 18px 18px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); z-index: 2600; max-height: 80vh; overflow-y: auto; }
+    body.pop-on .sp-bar { z-index: 2600; }
+    body.pop-on .sp-toggle { display: none; }
+    .pop-shade.on { display: block; position: fixed; inset: 0; background: rgba(13,23,48,.45); z-index: 2550; }
     .sp-toggle { display: flex; bottom: calc(74px + env(safe-area-inset-bottom)); }
-    .sp-more-f { display: inline-block !important; }
-    .sp-extra { display: none; }
-    .sp-filters.open .sp-extra { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
-    .sp-extra select { flex: 1 1 45%; }
-    .sp-filters input[type=search] { flex: 1 1 100%; }
     .sp-filters > button { flex: 1; }
     .sp-body { display: block; height: auto; min-height: 0; }
     #sp-map { height: 68vh; }
@@ -287,17 +324,54 @@
   <section class="sp">
     <div class="wrap">
       <div class="sp-bar">
-      <form class="sp-filters" id="sp-form">
-        <input type="search" id="f-q" placeholder="City, ZIP, address, or MLS #">
-        <span class="sp-extra">
-        <select id="f-min" aria-label="Min price"><option value="">Min price</option><option value="100000">$100K</option><option value="200000">$200K</option><option value="300000">$300K</option><option value="400000">$400K</option><option value="500000">$500K</option><option value="750000">$750K</option></select>
-        <select id="f-max" aria-label="Max price"><option value="">Max price</option><option value="200000">$200K</option><option value="300000">$300K</option><option value="400000">$400K</option><option value="500000">$500K</option><option value="750000">$750K</option><option value="1000000">$1M</option></select>
-        <select id="f-beds" aria-label="Beds"><option value="">Beds</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select>
-        <select id="f-baths" aria-label="Baths"><option value="">Baths</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option></select>
-        <select id="f-type" aria-label="Home type"><option value="">Any type</option><option value="residential">House</option><option value="condominium">Condo</option><option value="multifamily">Multi-family</option><option value="land">Land</option></select>
-        </span>
-        <button type="button" class="sp-more-f" id="sp-more-f" aria-expanded="false">Filters</button>
-        <button type="submit">Search</button>
+      <form class="sp-filters" id="sp-form" autocomplete="off">
+        <div class="sp-q"><input type="search" id="f-q" placeholder="City, ZIP, address, or MLS #" aria-label="City, ZIP, address, or MLS #"><button type="submit" class="sp-qgo" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div>
+        <input type="hidden" id="f-min"><input type="hidden" id="f-max"><input type="hidden" id="f-beds"><input type="hidden" id="f-baths"><input type="hidden" id="f-type">
+        <input type="hidden" id="f-area"><input type="hidden" id="f-year"><input type="hidden" id="f-dom">
+        <div class="fpills" id="pills">
+          <div class="fpill"><button type="button" class="pill-b" data-pop="price" aria-expanded="false"><span id="pl-price">Price</span><i></i></button>
+            <div class="pop" id="pop-price" role="dialog" aria-label="Price">
+              <div class="pop-h">Price range</div>
+              <div class="pop-2"><label>Min<input type="text" inputmode="numeric" id="pp-min" placeholder="No min"></label><span>–</span><label>Max<input type="text" inputmode="numeric" id="pp-max" placeholder="No max"></label></div>
+              <div class="pop-chips" id="pp-chips"></div>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="price">Reset</button><button type="button" class="pop-apply" data-apply="price">Apply</button></div>
+            </div>
+          </div>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="beds" aria-expanded="false"><span id="pl-beds">Beds &amp; baths</span><i></i></button>
+            <div class="pop" id="pop-beds" role="dialog" aria-label="Beds and baths">
+              <div class="pop-h">Bedrooms</div>
+              <div class="seg" id="pb-beds"><button type="button" data-v="">Any</button><button type="button" data-v="1">1+</button><button type="button" data-v="2">2+</button><button type="button" data-v="3">3+</button><button type="button" data-v="4">4+</button><button type="button" data-v="5">5+</button></div>
+              <div class="pop-h">Bathrooms</div>
+              <div class="seg" id="pb-baths"><button type="button" data-v="">Any</button><button type="button" data-v="1">1+</button><button type="button" data-v="2">2+</button><button type="button" data-v="3">3+</button><button type="button" data-v="4">4+</button></div>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="beds">Reset</button><button type="button" class="pop-apply" data-apply="beds">Apply</button></div>
+            </div>
+          </div>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="type" aria-expanded="false"><span id="pl-type">Home type</span><i></i></button>
+            <div class="pop" id="pop-type" role="dialog" aria-label="Home type">
+              <div class="pop-h">Home type</div>
+              <div class="radios" id="pt-type">
+                <label><input type="radio" name="pt" value="" checked><span>Any type</span></label>
+                <label><input type="radio" name="pt" value="residential"><span>House</span></label>
+                <label><input type="radio" name="pt" value="condominium"><span>Condo / townhome</span></label>
+                <label><input type="radio" name="pt" value="multifamily"><span>Multi-family</span></label>
+                <label><input type="radio" name="pt" value="land"><span>Land</span></label>
+              </div>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="type">Reset</button><button type="button" class="pop-apply" data-apply="type">Apply</button></div>
+            </div>
+          </div>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="more" aria-expanded="false"><svg viewBox="0 0 24 24" class="pl-ic"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span id="pl-more">More</span><i></i></button>
+            <div class="pop pop-r" id="pop-more" role="dialog" aria-label="More filters">
+              <div class="pop-h">Square feet</div>
+              <select id="pm-area"><option value="">Any size</option><option value="1000">1,000+ sq ft</option><option value="1500">1,500+ sq ft</option><option value="2000">2,000+ sq ft</option><option value="2500">2,500+ sq ft</option><option value="3000">3,000+ sq ft</option><option value="4000">4,000+ sq ft</option></select>
+              <div class="pop-h">Year built</div>
+              <select id="pm-year"><option value="">Any year</option><option value="1980">1980 or newer</option><option value="2000">2000 or newer</option><option value="2010">2010 or newer</option><option value="2020">2020 or newer</option></select>
+              <div class="pop-h">Days on market</div>
+              <select id="pm-dom"><option value="">Any</option><option value="1">New in last 1 day</option><option value="7">New in last 7 days</option><option value="14">New in last 14 days</option><option value="30">New in last 30 days</option></select>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="more">Reset</button><button type="button" class="pop-apply" data-apply="more">Apply</button></div>
+            </div>
+          </div>
+          <button type="button" class="sp-savebtn" data-alert hidden>Save search</button>
+        </div>
       </form>
       </div>
 
@@ -306,7 +380,7 @@
       <div class="sp-body show-map" id="sp-body">
         <div id="sp-map"></div>
         <div class="sp-list">
-          <div class="sp-head"><div class="sp-count" id="sp-count">Loading homes…</div><span class="sp-headr"><button type="button" class="sp-saved" id="sp-saved"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg><span id="sp-savedn">Saved (0)</span></button><button type="button" class="al-open" data-alert hidden><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>Get new listing alerts</button></span></div>
+          <div class="sp-head"><div class="sp-count" id="sp-count">Loading homes…</div><span class="sp-headr"><button type="button" class="sp-saved" id="sp-saved"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg><span id="sp-savedn">Saved (0)</span></button></span></div>
           <div class="sp-cmpbar" id="sp-cmpbar"><span id="sp-cmptxt">Pick 2 or 3 homes to compare</span><button type="button" id="sp-cmpgo" disabled>Compare</button></div>
           <div class="sp-cards" id="sp-cards"></div>
           <button class="sp-more" id="sp-more" hidden>Show more homes</button>
@@ -328,6 +402,7 @@
   <button type="button" class="hd-lb-nav hd-lb-next" id="hd-lb-next" aria-label="Next photo">&#8250;</button>
 </div>
 <div class="hd-toast" id="hd-toast" role="status"></div>
+<div class="pop-shade" id="pop-shade"></div>
 <div class="tr" id="tr" role="dialog" aria-modal="true" aria-labelledby="tr-h">
   <div class="tr-box">
     <button type="button" class="al-x" id="tr-x" aria-label="Close">&times;</button>
@@ -453,6 +528,9 @@
     if ($('f-beds').value) p.set('minbeds', $('f-beds').value);
     if ($('f-baths').value) p.set('minbaths', $('f-baths').value);
     if ($('f-type').value) p.set('type', $('f-type').value);
+    if ($('f-area').value) p.set('minarea', $('f-area').value);
+    if ($('f-year').value) p.set('minyear', $('f-year').value);
+    if ($('f-dom').value) p.set('maxdom', $('f-dom').value);
     if (!q) {
       var b = map.getBounds();
       [[b.getNorth(), b.getWest()], [b.getNorth(), b.getEast()], [b.getSouth(), b.getEast()], [b.getSouth(), b.getWest()]]
@@ -710,6 +788,7 @@
   $('hd-lb-prev').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' }); };
   $('hd-lb-next').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' }); };
   document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && openPop) { closePops(); return; }
     if (e.key === 'Escape' && $('tr').classList.contains('open')) { closeTour(); return; }
     if (e.key === 'Escape' && $('cmp').classList.contains('open')) { $('cmp').classList.remove('open'); return; }
     if (e.key === 'Escape' && $('al').classList.contains('open')) { closeAlert(); return; }
@@ -922,7 +1001,7 @@
     if (mn && mx) bits.push(short(+mn) + '–' + short(+mx)); else if (mx) bits.push(t('up to ', 'hasta ') + short(+mx)); else if (mn) bits.push(short(+mn) + '+');
     if ($('f-beds').value) bits.push($('f-beds').value + t('+ beds', '+ recámaras'));
     if ($('f-baths').value) bits.push($('f-baths').value + t('+ baths', '+ baños'));
-    if ($('f-type').value) bits.push($('f-type').selectedOptions[0].textContent);
+    if ($('f-type').value) bits.push(typeName($('f-type').value));
     return bits.join(' · ');
   }
   var alSent = false;
@@ -930,8 +1009,9 @@
     // from a home page: use that home's city and a price range around it
     if (h && h.address) {
       if (!$('f-q').value.trim() && h.address.city) $('f-q').value = h.address.city;
-      if (!$('f-max').value && h.listPrice) { var mxv = String(Math.ceil(h.listPrice * 1.15 / 10000) * 10000); var sel = $('f-max'); if (![].some.call(sel.options, function (o) { return o.value === mxv; })) { var o = document.createElement('option'); o.value = mxv; o.textContent = short(+mxv); sel.appendChild(o); } sel.value = mxv; }
+      if (!$('f-max').value && h.listPrice) $('f-max').value = String(Math.ceil(h.listPrice * 1.15 / 10000) * 10000);
       if (!$('f-beds').value && h.property && h.property.bedrooms) $('f-beds').value = String(Math.min(h.property.bedrooms, 5));
+      pillLabels();
     }
     $('al-what').textContent = alertWhat();
     $('al-form').hidden = alSent; $('al-done').hidden = !alSent; $('al-msg').textContent = '';
@@ -972,7 +1052,6 @@
   });
 
   $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); load(false); });
-  ['f-min', 'f-max', 'f-beds', 'f-baths', 'f-type'].forEach(function (id) { $(id).addEventListener('change', function () { load(false); }); });
   $('sp-more').onclick = function () { load(true); };
   map.on('moveend', function () {
     if (skipMove) { skipMove = false; return; }
@@ -998,23 +1077,99 @@
       if (d && !isNaN(d)) $('sp-updated').textContent = t('Listing data last updated ', 'Información actualizada el ') + d.toLocaleString(ES ? 'es-US' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
     }).catch(function () {});
 
-  $('sp-more-f').onclick = function () { var f = $('sp-form'), o = f.classList.toggle('open'); this.setAttribute('aria-expanded', o); };
+
+  // ===== Zillow-style filter bar: Price, Beds & baths, Home type, More, Save search =====
+  function typeName(v) { return ({ residential: t('House', 'Casa'), condominium: t('Condo / townhome', 'Condominio / townhome'), multifamily: t('Multi-family', 'Multifamiliar'), land: t('Land', 'Terreno') })[v] || v; }
+  function digits(v) { return String(v || '').replace(/[^0-9]/g, '').slice(0, 9); }
+  function fmtMoney(v) { var d = digits(v); return d ? '$' + Number(d).toLocaleString('en-US') : ''; }
+  var POPS = ['price', 'beds', 'type', 'more'], openPop = null;
+  function closePops() {
+    POPS.forEach(function (k) { $('pop-' + k).classList.remove('open'); });
+    document.querySelectorAll('.pill-b').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+    $('pop-shade').classList.remove('on'); document.body.classList.remove('pop-on'); openPop = null;
+  }
+  function fillPop(k) {
+    if (k === 'price') { $('pp-min').value = fmtMoney($('f-min').value); $('pp-max').value = fmtMoney($('f-max').value); }
+    if (k === 'beds') {
+      [['pb-beds', 'f-beds'], ['pb-baths', 'f-baths']].forEach(function (x) { $(x[0]).querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === $(x[1]).value); }); });
+    }
+    if (k === 'type') document.querySelectorAll('#pt-type input').forEach(function (r) { r.checked = r.value === $('f-type').value; });
+    if (k === 'more') { $('pm-area').value = $('f-area').value; $('pm-year').value = $('f-year').value; $('pm-dom').value = $('f-dom').value; }
+  }
+  document.querySelectorAll('.pill-b').forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var k = b.dataset.pop, was = openPop === k;
+      closePops();
+      if (was) return;
+      fillPop(k); $('pop-' + k).classList.add('open'); b.setAttribute('aria-expanded', 'true'); openPop = k;
+      if (window.innerWidth <= 860) { $('pop-shade').classList.add('on'); document.body.classList.add('pop-on'); }
+      var first = $('pop-' + k).querySelector('input[type=text]'); if (first && window.innerWidth > 860) first.focus();
+    });
+  });
+  document.addEventListener('click', function (e) { if (openPop && !e.target.closest('.pop') && !e.target.closest('.pill-b')) closePops(); });
+  $('pop-shade').addEventListener('click', closePops);
+  ['pp-min', 'pp-max'].forEach(function (id) {
+    $(id).addEventListener('input', function () { var el = $(id), d = digits(el.value); el.value = d ? '$' + Number(d).toLocaleString('en-US') : ''; });
+    $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyPop('price'); } });
+  });
+  // quick price picks
+  [[0, 250000], [250000, 350000], [350000, 450000], [450000, 600000], [600000, 0]].forEach(function (r) {
+    var b = document.createElement('button'); b.type = 'button';
+    b.textContent = r[0] && r[1] ? short(r[0]) + '–' + short(r[1]) : r[1] ? t('Under ', 'Menos de ') + short(r[1]) : short(r[0]) + '+';
+    b.onclick = function () { $('pp-min').value = r[0] ? fmtMoney(r[0]) : ''; $('pp-max').value = r[1] ? fmtMoney(r[1]) : ''; };
+    $('pp-chips').appendChild(b);
+  });
+  ['pb-beds', 'pb-baths'].forEach(function (id) {
+    $(id).addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; $(id).querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); });
+  });
+  function applyPop(k) {
+    if (k === 'price') {
+      var mn = digits($('pp-min').value), mx = digits($('pp-max').value);
+      if (mn && mx && +mn > +mx) { var tmp = mn; mn = mx; mx = tmp; }
+      $('f-min').value = mn; $('f-max').value = mx;
+    }
+    if (k === 'beds') {
+      var bb = $('pb-beds').querySelector('.on'), ba = $('pb-baths').querySelector('.on');
+      $('f-beds').value = bb ? bb.dataset.v : ''; $('f-baths').value = ba ? ba.dataset.v : '';
+    }
+    if (k === 'type') { var r = document.querySelector('#pt-type input:checked'); $('f-type').value = r ? r.value : ''; }
+    if (k === 'more') { $('f-area').value = $('pm-area').value; $('f-year').value = $('pm-year').value; $('f-dom').value = $('pm-dom').value; }
+    closePops(); pillLabels(); load(false);
+  }
+  function resetPop(k) {
+    if (k === 'price') { $('pp-min').value = ''; $('pp-max').value = ''; }
+    if (k === 'beds') ['pb-beds', 'pb-baths'].forEach(function (id) { $(id).querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.v === ''); }); });
+    if (k === 'type') document.querySelectorAll('#pt-type input').forEach(function (r) { r.checked = r.value === ''; });
+    if (k === 'more') { $('pm-area').value = ''; $('pm-year').value = ''; $('pm-dom').value = ''; }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-apply]'); if (a) { applyPop(a.dataset.apply); return; }
+    var r = e.target.closest('[data-reset]'); if (r) resetPop(r.dataset.reset);
+  });
+  function pillLabels() {
+    var mn = $('f-min').value, mx = $('f-max').value, bd = $('f-beds').value, ba = $('f-baths').value, ty = $('f-type').value;
+    var more = [$('f-area').value, $('f-year').value, $('f-dom').value].filter(Boolean).length;
+    $('pl-price').textContent = mn && mx ? short(+mn) + '–' + short(+mx) : mx ? t('Up to ', 'Hasta ') + short(+mx) : mn ? short(+mn) + '+' : t('Price', 'Precio');
+    $('pl-beds').textContent = bd || ba ? [bd && bd + t('+ bd', '+ rec'), ba && ba + t('+ ba', '+ baños')].filter(Boolean).join(', ') : t('Beds & baths', 'Recámaras y baños');
+    $('pl-type').textContent = ty ? typeName(ty) : t('Home type', 'Tipo de casa');
+    $('pl-more').innerHTML = t('More', 'Más') + (more ? ' <span class="n">' + more + '</span>' : '');
+    document.querySelector('[data-pop="price"]').classList.toggle('on', !!(mn || mx));
+    document.querySelector('[data-pop="beds"]').classList.toggle('on', !!(bd || ba));
+    document.querySelector('[data-pop="type"]').classList.toggle('on', !!ty);
+    document.querySelector('[data-pop="more"]').classList.toggle('on', !!more);
+  }
 
   // Start from a link like ?maxprice=272000&minbeds=3 (used by the affordability calculator)
   (function () {
     var u = new URLSearchParams(location.search);
-    function setSel(id, v) {
-      if (!v || !/^\d+$/.test(v)) return;
-      var el = $(id);
-      if (![].some.call(el.options, function (o) { return o.value === v; })) {
-        var o = document.createElement('option'); o.value = v; o.textContent = id === 'f-min' || id === 'f-max' ? short(+v) : v + '+';
-        el.appendChild(o);
-      }
-      el.value = v;
-    }
+    function setSel(id, v) { if (v && /^\d+(\.\d+)?$/.test(v)) $(id).value = v; }
     setSel('f-min', u.get('minprice')); setSel('f-max', u.get('maxprice'));
     setSel('f-beds', u.get('minbeds')); setSel('f-baths', u.get('minbaths'));
+    setSel('f-area', u.get('minarea')); setSel('f-year', u.get('minyear')); setSel('f-dom', u.get('maxdom'));
+    if (u.get('type') && /^(residential|condominium|multifamily|land)$/.test(u.get('type'))) $('f-type').value = u.get('type');
     if (u.get('q')) $('f-q').value = u.get('q').slice(0, 80);
+    pillLabels();
   })();
 
   load(false);
