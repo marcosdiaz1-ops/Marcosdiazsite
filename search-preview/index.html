@@ -53,24 +53,91 @@
   .sp-toggle { display: none; position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 1500; background: var(--navy); border-radius: 30px; padding: 4px; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
   .sp-toggle button { font: inherit; font-size: 15px; font-weight: 500; padding: 9px 22px; border: 0; background: transparent; color: #fff; border-radius: 26px; cursor: pointer; }
   .sp-toggle button.on { background: var(--gold); }
-  /* Home details */
-  .sp-modal { position: fixed; inset: 0; background: rgba(13,23,48,.65); display: none; z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
-  .sp-modal.open { display: flex; }
-  .sp-box { background: #fff; border-radius: 16px; max-width: 900px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; }
-  .sp-x { position: absolute; right: 10px; top: 10px; z-index: 2; background: #fff; border: 0; border-radius: 50%; width: 38px; height: 38px; font-size: 22px; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,.3); }
-  .sp-gal { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 4px; background: #000; }
-  .sp-gal img { height: 380px; width: auto; max-width: none; scroll-snap-align: start; object-fit: cover; }
-  .sp-det { padding: 20px 22px 24px; font-size: 15px; }
-  .sp-det .pr { font-size: 32px; font-weight: 600; color: var(--ink); line-height: 1.2; }
-  .sp-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 8px 16px; margin: 16px 0; font-size: 14px; background: var(--ivory); border-radius: 12px; padding: 14px; }
-  .sp-facts b { color: var(--ink); font-weight: 500; }
-  .sp-cta { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
-  .sp-cta a { padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 500; }
-  .sp-cta .a1 { background: var(--navy); color: #fff; }
-  .sp-cta .a2 { background: var(--gold); color: #fff; }
-  .sp-attr { font-size: 15px; color: var(--ink); margin: 10px 0 0; line-height: 1.5; }
-  .sp-attr a { color: var(--ink); }
-  .sp-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 10px; }
+  /* ===== Home details (full page, Zillow-style) ===== */
+  .sp-modal { position: fixed; inset: 0; background: var(--ivory); display: none; z-index: 2000; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .sp-modal.open { display: block; }
+  body.sp-lock { overflow: hidden; }
+  .sp-box { max-width: 1180px; margin: 0 auto; padding: 0 24px 60px; }
+  .hd-top { position: sticky; top: 0; z-index: 5; background: rgba(248,245,240,.96); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+  .hd-top button { font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; }
+  .hd-top button:hover { background: var(--sand); }
+  .hd-top svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-gal { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; height: 470px; border-radius: 16px; overflow: hidden; position: relative; }
+  .hd-gal button { border: 0; padding: 0; cursor: zoom-in; background: var(--sand) center/cover no-repeat; }
+  .hd-gal button:first-child { grid-row: span 2; }
+  .hd-gal.n1 { grid-template-columns: 1fr; } .hd-gal.n1 button:first-child { grid-row: span 2; }
+  .hd-all { position: absolute; right: 14px; bottom: 14px; background: #fff; color: var(--ink); font: 500 14px var(--sans); border: 0; border-radius: 10px; padding: 9px 14px; box-shadow: 0 2px 10px rgba(0,0,0,.25); cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+  .hd-status { position: absolute; left: 14px; top: 14px; background: #fff; color: var(--ink); font: 500 13px var(--sans); border-radius: 20px; padding: 4px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.2); }
+  .hd-status i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #2e8b57; margin-right: 6px; }
+  .hd-status.new i { background: var(--gold); }
+  .hd-grid { display: grid; grid-template-columns: 1fr 340px; gap: 36px; margin-top: 26px; align-items: start; }
+  .hd-head { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
+  .hd-price { font-family: var(--sans); font-size: 40px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+  .hd-addr { font-size: 19px; color: var(--ink); font-weight: 400; margin-top: 4px; }
+  .hd-stats { display: flex; gap: 30px; }
+  .hd-stats div { font-size: 15px; color: var(--text); line-height: 1.2; }
+  .hd-stats b { display: block; font-size: 32px; font-weight: 600; color: var(--ink); }
+  .hd-attr { font-size: 15px; color: var(--ink); margin: 14px 0 0; padding: 10px 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; line-height: 1.5; }
+  .hd-attr a { color: var(--ink); }
+  .hd-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0; }
+  .hd-chip { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 15px; color: var(--ink); font-weight: 400; display: flex; gap: 10px; align-items: center; }
+  .hd-chip svg { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--gold-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-sec { border-top: 1px solid var(--line); padding: 24px 0 6px; }
+  .hd-sec h2 { font-size: 28px; margin-bottom: 12px; }
+  .hd-sec p { color: var(--ink); font-weight: 300; }
+  .hd-more { font: inherit; font-weight: 500; color: var(--gold-ink); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+  .hd-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 30px; }
+  .hd-facts h3 { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--ink); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .hd-facts ul { list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .hd-facts li { padding: 3px 0; color: var(--text); }
+  .hd-facts li b { color: var(--ink); font-weight: 500; }
+  #hd-map { height: 280px; border-radius: 14px; border: 1px solid var(--line); }
+  .hd-side { position: sticky; top: 80px; }
+  .hd-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 8px 26px rgba(19,32,59,.08); }
+  .hd-agent { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+  .hd-agent img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; }
+  .hd-agent b { display: block; color: var(--ink); font-weight: 500; font-size: 17px; }
+  .hd-agent span { font-size: 13px; color: var(--text); line-height: 1.3; display: block; }
+  .hd-btn { display: block; text-align: center; text-decoration: none; border-radius: 10px; padding: 13px 14px; font-weight: 500; font-size: 16px; margin-top: 10px; line-height: 1.3; }
+  .hd-btn small { display: block; font-weight: 300; font-size: 13px; opacity: .9; }
+  .hd-b1 { background: var(--navy); color: #fff; }
+  .hd-b1:hover { background: var(--navy-deep); }
+  .hd-b2 { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
+  .hd-b3 { background: var(--gold); color: #fff; }
+  .hd-note { font-size: 13px; color: var(--text); margin-top: 12px; line-height: 1.45; }
+  .hd-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 24px; line-height: 1.5; }
+  /* Photo viewer */
+  .hd-lb { position: fixed; inset: 0; background: rgba(5,10,22,.96); z-index: 3000; display: none; flex-direction: column; }
+  .hd-lb.open { display: flex; }
+  .hd-lb-top { display: flex; justify-content: space-between; align-items: center; color: #fff; padding: 12px 16px; font-size: 15px; }
+  .hd-lb-top button { background: none; border: 0; color: #fff; font-size: 30px; cursor: pointer; line-height: 1; }
+  .hd-lb-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .hd-lb-track::-webkit-scrollbar { display: none; }
+  .hd-lb-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; scroll-snap-align: center; }
+  .hd-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.9); border: 0; width: 46px; height: 46px; border-radius: 50%; font-size: 24px; cursor: pointer; }
+  .hd-lb-prev { left: 16px; } .hd-lb-next { right: 16px; }
+  .hd-toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 30px; font-size: 14px; z-index: 3500; display: none; }
+  @media (max-width: 900px) {
+    .sp-box { padding: 0 0 120px; }
+    .hd-top { padding: 8px 10px; margin: 0; }
+    .hd-gal { display: flex; height: 300px; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0; scrollbar-width: none; }
+    .hd-gal::-webkit-scrollbar { display: none; }
+    .hd-gal button { flex: 0 0 100%; scroll-snap-align: start; }
+    .hd-all { position: fixed; display: none; }
+    .hd-count { position: absolute; right: 12px; bottom: 12px; background: rgba(0,0,0,.65); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 20px; pointer-events: none; }
+    .hd-galwrap { position: relative; }
+    .hd-grid { display: block; padding: 0 18px; margin-top: 18px; }
+    .hd-price { font-size: 32px; }
+    .hd-stats { gap: 22px; } .hd-stats b { font-size: 24px; }
+    .hd-chips { grid-template-columns: 1fr 1fr; }
+    .hd-chip { font-size: 14px; padding: 10px; }
+    .hd-facts { grid-template-columns: 1fr; }
+    .hd-side { position: static; margin-top: 24px; }
+    .hd-lb-nav { display: none; }
+    .hd-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -4px 16px rgba(0,0,0,.12); }
+    .hd-dock a { margin: 0; padding: 12px 8px; font-size: 15px; }
+  }
+  @media (min-width: 901px) { .hd-dock, .hd-count { display: none; } .hd-galwrap { position: relative; } }
   .sp-disc { font-size: 12px; color: #666; margin-top: 18px; line-height: 1.5; }
   @media (max-width: 860px) {
     .sp-hero { padding: 96px 0 30px; }
@@ -88,13 +155,6 @@
     .sp-cards { grid-template-columns: 1fr; }
     .sp-body.show-list #sp-map { display: none; }
     .sp-body.show-map .sp-list { display: none; }
-    .sp-box { border-radius: 14px; }
-    .sp-modal { padding: 0; align-items: flex-end; }
-    .sp-box { max-height: 96vh; border-radius: 16px 16px 0 0; }
-    .sp-gal img { height: 270px; width: 100%; min-width: 100%; }
-    .sp-facts { grid-template-columns: 1fr 1fr; }
-    .sp-cta a { flex: 1; text-align: center; padding: 12px 8px; }
-    .sp-det .pr { font-size: 28px; }
   }
 </style>
 </head>
@@ -163,12 +223,16 @@
   </section>
 </main>
 
-<div class="sp-modal" id="sp-modal" role="dialog" aria-modal="true">
-  <div class="sp-box">
-    <button class="sp-x" id="sp-x" aria-label="Close">&times;</button>
-    <div id="sp-detail"></div>
-  </div>
+<div class="sp-modal" id="sp-modal" role="dialog" aria-modal="true" aria-label="Home details">
+  <div class="sp-box"><div id="sp-detail"></div></div>
 </div>
+<div class="hd-lb" id="hd-lb" role="dialog" aria-modal="true" aria-label="Photos">
+  <div class="hd-lb-top"><span id="hd-lb-n"></span><button type="button" id="hd-lb-x" aria-label="Close photos">&times;</button></div>
+  <div class="hd-lb-track" id="hd-lb-track"></div>
+  <button type="button" class="hd-lb-nav hd-lb-prev" id="hd-lb-prev" aria-label="Previous photo">&#8249;</button>
+  <button type="button" class="hd-lb-nav hd-lb-next" id="hd-lb-next" aria-label="Next photo">&#8250;</button>
+</div>
+<div class="hd-toast" id="hd-toast" role="status"></div>
 
 <footer class="site-footer">
   <div class="wrap legal">
@@ -245,7 +309,7 @@
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
         if (!more) results = LIVE ? [] : [sampleListing()];
-        results = results.concat(data);
+        results = results.concat(data.filter(function (h) { return h.internetEntireListingDisplay !== false; }));
         offset = results.length - (LIVE ? 0 : 1);
         render(!more && $('f-q').value.trim());
         $('sp-more').hidden = data.length < PAGE;
@@ -308,7 +372,7 @@
         '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc((h.mls && h.mls.status) || 'Active') + '</span></div>' +
         '<div class="in"><div class="pr">' + money(h.listPrice) + '</div>' +
         '<div class="st">' + (p.bedrooms || 0) + ' bd · ' + baths(h) + ' ba · ' + (p.area ? p.area.toLocaleString() + ' sq ft' : '') + '</div>' +
-        '<div class="ad">' + esc(cleanAddr(a.full)) + ', ' + esc(a.city) + '</div>' +
+        '<div class="ad">' + (showAddr(h) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city) + '</div>' +
         '<div class="co">' + attrHtml(h, false) + '</div></div></div>';
     }).join('');
     if (fit && pts.length) { skipMove = true; map.fitBounds(pts, { padding: [30, 30], maxZoom: 15 }); }
@@ -323,29 +387,158 @@
   $('sp-cards').addEventListener('mouseover', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, true); });
   $('sp-cards').addEventListener('mouseout', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, false); });
 
-  function openDetail(i) {
-    var h = results[i], p = h.property || {}, a = h.address || {}, s = h.school || {}, t = h.tax || {};
-    var facts = [
-      ['Beds', p.bedrooms], ['Baths', baths(h)], ['Sq ft', p.area && p.area.toLocaleString()], ['Lot', p.lotSizeArea && (Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? 'sq ft' : 'acres')))],
-      ['Year built', p.yearBuilt], ['Type', p.subTypeText || p.type], ['Garage', p.garageSpaces && Math.round(p.garageSpaces)], ['Heating', p.heating], ['Cooling', p.cooling],
-      ['Taxes', t.taxAnnualAmount && money(t.taxAnnualAmount)], ['School district', s.district], ['MLS #', h.listingId]
-    ].filter(function (f) { return f[1]; });
-    var addr = cleanAddr(a.full) + ', ' + (a.city || '') + ' ' + (a.state || '') + ' ' + (a.postalCode || '');
-    var sms = 'sms:+16058389140?&body=' + encodeURIComponent("Hi Marcos, I'd like to see " + addr);
-    $('sp-detail').innerHTML =
-      '<div class="sp-gal">' + (h.photos || []).map(function (u) { return '<img src="' + esc(u) + '" alt="" loading="lazy">'; }).join('') + '</div>' +
-      '<div class="sp-det"><div class="pr">' + money(h.listPrice) + '</div><div>' + esc(addr) + '</div>' +
-      '<p class="sp-attr">' + attrHtml(h, true) + '</p>' +
-      '<div class="sp-cta"><a class="a1" href="' + sms + '">Text Marcos to see it</a><a class="a2" href="tel:+16058389140">Call 605-838-9140</a></div>' +
-      '<div class="sp-facts">' + facts.map(function (f) { return '<div>' + f[0] + ': <b>' + esc(f[1]) + '</b></div>'; }).join('') + '</div>' +
-      (h.remarks ? '<p style="margin-bottom:14px">' + esc(h.remarks) + '</p>' : '') +
-      '<div class="sp-courtesy">' + esc(h.disclaimer || 'Information deemed reliable but not guaranteed.') + (h.mls && h.mls.daysOnMarket != null ? ' Days on market: ' + h.mls.daysOnMarket + '.' : '') + '</div></div>';
-    $('sp-modal').classList.add('open');
+  // ===== Home details page (Zillow-style) =====
+  var ICON = {
+    home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    lot: '<path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M3 14h4M17 14h4"/>',
+    tag: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+    car: '<path d="M5 17h14M6 17v2M18 17v2M4 13l2-6h12l2 6v4H4z"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    hoa: '<path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-5h6v5M4 21h16"/>',
+    temp: '<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/>',
+    snow: '<path d="M12 2v20M4.9 6l14.2 12M4.9 18L19.1 6"/>'
+  };
+  function ic(n) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[n] + '</svg>'; }
+  function list(s) { return String(s || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean).join(', '); }
+  function lotText(p) {
+    if (p.lotSizeArea) return Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? 'sq ft' : 'acres')) + ' lot';
+    if (p.acres) return p.acres + ' acre lot';
+    return '';
   }
-  function closeDetail() { $('sp-modal').classList.remove('open'); }
-  $('sp-x').onclick = closeDetail;
-  $('sp-modal').addEventListener('click', function (e) { if (e.target.id === 'sp-modal') closeDetail(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDetail(); });
+  function showAddr(h) { return h.internetAddressDisplay !== false; }
+  var cur = null, hdMap = null;
+
+  function openDetail(i) { show(results[i]); }
+  function show(h) {
+    cur = h;
+    var p = h.property || {}, a = h.address || {}, s = h.school || {}, t = h.tax || {}, as = h.association || {}, m = h.mls || {};
+    var street = showAddr(h) ? cleanAddr(a.full) : 'Address not shown';
+    var addr = street + ', ' + (a.city || '') + ', ' + (a.state || '') + ' ' + (a.postalCode || '');
+    var photos = h.photos || [];
+    var n = photos.length;
+    var ppsf = h.listPrice && p.area ? money(h.listPrice / p.area) + '/sq ft' : '';
+    var dom = m.daysOnMarket;
+    var chips = [
+      ['home', p.subTypeText || p.style || ''],
+      ['cal', p.yearBuilt && 'Built in ' + p.yearBuilt],
+      ['lot', lotText(p)],
+      ['tag', ppsf],
+      ['car', p.garageSpaces && Math.round(p.garageSpaces) + '-car garage'],
+      ['clock', dom != null && (dom === 0 ? 'Listed today' : dom + (dom === 1 ? ' day' : ' days') + ' on market')],
+      ['hoa', as.fee ? money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '') + ' HOA' : 'No HOA listed'],
+      ['temp', p.heating],
+      ['snow', p.cooling]
+    ].filter(function (c) { return c[1]; });
+    var groups = [
+      ['Interior', [['Bedrooms', p.bedrooms], ['Full baths', p.bathsFull], ['3/4 baths', p.bathsThreeQuarter], ['Half baths', p.bathsHalf], ['Finished sq ft', p.area && p.area.toLocaleString()], ['Flooring', list(p.flooring)], ['Fireplaces', p.fireplaces], ['Features', list(p.interiorFeatures)], ['Laundry', list(p.laundryFeatures)]]],
+      ['Heating &amp; cooling', [['Heating', p.heating], ['Cooling', p.cooling]]],
+      ['Building', [['Style', p.style], ['Type', p.subTypeText], ['Year built', p.yearBuilt], ['Siding', list(p.construction)], ['Roof', list(p.roof)], ['Foundation', p.foundation], ['Stories', p.stories]]],
+      ['Lot &amp; outside', [['Lot', lotText(p).replace(/ lot$/, '')], ['Lot description', list(p.lotDescription)], ['Outside', list(p.exteriorFeatures)], ['Garage', p.garageSpaces && Math.round(p.garageSpaces) + ' spaces'], ['Parking', p.parking && p.parking.description], ['Water', p.water]]],
+      ['Schools', [['District', s.district], ['Elementary', s.elementarySchool], ['Middle', s.middleSchool], ['High', s.highSchool]]],
+      ['Taxes &amp; area', [['Yearly taxes', t.taxAnnualAmount && money(t.taxAnnualAmount) + (t.taxYear ? ' (' + t.taxYear + ')' : '')], ['HOA', as.fee && money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '')], ['Subdivision', p.subdivision], ['County', h.geo && h.geo.county], ['MLS #', h.listingId]]]
+    ].map(function (g) { return [g[0], g[1].filter(function (r) { return r[1] !== undefined && r[1] !== null && r[1] !== '' && r[1] !== 0; })]; })
+     .filter(function (g) { return g[1].length; });
+
+    var msg = "Hi Marcos, I'd like to see " + street + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
+    var sms = 'sms:+16058389140?&body=' + encodeURIComponent(msg);
+    var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
+    var mobileTiles = photos.map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
+    var isNew = dom != null && dom <= 7;
+    var remarks = h.remarks || '';
+
+    $('sp-detail').innerHTML =
+      '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Back to search</button>' +
+      '<button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg>Share</button></div>' +
+      '<div class="hd-galwrap">' +
+        '<div class="hd-gal n' + Math.min(n, 5) + '" id="hd-gal">' + (window.innerWidth <= 900 ? mobileTiles : tiles) + '</div>' +
+        '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? 'New listing' : esc(m.statusText || m.status || 'For sale')) + '</span>' +
+        (n > 5 ? '<button type="button" class="hd-all" id="hd-all">▦ See all ' + n + ' photos</button>' : '') +
+        (n > 1 ? '<span class="hd-count" id="hd-count">1 / ' + n + '</span>' : '') +
+      '</div>' +
+      '<div class="hd-grid"><div>' +
+        '<div class="hd-head"><div><div class="hd-price">' + money(h.listPrice) + '</div><div class="hd-addr">' + esc(addr) + '</div></div>' +
+        '<div class="hd-stats"><div><b>' + (p.bedrooms || 0) + '</b>beds</div><div><b>' + baths(h) + '</b>baths</div>' + (p.area ? '<div><b>' + p.area.toLocaleString() + '</b>sq ft</div>' : '') + '</div></div>' +
+        '<p class="hd-attr">' + attrHtml(h, true) + '</p>' +
+        '<div class="hd-chips">' + chips.map(function (c) { return '<div class="hd-chip">' + ic(c[0]) + '<span>' + esc(c[1]) + '</span></div>'; }).join('') + '</div>' +
+        (remarks ? '<div class="hd-sec"><h2>About this home</h2><p id="hd-rem">' + esc(remarks.length > 420 ? remarks.slice(0, 420).replace(/\s+\S*$/, '') + '…' : remarks) + '</p>' + (remarks.length > 420 ? '<button type="button" class="hd-more" id="hd-remmore">Show more</button>' : '') + '</div>' : '') +
+        '<div class="hd-sec"><h2>Facts &amp; features</h2><div class="hd-facts">' + groups.map(function (g) {
+          return '<div><h3>' + g[0] + '</h3><ul>' + g[1].map(function (r) { return '<li>' + r[0] + ': <b>' + esc(r[1]) + '</b></li>'; }).join('') + '</ul></div>';
+        }).join('') + '</div></div>' +
+        (showAddr(h) && h.geo && h.geo.lat ? '<div class="hd-sec"><h2>Location</h2><div id="hd-map"></div></div>' : '') +
+        '<div class="hd-courtesy">' + attrHtml(h, false) + '. ' + esc(h.disclaimer || 'Information deemed reliable but not guaranteed.') + ' Listing data provided by the REALTOR® Association of the Sioux Empire MLS. Information is deemed reliable but not guaranteed and should be independently verified.</div>' +
+      '</div>' +
+      '<aside class="hd-side"><div class="hd-card">' +
+        '<div class="hd-agent"><img src="/images/marcos-headshot.jpg" alt=""><div><b>Marcos Diaz</b><span>Broker Associate · Keller Williams Realty Sioux Falls · Hablo español</span></div></div>' +
+        '<a class="hd-btn hd-b1" href="' + sms + '">Schedule a showing<small>Text me and I’ll set it up</small></a>' +
+        '<a class="hd-btn hd-b2" href="tel:+16058389140">Call 605-838-9140</a>' +
+        '<a class="hd-btn hd-b3" href="/calculators/affordability/">See what you can afford</a>' +
+        '<p class="hd-note">Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.</p>' +
+      '</div></aside></div>' +
+      '<div class="hd-dock"><a class="hd-btn hd-b1" href="' + sms + '">Text Marcos</a><a class="hd-btn hd-b3" href="tel:+16058389140">Call</a></div>';
+
+    $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
+    if (h.mlsId && location.hash !== '#home=' + h.mlsId) history.pushState({ home: h.mlsId }, '', '#home=' + h.mlsId);
+
+    $('hd-back').onclick = closeDetail;
+    $('hd-share').onclick = share;
+    $('hd-gal').onclick = function (e) { var b = e.target.closest('button'); if (b) openLb(+b.dataset.k); };
+    if ($('hd-all')) $('hd-all').onclick = function () { openLb(0); };
+    if ($('hd-remmore')) $('hd-remmore').onclick = function () { $('hd-rem').textContent = remarks; this.remove(); };
+    var g = $('hd-gal');
+    if ($('hd-count')) g.addEventListener('scroll', function () { $('hd-count').textContent = (Math.round(g.scrollLeft / g.clientWidth) + 1) + ' / ' + n; }, { passive: true });
+    if ($('hd-map')) {
+      if (hdMap) { hdMap.remove(); hdMap = null; }
+      hdMap = L.map('hd-map', { scrollWheelZoom: false }).setView([h.geo.lat, h.geo.lng], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(hdMap);
+      L.marker([h.geo.lat, h.geo.lng], { icon: L.divIcon({ className: '', html: '<span class="pin hi">' + short(h.listPrice) + '</span>' }) }).addTo(hdMap);
+    }
+  }
+  function closeDetail(fromPop) {
+    $('sp-modal').classList.remove('open'); document.body.classList.remove('sp-lock'); closeLb();
+    if (fromPop !== true && /^#home=/.test(location.hash)) history.pushState({}, '', location.pathname + location.search);
+  }
+  window.addEventListener('popstate', function () {
+    var id = (location.hash.match(/^#home=(\d+)/) || [])[1];
+    if (id && cur && String(cur.mlsId) === id) return;
+    if (id) openById(id); else closeDetail(true);
+  });
+  function openById(id) {
+    var hit = results.filter(function (h) { return String(h.mlsId) === String(id); })[0];
+    if (hit) return show(hit);
+    if (!LIVE) return;
+    fetch(API + '/' + encodeURIComponent(id)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (h) { if (h && h.internetEntireListingDisplay !== false) show(h); }).catch(function () {});
+  }
+  function toast(t) { var el = $('hd-toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(el._t); el._t = setTimeout(function () { el.style.display = 'none'; }, 2200); }
+  function share() {
+    var url = location.origin + location.pathname + '#home=' + cur.mlsId;
+    var title = money(cur.listPrice) + ' · ' + (showAddr(cur) ? cleanAddr((cur.address || {}).full) + ', ' : '') + ((cur.address || {}).city || '');
+    if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+    try { navigator.clipboard.writeText(url).then(function () { toast('Link copied'); }, function () { prompt('Copy this link:', url); }); }
+    catch (e) { prompt('Copy this link:', url); }
+  }
+  // Photo viewer
+  function openLb(k) {
+    var ph = (cur && cur.photos) || []; if (!ph.length) return;
+    $('hd-lb-track').innerHTML = ph.map(function (u) { return '<img src="' + esc(u) + '" alt="" loading="lazy">'; }).join('');
+    $('hd-lb').classList.add('open');
+    var tr = $('hd-lb-track');
+    requestAnimationFrame(function () { tr.scrollLeft = k * tr.clientWidth; lbCount(); });
+  }
+  function closeLb() { $('hd-lb').classList.remove('open'); }
+  function lbCount() { var tr = $('hd-lb-track'); $('hd-lb-n').textContent = (Math.round(tr.scrollLeft / tr.clientWidth) + 1) + ' / ' + tr.children.length; }
+  $('hd-lb-track').addEventListener('scroll', lbCount, { passive: true });
+  $('hd-lb-x').onclick = closeLb;
+  $('hd-lb-prev').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' }); };
+  $('hd-lb-next').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' }); };
+  document.addEventListener('keydown', function (e) {
+    if ($('hd-lb').classList.contains('open')) {
+      if (e.key === 'Escape') closeLb();
+      if (e.key === 'ArrowRight') $('hd-lb-next').click();
+      if (e.key === 'ArrowLeft') $('hd-lb-prev').click();
+    } else if (e.key === 'Escape' && $('sp-modal').classList.contains('open')) closeDetail();
+  });
 
   $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); load(false); });
   ['f-min', 'f-max', 'f-beds', 'f-baths', 'f-type'].forEach(function (id) { $(id).addEventListener('change', function () { load(false); }); });
@@ -376,6 +569,8 @@
   $('sp-more-f').onclick = function () { var f = $('sp-form'), o = f.classList.toggle('open'); this.setAttribute('aria-expanded', o); };
 
   load(false);
+  var deep = (location.hash.match(/^#home=(\d+)/) || [])[1];
+  if (deep) openById(deep);
 })();
 </script>
 </body>
