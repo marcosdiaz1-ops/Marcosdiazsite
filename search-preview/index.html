@@ -70,8 +70,20 @@
   .sp-draw .d-go.on { background: var(--gold); }
   .sp-draw .d-clear { background: #fff; color: var(--navy); }
   .sp-draw svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-draw [hidden] { display: none !important; }
   .sp-draw-tip { background: rgba(19,32,59,.88); color: #fff; font-size: 13px; padding: 6px 10px; border-radius: 8px; max-width: 220px; text-align: right; }
   #sp-map.drawing, #sp-map.drawing .leaflet-interactive { cursor: crosshair; touch-action: none; }
+  .pin.p-new { background: var(--gold); }
+  .pin.p-cut { background: #1f6b45; }
+  .pin.p-c { background: #fff; color: var(--navy); border: 2px solid var(--navy); font-size: 13px; padding: 5px 10px; cursor: pointer; }
+  .pin.p-c:hover { background: var(--navy); color: #fff; }
+  .sp-tools { display: flex; flex-direction: column; background: #fff; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,.35); overflow: hidden; }
+  .sp-tools button { width: 34px; height: 34px; border: 0; border-top: 1px solid #ddd; background: #fff; color: var(--navy); cursor: pointer; display: grid; place-items: center; padding: 0; }
+  .sp-tools button:first-child { border-top: 0; }
+  .sp-tools button.on { background: var(--navy); color: #fff; }
+  .sp-tools svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-legend { background: rgba(255,255,255,.92); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--ink); display: flex; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+  .sp-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; border: 1px solid #fff; }
   .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
   .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
   .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; transition: box-shadow .2s, transform .2s; }
@@ -514,10 +526,15 @@
   var offset = 0, results = [], markers = {}, moveTimer = null, skipMove = false;
 
   var map = L.map('sp-map', { scrollWheelZoom: true });
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
+  // Satellite photos from the USGS National Map (free, public domain)
+  var satellite = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19, maxNativeZoom: 16, attribution: 'Imagery: USGS The National Map'
+  });
   var layer = L.layerGroup().addTo(map);
+  var pinLayer = L.layerGroup().addTo(map);
   if (LIVE) map.setView([43.5446, -96.7311], 11); // Sioux Falls
   else map.setView([29.76, -95.37], 10); // demo data is in Houston
 
@@ -571,14 +588,15 @@
     map.removeLayer(trail); trail = null;
     setDrawing(false);
     if (rawPts.length < 5) { drawLabel(); return; }
-    var pts = simplify(rawPts, 30);
+    applyDrawing(simplify(rawPts, 30), true);
+  }
+  function applyDrawing(pts, fit) {
     if (drawShape) map.removeLayer(drawShape);
     drawShape = L.polygon(pts, { color: '#b98b5c', weight: 3, fillColor: '#b98b5c', fillOpacity: 0.08, interactive: false }).addTo(map);
-    drawPts = pts.map(function (ll) { return ll.lat.toFixed(5) + ',' + ll.lng.toFixed(5); });
+    drawPts = pts.map(function (ll) { return (+ll.lat).toFixed(5) + ',' + (+ll.lng).toFixed(5); });
     $('f-q').value = '';
     document.getElementById('d-clear').hidden = false; drawLabel();
-    skipMove = true; map.fitBounds(drawShape.getBounds(), { padding: [20, 20] });
-    load(false);
+    if (fit) { skipMove = true; map.fitBounds(drawShape.getBounds(), { padding: [20, 20] }); load(false); }
   }
   mapEl.addEventListener('pointerdown', startTrace);
   mapEl.addEventListener('pointermove', moveTrace);
@@ -586,6 +604,103 @@
   mapEl.addEventListener('pointercancel', endTrace);
   document.getElementById('d-go').onclick = function () { setDrawing(!drawing); };
   document.getElementById('d-clear').onclick = function () { clearDrawing(true); };
+  // ---- Map tools: satellite view, near me, share this search ----
+  var ICON = {
+    sat: '<svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg>',
+    me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>',
+    share: '<svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg>'
+  };
+  var toolCtl = L.control({ position: 'topleft' });
+  toolCtl.onAdd = function () {
+    var d = L.DomUtil.create('div', 'sp-tools');
+    d.innerHTML = '<button type="button" id="t-sat" title="' + t('Satellite view', 'Vista de satélite') + '" aria-label="' + t('Satellite view', 'Vista de satélite') + '">' + ICON.sat + '</button>' +
+      '<button type="button" id="t-me" title="' + t('Homes near me', 'Casas cerca de mí') + '" aria-label="' + t('Homes near me', 'Casas cerca de mí') + '">' + ICON.me + '</button>' +
+      '<button type="button" id="t-share" title="' + t('Share this search', 'Compartir esta búsqueda') + '" aria-label="' + t('Share this search', 'Compartir esta búsqueda') + '">' + ICON.share + '</button>';
+    L.DomEvent.disableClickPropagation(d);
+    return d;
+  };
+  toolCtl.addTo(map);
+  var legend = L.control({ position: 'bottomleft' });
+  legend.onAdd = function () {
+    var d = L.DomUtil.create('div', 'sp-legend');
+    d.innerHTML = '<span><i style="background:var(--gold)"></i>' + t('New this week', 'Nueva esta semana') + '</span><span><i style="background:#1f6b45"></i>' + t('Price cut', 'Bajó de precio') + '</span>';
+    return d;
+  };
+  legend.addTo(map);
+  document.getElementById('t-sat').onclick = function () {
+    var on = !map.hasLayer(satellite);
+    if (on) { map.removeLayer(streets); satellite.addTo(map); } else { map.removeLayer(satellite); streets.addTo(map); }
+    this.classList.toggle('on', on);
+  };
+  var meDot = null;
+  document.getElementById('t-me').onclick = function () {
+    if (!navigator.geolocation) return toast(t('Your device can’t share its location.', 'Su aparato no puede compartir su ubicación.'));
+    $('f-q').value = ''; if (drawPts) clearDrawing(false);
+    map.locate({ setView: true, maxZoom: 14 });
+  };
+  map.on('locationfound', function (e) {
+    if (meDot) map.removeLayer(meDot);
+    meDot = L.circleMarker(e.latlng, { radius: 8, color: '#fff', weight: 3, fillColor: '#2a6fdb', fillOpacity: 1 }).addTo(map);
+  });
+  map.on('locationerror', function () { toast(t('Couldn’t get your location. Check that location is allowed for this site.', 'No se pudo obtener su ubicación. Revise que el sitio tenga permiso.')); });
+  function searchUrl() {
+    var u = new URLSearchParams();
+    var q = $('f-q').value.trim(); if (q) u.set('q', q);
+    [['f-min', 'minprice'], ['f-max', 'maxprice'], ['f-beds', 'minbeds'], ['f-baths', 'minbaths'], ['f-type', 'type'], ['f-area', 'minarea'], ['f-year', 'minyear'], ['f-dom', 'maxdom']]
+      .forEach(function (x) { if ($(x[0]).value) u.set(x[1], $(x[0]).value); });
+    if (drawPts) u.set('d', drawPts.join('|'));
+    else if (!q) { var c = map.getCenter(); u.set('c', c.lat.toFixed(4) + ',' + c.lng.toFixed(4) + ',' + map.getZoom()); }
+    var qs = u.toString();
+    return location.pathname + (qs ? '?' + qs : '');
+  }
+  function syncUrl() { try { history.replaceState(history.state, '', searchUrl() + location.hash); } catch (e) {} }
+  document.getElementById('t-share').onclick = function () {
+    var url = location.origin + searchUrl();
+    var title = t('Homes for sale I found on 605homesearch.com', 'Casas en venta que encontré en 605homesearch.com');
+    if (navigator.share) navigator.share({ title: title, url: url }).catch(function () {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast(t('Link copied. Paste it in a text or email.', 'Enlace copiado. Péguelo en un texto o correo.')); });
+    else prompt(t('Copy this link:', 'Copie este enlace:'), url);
+  };
+
+  // ---- Every home in the area as a pin (crowded pins grouped into a numbered bubble) ----
+  var allPins = null, pinReq = 0;
+  function pinCls(dom, orig, price) { return (orig && price && orig > price) ? ' p-cut' : (dom != null && dom <= 7 ? ' p-new' : ''); }
+  function loadPins() {
+    var my = ++pinReq;
+    var u = query(false).replace(/([?&])limit=\d+/, '$1limit=' + PAGE) + '&pins=1';
+    fetch(u, { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (data) {
+      if (my !== pinReq) return;
+      // the pin list is small (location + price); an older listings service sends full listings instead, so keep the old pins then
+      allPins = (Array.isArray(data) && (!data.length || data[0].lat != null)) ? data : null;
+      drawPins(); render(false);
+    }).catch(function () { if (my === pinReq) { allPins = null; drawPins(); } });
+  }
+  function drawPins() {
+    pinLayer.clearLayers();
+    if (!allPins || savedMode) return;
+    var z = map.getZoom(), cell = z >= 15 ? 0 : 58, groups = {};
+    allPins.forEach(function (h) {
+      var pt = map.project([h.lat, h.lng], z);
+      var key = cell ? Math.floor(pt.x / cell) + ':' + Math.floor(pt.y / cell) : h.mlsId;
+      (groups[key] = groups[key] || []).push(h);
+    });
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k];
+      if (g.length < 2) {
+        g.forEach(function (h) {
+          L.marker([h.lat, h.lng], { icon: L.divIcon({ className: '', html: '<span class="pin' + pinCls(h.dom, h.originalListPrice, h.listPrice) + '" data-m="' + esc(h.mlsId) + '">' + short(h.listPrice) + '</span>' }) })
+            .on('click', function () { openById(h.mlsId); }).addTo(pinLayer);
+        });
+      } else {
+        var lat = 0, lng = 0; g.forEach(function (h) { lat += h.lat; lng += h.lng; });
+        var b = L.latLngBounds(g.map(function (h) { return [h.lat, h.lng]; }));
+        L.marker([lat / g.length, lng / g.length], { zIndexOffset: 1000, icon: L.divIcon({ className: '', html: '<span class="pin p-c">' + g.length + '</span>' }) })
+          .on('click', function () { skipMove = false; map.fitBounds(b, { padding: [40, 40], maxZoom: Math.min(z + 3, 17) }); }).addTo(pinLayer);
+      }
+    });
+  }
+  map.on('zoomend', drawPins);
+
   function areaPoints() {
     if (drawPts) return drawPts;
     var b = map.getBounds();
@@ -618,7 +733,7 @@
 
   function load(more) {
     if (!more && savedMode) { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); }
-    if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); }
+    if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); if (LIVE) loadPins(); syncUrl(); }
     fetch(query(more), { headers: HEADERS })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
@@ -672,13 +787,16 @@
 
   function render(fit) {
     var real = results.filter(function (h) { return !h._sample; }).length;
-    $('sp-count').textContent = real ? real + (($('sp-more').hidden) ? '' : '+') + (drawPts ? t(' homes in the area you drew', ' casas en el área que dibujó') : t(' homes in this area', ' casas en esta área')) + (LIVE ? '' : ' (plus 1 test listing)') : (drawPts ? t('No homes match inside your drawing. Try a bigger area or fewer filters.', 'No hay casas dentro de su dibujo. Dibuje un área más grande o quite filtros.') : t('No homes match. Try zooming out or changing filters.', 'No hay casas que coincidan. Aleje el mapa o cambie los filtros.'));
+    var pinMode = !!allPins && !savedMode;
+    if (pinMode && allPins.length) real = allPins.length;
+    $('sp-count').textContent = real ? real + ((pinMode ? allPins.length < 500 : $('sp-more').hidden) ? '' : '+') + (drawPts ? t(' homes in the area you drew', ' casas en el área que dibujó') : t(' homes in this area', ' casas en esta área')) + (LIVE ? '' : ' (plus 1 test listing)') : (drawPts ? t('No homes match inside your drawing. Try a bigger area or fewer filters.', 'No hay casas dentro de su dibujo. Dibuje un área más grande o quite filtros.') : t('No homes match. Try zooming out or changing filters.', 'No hay casas que coincidan. Aleje el mapa o cambie los filtros.'));
     layer.clearLayers(); markers = {};
     var pts = [];
     $('sp-cards').innerHTML = results.map(function (h, i) {
       var p = h.property || {}, a = h.address || {}, g = h.geo || {};
-      if (g.lat && g.lng) {
-        var m = L.marker([g.lat, g.lng], { icon: L.divIcon({ className: '', html: '<span class="pin" data-i="' + i + '">' + short(h.listPrice) + '</span>' }) })
+      if (g.lat && g.lng && pinMode) { if (!h._sample) pts.push([g.lat, g.lng]); }
+      else if (g.lat && g.lng) {
+        var m = L.marker([g.lat, g.lng], { icon: L.divIcon({ className: '', html: '<span class="pin' + pinCls((h.mls || {}).daysOnMarket, h.originalListPrice, h.listPrice) + '" data-i="' + i + '" data-m="' + esc(h.mlsId) + '">' + short(h.listPrice) + '</span>' }) })
           .on('click', function () { openDetail(i); }).addTo(layer);
         markers[i] = m; if (!h._sample) pts.push([g.lat, g.lng]);
       }
@@ -693,12 +811,13 @@
         (savedMode ? '<label class="cmp"><input type="checkbox" data-cmp="' + esc(h.mlsId) + '"' + (cmpSel.indexOf(String(h.mlsId)) > -1 ? ' checked' : '') + '>' + t('Compare', 'Comparar') + '</label>' : '') +
         '</div></div>';
     }).join('');
+    if (pinMode && fit && allPins.length) pts = allPins.map(function (h) { return [h.lat, h.lng]; });
     if (fit && pts.length) { skipMove = true; map.fitBounds(pts, { padding: [30, 30], maxZoom: 15 }); }
   }
 
   function hi(i, on) {
     var c = document.querySelector('.sp-card[data-i="' + i + '"]'); if (c) c.classList.toggle('hi', on);
-    var pin = document.querySelector('.pin[data-i="' + i + '"]'); if (pin) pin.classList.toggle('hi', on);
+    var h = results[i], pin = h && document.querySelector('.pin[data-m="' + String(h.mlsId).replace(/"/g, '') + '"]'); if (pin) pin.classList.toggle('hi', on);
   }
 
   $('sp-cards').addEventListener('click', function (e) {
@@ -931,6 +1050,7 @@
     var ids = favs();
     savedMode = true; cmpSel = cmpSel.filter(function (x) { return ids.indexOf(x) > -1; });
     $('sp-saved').classList.add('on'); $('sp-more').hidden = true;
+    pinReq++; drawPins();
     $('sp-cmpbar').classList.toggle('on', ids.length > 1); updCmp();
     if (!ids.length) { results = []; render(false); $('sp-count').textContent = t('No saved homes yet. Tap the ♥ on any home to save it.', 'Aún no hay casas guardadas. Toque el ♥ en cualquier casa para guardarla.'); return; }
     $('sp-count').textContent = t('Loading your saved homes…', 'Cargando sus casas guardadas…');
@@ -1242,6 +1362,11 @@
     if (u.get('type') && /^(residential|condominium)$/.test(u.get('type'))) $('f-type').value = u.get('type');
     if (u.get('q')) $('f-q').value = u.get('q').slice(0, 80);
     pillLabels();
+    // a shared search link: map position (c=lat,lng,zoom) or a drawn area (d=lat,lng|lat,lng|...)
+    var c = (u.get('c') || '').split(',').map(Number);
+    if (c.length === 3 && c.every(isFinite) && !u.get('q')) { skipMove = true; map.setView([c[0], c[1]], Math.max(5, Math.min(18, c[2])), { animate: false }); skipMove = false; }
+    var d = (u.get('d') || '').split('|').filter(function (p) { return /^-?\d{1,3}\.\d{1,6},-?\d{1,3}\.\d{1,6}$/.test(p); }).slice(0, 30);
+    if (d.length >= 3) { applyDrawing(d.map(function (p) { var x = p.split(','); return L.latLng(+x[0], +x[1]); }), false); skipMove = true; map.fitBounds(drawShape.getBounds(), { padding: [20, 20], animate: false }); skipMove = false; }
   })();
 
   load(false);

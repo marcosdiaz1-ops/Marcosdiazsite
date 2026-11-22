@@ -12,6 +12,8 @@
 // Only read-only listing requests are allowed, and only from 605homesearch.com.
 
 const UPSTREAM = 'https://api.simplyrets.com';
+// MLS fields meant only for agents (showing instructions, private remarks): removed before anything reaches the browser
+const PRIVATE = ['privateRemarks', 'showingInstructions', 'showingContactName', 'showingContactPhone'];
 const ALLOWED_ORIGINS = ['https://605homesearch.com', 'https://www.605homesearch.com'];
 
 function cors(origin) {
@@ -44,13 +46,32 @@ export default {
     // Listing search (/properties) and single listing (/properties/<mlsId>) only
     if (!/^\/properties(\/[A-Za-z0-9_-]+)?$/.test(url.pathname)) return new Response('Not found', { status: 404, headers });
 
-    const target = UPSTREAM + url.pathname + url.search;
+    // ?pins=1 returns a small list (location, price, status) for every map pin, up to 500 homes
+    const pins = url.searchParams.get('pins') === '1';
+    // keep the query exactly as sent (commas in "points" stay as they are), minus pins=1
+    let qs = url.search.replace(/^\?/, '').split('&').filter(p => p && p !== 'pins=1' && !(pins && /^limit=/.test(p)));
+    if (pins) qs.push('limit=500');
+    const target = UPSTREAM + url.pathname + (qs.length ? '?' + qs.join('&') : '');
     const cache = caches.default;
-    const cacheKey = new Request(target, { method: 'GET' });
+    const cacheKey = new Request(url.origin + url.pathname + url.search, { method: 'GET' });
     let res = await cache.match(cacheKey);
     if (!res) {
       const r = await fetch(target, { headers: { Authorization: auth, Accept: 'application/json' } });
-      res = new Response(r.body, { status: r.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' } });
+      let body = await r.text();
+      if (r.ok) {
+        try {
+          const data = JSON.parse(body);
+          const list = Array.isArray(data) ? data : [data];
+          // Never send agent-only MLS fields to the public website
+          list.forEach(h => { if (h && typeof h === 'object') PRIVATE.forEach(k => delete h[k]); });
+          body = JSON.stringify(pins
+            ? list.filter(h => h && h.internetEntireListingDisplay !== false && h.geo && h.geo.lat).map(h => ({
+                mlsId: h.mlsId, lat: h.geo.lat, lng: h.geo.lng, listPrice: h.listPrice, originalListPrice: h.originalListPrice || null,
+                dom: h.mls ? h.mls.daysOnMarket : null, status: h.mls ? (h.mls.statusText || h.mls.status) : null }))
+            : data);
+        } catch (e) { /* not JSON: pass through */ }
+      }
+      res = new Response(body, { status: r.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' } });
       if (r.ok) ctx.waitUntil(cache.put(cacheKey, res.clone()));
     }
     const out = new Response(res.body, res);
