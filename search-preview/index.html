@@ -77,11 +77,27 @@
   .pin.p-cut { background: #1f6b45; }
   .pin.p-c { background: #fff; color: var(--navy); border: 2px solid var(--navy); font-size: 13px; padding: 5px 10px; cursor: pointer; }
   .pin.p-c:hover { background: var(--navy); color: #fff; }
-  .sp-tools { display: flex; flex-direction: column; background: #fff; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,.35); overflow: hidden; }
+  .sp-tools { display: flex; flex-direction: column; background: #fff; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,.35); }
+  .sp-tools > button:first-child { border-radius: 6px 6px 0 0; } .sp-tools > button:nth-child(3) { border-radius: 0 0 6px 6px; }
   .sp-tools button { width: 34px; height: 34px; border: 0; border-top: 1px solid #ddd; background: #fff; color: var(--navy); cursor: pointer; display: grid; place-items: center; padding: 0; }
   .sp-tools button:first-child { border-top: 0; }
   .sp-tools button.on { background: var(--navy); color: #fff; }
   .sp-tools svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-layers { position: absolute; left: 44px; top: 0; width: 250px; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(19,32,59,.25); padding: 12px 14px; font-size: 14px; color: var(--ink); z-index: 1000; }
+  .sp-layers h4 { font: 600 12px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); margin: 10px 0 6px; }
+  .sp-layers h4:first-child { margin-top: 0; }
+  .sp-layers label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; font: 400 14px var(--sans) !important; color: var(--ink); margin: 0; }
+  .sp-layers .sub label { font-size: 13px !important; }
+  .sp-layers .sub i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .sp-layers input { accent-color: var(--navy); width: 17px; height: 17px; }
+  .sp-layers .sub { display: grid; grid-template-columns: 1fr 1fr; padding-left: 24px; }
+  .sp-layers small { display: block; color: #666; font-size: 12px; line-height: 1.4; margin-top: 6px; }
+  .sch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; color: #fff; font: 700 11px var(--sans); display: grid; place-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.35); transform: translate(-50%,-50%); }
+  .sch.E { background: #2a6fdb; } .sch.M { background: #7b4bc4; } .sch.H { background: #c0392b; } .sch.P { background: #4a5063; }
+  .hd-env { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .hd-env a { font-size: 15px; color: var(--navy); border: 1.5px solid var(--navy); border-radius: 10px; padding: 8px 14px; text-decoration: none; }
+  .hd-flood { margin-top: 12px; background: #f3f6fb; border-left: 4px solid #2a6fdb; border-radius: 8px; padding: 10px 14px; font-size: 15px; }
+  .hd-flood.hi { background: #fdf3f2; border-color: #c0392b; }
   .sp-legend { background: rgba(255,255,255,.92); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--ink); display: flex; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
   .sp-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; border: 1px solid #fff; }
   .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
@@ -613,10 +629,26 @@
   var toolCtl = L.control({ position: 'topleft' });
   toolCtl.onAdd = function () {
     var d = L.DomUtil.create('div', 'sp-tools');
-    d.innerHTML = '<button type="button" id="t-sat" title="' + t('Satellite view', 'Vista de satélite') + '" aria-label="' + t('Satellite view', 'Vista de satélite') + '">' + ICON.sat + '</button>' +
+    d.style.position = 'relative';
+    d.innerHTML = '<button type="button" id="t-sat" title="' + t('Map options', 'Opciones del mapa') + '" aria-label="' + t('Map options', 'Opciones del mapa') + '" aria-expanded="false">' + ICON.sat + '</button>' +
       '<button type="button" id="t-me" title="' + t('Homes near me', 'Casas cerca de mí') + '" aria-label="' + t('Homes near me', 'Casas cerca de mí') + '">' + ICON.me + '</button>' +
       '<button type="button" id="t-share" title="' + t('Share this search', 'Compartir esta búsqueda') + '" aria-label="' + t('Share this search', 'Compartir esta búsqueda') + '">' + ICON.share + '</button>';
-    L.DomEvent.disableClickPropagation(d);
+    var pnl = document.createElement('div'); pnl.className = 'sp-layers'; pnl.id = 't-panel'; pnl.hidden = true;
+    pnl.innerHTML = '<h4>' + t('Map style', 'Tipo de mapa') + '</h4>' +
+      '<label><input type="radio" name="t-base" value="map" checked>' + t('Map', 'Mapa') + '</label>' +
+      '<label><input type="radio" name="t-base" value="sat">' + t('Satellite', 'Satélite') + '</label>' +
+      '<h4>' + t('Show on map', 'Mostrar en el mapa') + '</h4>' +
+      '<label><input type="checkbox" id="t-flood">' + t('Flood zones (FEMA)', 'Zonas de inundación (FEMA)') + '</label>' +
+      '<label><input type="checkbox" id="t-sch">' + t('Schools', 'Escuelas') + '</label>' +
+      '<div class="sub" id="t-sch-f" hidden>' +
+        '<label><input type="checkbox" data-sl="E" checked><i style="background:#2a6fdb"></i>' + t('Elementary', 'Primaria') + '</label>' +
+        '<label><input type="checkbox" data-sl="M" checked><i style="background:#7b4bc4"></i>' + t('Middle', 'Secundaria') + '</label>' +
+        '<label><input type="checkbox" data-sl="H" checked><i style="background:#c0392b"></i>' + t('High', 'Preparatoria') + '</label>' +
+        '<label><input type="checkbox" data-sl="P" checked><i style="background:#4a5063"></i>' + t('Private', 'Privada') + '</label>' +
+      '</div>' +
+      '<small id="t-note">' + t('School locations from the U.S. Dept. of Education. Always confirm which school a home is assigned to with the district.', 'Ubicaciones de escuelas del Departamento de Educación de EE. UU. Siempre confirme con el distrito qué escuela le toca a cada casa.') + '</small>';
+    d.appendChild(pnl);
+    L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
     return d;
   };
   toolCtl.addTo(map);
@@ -627,11 +659,56 @@
     return d;
   };
   legend.addTo(map);
+  // ---- Map options: map / satellite, flood zones, schools ----
   document.getElementById('t-sat').onclick = function () {
-    var on = !map.hasLayer(satellite);
-    if (on) { map.removeLayer(streets); satellite.addTo(map); } else { map.removeLayer(satellite); streets.addTo(map); }
-    this.classList.toggle('on', on);
+    var p = document.getElementById('t-panel'); p.hidden = !p.hidden;
+    this.classList.toggle('on', !p.hidden); this.setAttribute('aria-expanded', String(!p.hidden));
   };
+  map.on('click', function () { var p = document.getElementById('t-panel'); if (!p.hidden) { p.hidden = true; document.getElementById('t-sat').classList.remove('on'); } });
+  document.querySelectorAll('input[name="t-base"]').forEach(function (r) {
+    r.onchange = function () {
+      if (this.value === 'sat') { map.removeLayer(streets); satellite.addTo(map); } else { map.removeLayer(satellite); streets.addTo(map); }
+      satellite.bringToBack(); streets.bringToBack();
+    };
+  });
+  // FEMA National Flood Hazard Layer (free public data), drawn as see-through tiles
+  var FEMA = 'https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer';
+  var FloodTiles = L.TileLayer.extend({
+    getTileUrl: function (c) {
+      var sz = this.getTileSize(), nw = c.scaleBy(sz), se = nw.add(sz);
+      var a = map.options.crs.project(map.unproject(nw, c.z)), b = map.options.crs.project(map.unproject(se, c.z));
+      return FEMA + '/export?bbox=' + [a.x, b.y, b.x, a.y].join(',') + '&bboxSR=3857&imageSR=3857&size=' + sz.x + ',' + sz.y + '&format=png32&transparent=true&layers=show:28&f=image';
+    }
+  });
+  var flood = new FloodTiles('', { opacity: 0.55, minZoom: 11, maxZoom: 19, attribution: 'Flood zones: FEMA NFHL' });
+  document.getElementById('t-flood').onchange = function () {
+    if (this.checked) { flood.addTo(map); if (map.getZoom() < 11) toast(t('Zoom in to see flood zones.', 'Acérquese para ver las zonas de inundación.')); }
+    else map.removeLayer(flood);
+  };
+  var schoolLayer = L.layerGroup(), schools = null;
+  function drawSchools() {
+    schoolLayer.clearLayers(); if (!schools) return;
+    var on = {}; document.querySelectorAll('[data-sl]').forEach(function (c) { on[c.dataset.sl] = c.checked; });
+    var lv = { E: t('Elementary', 'Primaria'), M: t('Middle school', 'Secundaria'), H: t('High school', 'Preparatoria') };
+    schools.pub.forEach(function (x) {
+      if (!on[x[1]]) return;
+      L.marker([x[4], x[5]], { zIndexOffset: -500, icon: L.divIcon({ className: '', html: '<span class="sch ' + x[1] + '">' + ({ E: 'E', M: 'M', H: 'H' })[x[1]] + '</span>' }) })
+        .bindPopup('<b>' + esc(x[0]) + '</b><br>' + lv[x[1]] + ' · ' + t('Public', 'Pública') + ' · ' + t('Grades ', 'Grados ') + esc(x[2]) + '<br>' + esc(x[3]) + t(' School District', ' (distrito escolar)'))
+        .addTo(schoolLayer);
+    });
+    if (on.P) schools.prv.forEach(function (x) {
+      L.marker([x[1], x[2]], { zIndexOffset: -500, icon: L.divIcon({ className: '', html: '<span class="sch P">P</span>' }) })
+        .bindPopup('<b>' + esc(x[0]) + '</b><br>' + t('Private school', 'Escuela privada')).addTo(schoolLayer);
+    });
+  }
+  document.getElementById('t-sch').onchange = function () {
+    document.getElementById('t-sch-f').hidden = !this.checked;
+    if (!this.checked) { map.removeLayer(schoolLayer); return; }
+    schoolLayer.addTo(map);
+    if (schools) return drawSchools();
+    fetch('/data/schools.json').then(function (r) { return r.json(); }).then(function (d) { schools = d; drawSchools(); }).catch(function () {});
+  };
+  document.querySelectorAll('[data-sl]').forEach(function (c) { c.onchange = drawSchools; });
   var meDot = null;
   document.getElementById('t-me').onclick = function () {
     if (!navigator.geolocation) return toast(t('Your device can’t share its location.', 'Su aparato no puede compartir su ubicación.'));
@@ -909,7 +986,10 @@
         '<div class="hd-sec"><h2>' + t('Facts &amp; features', 'Detalles de la casa') + '</h2><div class="hd-facts">' + groups.map(function (g) {
           return '<div><h3>' + g[0] + '</h3><ul>' + g[1].map(function (r) { return '<li>' + r[0] + ': <b>' + esc(r[1]) + '</b></li>'; }).join('') + '</ul></div>';
         }).join('') + '</div></div>' +
-        (showAddr(h) && h.geo && h.geo.lat ? '<div class="hd-sec"><h2>' + t('Location', 'Ubicación') + '</h2><div id="hd-map"></div></div>' +
+        (showAddr(h) && h.geo && h.geo.lat ? '<div class="hd-sec"><h2>' + t('Location', 'Ubicación') + '</h2><div id="hd-map"></div>' +
+          '<div class="hd-flood" id="hd-flood" hidden></div>' +
+          '<div class="hd-env"><a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + h.geo.lat + ',' + h.geo.lng + '" target="_blank" rel="noopener">' + t('Street View', 'Ver la calle (Street View)') + ' ↗</a>' +
+          '<a href="https://riskfactor.com/search?query=' + encodeURIComponent(cleanAddr(a.full) + ', ' + (a.city || '') + ', ' + (a.state || 'SD') + ' ' + (a.postalCode || '')) + '" target="_blank" rel="noopener">' + t('Flood, fire, heat &amp; wind risk (Risk Factor)', 'Riesgo de inundación, fuego, calor y viento (Risk Factor)') + ' ↗</a></div></div>' +
           '<div class="hd-sec hd-drive"><h2>' + t('Drive time', 'Tiempo de manejo') + '</h2><div id="hd-drive"></div></div>' : '') +
         '<div class="hd-courtesy">' + attrHtml(h, false) + '. ' + esc(h.disclaimer || t('Information deemed reliable but not guaranteed.', 'Información considerada confiable pero no garantizada.')) + ' ' + t('Listing data provided by the REALTOR® Association of the Sioux Empire MLS. Information is deemed reliable but not guaranteed and should be independently verified.', 'Información de las casas proporcionada por el MLS de la REALTOR® Association of the Sioux Empire. La información se considera confiable pero no está garantizada y debe verificarse.') + '</div>' +
       '</div>' +
@@ -941,7 +1021,26 @@
       hdMap = L.map('hd-map', { scrollWheelZoom: false }).setView([h.geo.lat, h.geo.lng], 15);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(hdMap);
       L.marker([h.geo.lat, h.geo.lng], { icon: L.divIcon({ className: '', html: '<span class="pin hi">' + short(h.listPrice) + '</span>' }) }).addTo(hdMap);
+      floodZone(h);
     }
+  }
+  // FEMA flood zone for one home (free public lookup). Not a flood determination for a loan.
+  function floodZone(h) {
+    var box = $('hd-flood'); if (!box) return;
+    var id = h.mlsId;
+    fetch(FEMA + '/28/query?geometry=' + h.geo.lng + ',' + h.geo.lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=FLD_ZONE,ZONE_SUBTY&returnGeometry=false&f=json')
+      .then(function (r) { return r.json(); }).then(function (d) {
+        if (!cur || cur.mlsId !== id || !$('hd-flood')) return;
+        var f = (d.features || [])[0], z = f && f.attributes.FLD_ZONE, sub = f && String(f.attributes.ZONE_SUBTY || '');
+        var msg, high = false;
+        if (!z) msg = t('No FEMA flood map for this spot yet.', 'FEMA todavía no tiene mapa de inundación para este lugar.');
+        else if (/^(A|V)/.test(z)) { high = true; msg = t('<b>FEMA flood zone ' + esc(z) + ': high-risk area.</b> Lenders usually require flood insurance here.', '<b>Zona de inundación FEMA ' + esc(z) + ': zona de alto riesgo.</b> Los bancos casi siempre piden seguro de inundación aquí.'); }
+        else if (z === 'X' && /0\.2/.test(sub)) msg = t('<b>FEMA flood zone X (shaded): moderate risk.</b> Flood insurance is usually optional.', '<b>Zona de inundación FEMA X (sombreada): riesgo moderado.</b> El seguro de inundación casi siempre es opcional.');
+        else if (z === 'X') msg = t('<b>FEMA flood zone X: minimal risk.</b> Flood insurance is usually optional.', '<b>Zona de inundación FEMA X: riesgo mínimo.</b> El seguro de inundación casi siempre es opcional.');
+        else msg = t('<b>FEMA flood zone ' + esc(z) + '.</b>', '<b>Zona de inundación FEMA ' + esc(z) + '.</b>');
+        box.innerHTML = msg + ' <small>' + t('From FEMA’s flood maps. Your lender or insurance agent makes the official call.', 'De los mapas de FEMA. Su banco o agente de seguros da la respuesta oficial.') + '</small>';
+        box.classList.toggle('hi', high); box.hidden = false;
+      }).catch(function () {});
   }
   function closeDetail(fromPop) {
     $('sp-modal').classList.remove('open'); document.body.classList.remove('sp-lock'); closeLb();
