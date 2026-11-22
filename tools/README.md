@@ -16,3 +16,5 @@
 - `build_dpa.py`: down payment assistance pages (/down-payment-assistance/, /es/ayuda-pago-inicial/).
 - Area pages: "See homes for sale" buttons use `town_search()` in build_pages.py (KW map search framed on each town).
 - `build_resources.py`: ITIN mortgage and low-credit pages (EN + ES, Spanish-first SEO), with FAQPage schema.
+
+- `go_live_search.py`: when RASE approves, makes the new map/photo search the real Search Homes page (EN + ES). `--undo` puts the old page back.
