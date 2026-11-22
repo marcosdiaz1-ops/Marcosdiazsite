@@ -1392,6 +1392,8 @@
       if (pl[0].toLowerCase().indexOf(lv) === 0 || (lv.length > 2 && pl[0].toLowerCase().indexOf(lv) > -1)) places.push({ kind: 'place', q: pl[0], label: pl[0] + ', SD', sub: pl[1].split(' ').length > 1 ? t('City', 'Ciudad') : 'ZIP ' + pl[1] });
       pl[1].split(' ').forEach(function (z) { if (/^\d{2,}$/.test(v) && z.indexOf(v) === 0) places.push({ kind: 'place', q: z, label: z, sub: pl[0] + ', SD' }); });
     });
+    // small typos ("siouix falls"): fall back to towns that start with the same first 3 letters
+    if (!places.length && lv.length >= 3 && !/^\d/.test(lv)) PLACES.forEach(function (pl) { if (pl[0].toLowerCase().indexOf(lv.slice(0, 3)) === 0) places.push({ kind: 'place', q: pl[0], label: pl[0] + ', SD', sub: pl[1].split(' ').length > 1 ? t('City', 'Ciudad') : 'ZIP ' + pl[1] }); });
     acItems = places.slice(0, 5).concat(acItems.filter(function (x) { return x.kind === 'home' && x.for === v; }));
     acSel = -1; acPaint(acHomesHtml());
     if (v.length < 3 || !LIVE) return;
