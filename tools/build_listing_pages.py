@@ -4,9 +4,12 @@ Runs inside .github/workflows/deploy.yml (never committed), only after the new s
 (the file data/listing-pages-on exists; tools/go_live_search.py creates it).
 
 Makes, from every active listing the feed allows on the internet:
-  /homes/<address>-<mlsId>/          one page per home (English)
-  /homes-for-sale/ and /homes-for-sale/<town>/            town pages (English)
-  /es/casas-en-venta/ and /es/casas-en-venta/<town>/      town pages (Spanish)
+  /homes/<address>-<mlsId>/  and  /es/casas/<address>-<mlsId>/      one page per home (EN + ES)
+  /homes-for-sale/<town>/    and  /es/casas-en-venta/<town>/        town pages
+     .../<town>/under-300k/, .../<town>/3-bedrooms/                  price and bedroom pages per town
+  /homes-for-sale/acreage/, new-construction/, condos-townhomes/, under-300k/ ...   area-wide searches
+  /homes-for-sale/neighborhoods/<name>/, /homes-for-sale/school-districts/<name>/
+  (every page in English and Spanish; Spanish pages live under /es/casas-en-venta/)
   /homes-sitemap.xml (+ a line in robots.txt) so Google finds them
 and points the "See homes for sale" buttons on the area pages at the new town pages.
 
@@ -125,10 +128,10 @@ def street(h): return clean_addr((h.get('address') or {}).get('full')) if show_a
 
 def town_of(h): return ((h.get('address') or {}).get('city') or '').strip().title()
 
-def url_of(h):
+def url_of(h, es=False):
     a = h.get('address') or {}
     base = (street(h) + ' ' if street(h) else 'home ') + f"{town_of(h)} {a.get('state') or 'SD'} {a.get('postalCode') or ''}"
-    return f"/homes/{slugify(base)}-{h['mlsId']}/"
+    return ('/es/casas/' if es else '/homes/') + f"{slugify(base)}-{h['mlsId']}/"
 
 def attribution(h):  # RASE IDX Policy 18.2.12: listing firm + listing agent + contact
     ag, of = h.get('agent') or {}, h.get('office') or {}
@@ -204,32 +207,36 @@ CSS = '''<style>
 </style>
 '''
 
+
 ALERT_JS = """<script>
 (function () {
   var URL_ = '""" + ALERTS_URL + """', RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  var ES = document.documentElement.lang === 'es', t = function (en, es) { return ES ? es : en; };
   function getAid() { try { var v = localStorage.getItem('mdAlertId'); return RE.test(v || '') ? v : ''; } catch (e) { return ''; } }
   function newId() { return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }); }
   var f = document.getElementById('lp-al'); if (!f) return;
   var aid = getAid();
-  if (aid) { var v = new URLSearchParams(); v.set('action', 'view'); v.set('id', aid); v.set('mlsId', f.dataset.mls); fetch(URL_, { method: 'POST', mode: 'no-cors', body: v, keepalive: true }).catch(function () {}); }
+  if (aid && f.dataset.mls) { var v = new URLSearchParams(); v.set('action', 'view'); v.set('id', aid); v.set('mlsId', f.dataset.mls); fetch(URL_, { method: 'POST', mode: 'no-cors', body: v, keepalive: true }).catch(function () {}); }
   var msg = f.querySelector('.msg');
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     var name = f.name.value.trim(), email = f.email.value.trim();
-    if (!name || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email)) { msg.textContent = 'Please add your name and a good email.'; return; }
-    if (!f.consent.checked) { msg.textContent = 'Please check the box so I can email you.'; return; }
+    if (!name || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email)) { msg.textContent = t('Please add your name and a good email.', 'Escriba su nombre y un correo válido.'); return; }
+    if (!f.consent.checked) { msg.textContent = t('Please check the box so I can email you.', 'Marque la casilla para poder enviarle correos.'); return; }
     var d = new URLSearchParams(), id = getAid() || newId();
     d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim()); d.set('freq', 'Daily'); d.set('consent', 'yes');
-    d.set('botcheck', f.botcheck.value); d.set('id', id); d.set('lang', 'en'); d.set('source', location.href.slice(0, 200));
-    d.set('q', f.dataset.q); d.set('minprice', f.dataset.min); d.set('maxprice', f.dataset.max); d.set('minbeds', f.dataset.beds); d.set('type', f.dataset.type);
+    d.set('botcheck', f.botcheck.value); d.set('id', id); d.set('lang', ES ? 'es' : 'en'); d.set('source', location.href.slice(0, 200));
+    ['q', 'minprice', 'maxprice', 'minbeds', 'type'].forEach(function (k) { if (f.dataset[k]) d.set(k, f.dataset[k]); });
     f.querySelector('button').disabled = true;
     fetch(URL_, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
       try { localStorage.setItem('mdAlertId', id); } catch (e) {}
-      f.innerHTML = '<p style="grid-column:1/-1;margin:0;color:#fff"><b>You’re all set!</b> Check your email. I sent you the homes that match right now.</p>';
-    }).catch(function () { msg.textContent = 'That didn’t go through. Please try again, or text me at 605-838-9140.'; f.querySelector('button').disabled = false; });
+      f.innerHTML = '<p style="grid-column:1/-1;margin:0;color:#fff"><b>' + t('You’re all set!', '¡Listo!') + '</b> ' + t('Check your email. I sent you the homes that match right now.', 'Revise su correo. Le mandé las casas que hay ahora.') + '</p>';
+    }).catch(function () { msg.textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.'); f.querySelector('button').disabled = false; });
   });
 })();
 </script>"""
+
+def T(es, en, sp): return sp if es else en
 
 def disclaimer(es, updated):
     if es:
@@ -240,47 +247,88 @@ def disclaimer(es, updated):
             + (f'Listing data last updated {e(updated)}. ' if updated else '')
             + 'Listings shown are courtesy of the listing brokerage named on each listing. Listing data provided by the REALTOR® Association of the Sioux Empire MLS.')
 
-# ---------- One page per home ----------
-def home_page(h, same_town, updated):
+def alert_box(es, q='', minp='', maxp='', beds='', ptype='', mls='', lead=''):
+    return f'''<div class="lp-alert" id="alerts"><h2>{T(es, 'Get new homes like these by email', 'Reciba casas nuevas como estas por correo')}</h2>
+      <p style="margin:0">{lead}</p>
+      <form id="lp-al" novalidate data-q="{e(q)}" data-minprice="{minp}" data-maxprice="{maxp}" data-minbeds="{beds}" data-type="{ptype}" data-mls="{mls}">
+        <input type="text" name="name" placeholder="{T(es, 'Name', 'Nombre')}" aria-label="{T(es, 'Name', 'Nombre')}" autocomplete="name" maxlength="100">
+        <input type="email" name="email" placeholder="{T(es, 'Email', 'Correo')}" aria-label="{T(es, 'Email', 'Correo')}" autocomplete="email" maxlength="120">
+        <input type="tel" name="phone" placeholder="{T(es, 'Phone (optional)', 'Teléfono (opcional)')}" aria-label="{T(es, 'Phone (optional)', 'Teléfono (opcional)')}" autocomplete="tel" maxlength="40">
+        <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+        <label class="ok"><input type="checkbox" name="consent" value="yes"><span>{T(es,
+          'Yes, email me new listings from Marcos Diaz, and use the homes I open on this site to fine-tune my alerts. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime. <a href="/privacy.html" target="_blank">Privacy</a>',
+          'Sí, envíenme casas nuevas de Marcos Diaz por correo, y usen las casas que abro en este sitio para ajustar mis alertas. Si doy mi teléfono, Marcos me puede llamar o mandar textos sobre casas. Puedo cancelar cuando quiera. <a href="/es/privacidad.html" target="_blank">Privacidad</a>')}</span></label>
+        <button type="submit">{T(es, 'Start my alerts', 'Empezar mis alertas')}</button><p class="msg" role="alert"></p>
+      </form></div>'''
+
+def alts(en_url, es_url):
+    return (f'<link rel="alternate" hreflang="en" href="{SITE}{en_url}">\n<link rel="alternate" hreflang="es" href="{SITE}{es_url}">\n'
+            f'<link rel="alternate" hreflang="x-default" href="{SITE}{en_url}">\n')
+
+def set_og_image(path, photo, alt):
+    fp = os.path.join(ROOT, path); doc = open(fp).read()
+    doc = re.sub(r'<meta property="og:image" content="[^"]*">', lambda m: f'<meta property="og:image" content="{e(photo)}">\n<meta property="og:image:alt" content="{e(alt)}">', doc, count=1)
+    open(fp, 'w').write(doc)
+
+# ---------- One page per home (EN + ES) ----------
+def home_page(h, same_town, updated, es, links):
+    """links: dict with optional 'town', 'sub', 'district' -> (label, en_url, es_url)"""
     p, a, s, tx, ass, m = (h.get(k) or {} for k in ('property', 'address', 'school', 'tax', 'association', 'mls'))
     st, town = street(h), town_of(h)
     full = (st + ', ' if st else '') + f"{town}, {a.get('state') or 'SD'} {a.get('postalCode') or ''}".strip()
-    url = url_of(h); path = url.strip('/') + '/index.html'
-    price = money(h.get('listPrice'))
-    bd, ba, sq = p.get('bedrooms') or 0, baths(p), p.get('area')
-    kind = p.get('subTypeText') or {'RES': 'Home', 'CND': 'Condo/townhome'}.get(p.get('type'), 'Home')
-    title = f"{st or kind + ' for sale'}, {town}, SD {a.get('postalCode') or ''} | {price} | {bd} bd".strip()
-    desc = (f"{price} · {bd} bed, {ba} bath" + (f", {sq:,} sq ft" if sq else '') + f" {kind.lower()} for sale in {town}, SD"
-            + (f" (MLS #{h.get('listingId')})" if h.get('listingId') else '') + '. See photos, details and schedule a showing with Marcos Diaz, Keller Williams Realty Sioux Falls.')
-    photos = h.get('photos') or []
-    gal = ''.join(f'<img src="{e(u)}" alt="{e(("Photo %d of " % (i + 1)) + full)}" width="1200" height="800"' + (' loading="lazy"' if i else ' fetchpriority="high"') + '>'
-                  for i, u in enumerate(photos[:7]))
-    live = f"/search/#home={h['mlsId']}"
-    book = BOOK + '?' + urllib.parse.urlencode({'a1': 'Home: ' + (st or 'MLS #' + str(h.get('listingId'))) + ', ' + town + (f" (MLS #{h.get('listingId')})" if h.get('listingId') else '')})
-    sms = 'sms:+16058389140?&body=' + urllib.parse.quote(f"Hi Marcos, I'd like to see {st or 'MLS #' + str(h.get('listingId'))}" + (f" (MLS #{h.get('listingId')})" if h.get('listingId') else ''))
-    dom = m.get('daysOnMarket')
-    facts = [('Bedrooms', bd), ('Full baths', p.get('bathsFull')), ('3/4 baths', p.get('bathsThreeQuarter')), ('Half baths', p.get('bathsHalf')),
-             ('Finished sq ft', sq and f'{sq:,}'), ('Price per sq ft', sq and h.get('listPrice') and money(h['listPrice'] / sq)), ('Type', kind), ('Style', p.get('style')),
-             ('Year built', p.get('yearBuilt')), ('Stories', p.get('stories')), ('Garage', p.get('garageSpaces') and '%d-car' % round(p['garageSpaces'])),
-             ('Lot', lot(p)), ('Heating', p.get('heating')), ('Cooling', p.get('cooling')), ('Foundation', p.get('foundation')),
-             ('Flooring', as_list(p.get('flooring'))), ('Interior', as_list(p.get('interiorFeatures'))), ('Outside', as_list(p.get('exteriorFeatures'))),
-             ('Subdivision', p.get('subdivision')), ('County', (h.get('geo') or {}).get('county')),
-             ('Yearly taxes', tx.get('taxAnnualAmount') and money(tx['taxAnnualAmount']) + (f" ({tx['taxYear']})" if tx.get('taxYear') else '')),
-             ('HOA', ass.get('fee') and money(ass['fee']) + (f" / {str(ass.get('frequency')).lower()}" if ass.get('frequency') else '')),
-             ('Days on market', dom), ('MLS #', h.get('listingId'))]
-    facts_html = ''.join(f'<li>{k}: <b>{e(v)}</b></li>' for k, v in facts if v not in (None, '', 0))
-    schools = [('School district', s.get('district')), ('Elementary', s.get('elementarySchool')), ('Middle', s.get('middleSchool')), ('High', s.get('highSchool'))]
-    schools_html = ''.join(f'<li>{k}: <b>{e(v)}</b></li>' for k, v in schools if v)
-    tslug = TOWNS.get(town, (slugify(town + ' sd'), None))[0]
-    tlink = f'/homes-for-sale/{tslug}/' if (town in TOWNS or len(same_town) >= 3) else '/homes-for-sale/'
-    more = [x for x in same_town if x['mlsId'] != h['mlsId']]
+    en_url, es_url = url_of(h), url_of(h, True)
+    url = es_url if es else en_url; path = url.strip('/') + '/index.html'
     lp = h.get('listPrice') or 0
-    more.sort(key=lambda x: abs((x.get('listPrice') or 0) - lp))
-    more_html = ''.join(card(x, url_of(x)) for x in more[:4])
-    ld = {'@context': 'https://schema.org', '@type': 'RealEstateListing', 'name': full, 'url': SITE + url, 'description': desc,
+    price = money(lp)
+    bd, ba, sq = p.get('bedrooms') or 0, baths(p), p.get('area')
+    condo = p.get('type') == 'CND' or re.search(r'condo|town', str(p.get('subTypeText') or ''), re.I)
+    kind = T(es, p.get('subTypeText') or ('Condo/townhome' if condo else 'Home'), 'Condominio o casa adosada' if condo else 'Casa')
+    mls_no = h.get('listingId')
+    if es:
+        title = f"{st or 'Casa en venta'}, {town}, SD | {price} | {bd} rec"
+        desc = (f"{price} · casa de {bd} recámaras y {ba} baños" + (f", {sq:,} pies²" if sq else '') + f" en venta en {town}, SD"
+                + (f" (MLS #{mls_no})" if mls_no else '') + '. Vea fotos y pida una visita con Marcos Diaz, agente que habla español.')
+    else:
+        title = f"{st or kind + ' for sale'}, {town}, SD {a.get('postalCode') or ''} | {price} | {bd} bd".strip()
+        desc = (f"{price} · {bd} bed, {ba} bath" + (f", {sq:,} sq ft" if sq else '') + f" {kind.lower()} for sale in {town}, SD"
+                + (f" (MLS #{mls_no})" if mls_no else '') + '. See photos, details and schedule a showing with Marcos Diaz, Keller Williams Realty Sioux Falls.')
+    photos = h.get('photos') or []
+    gal = ''.join(f'<img src="{e(u)}" alt="{e(T(es, "Photo %d of ", "Foto %d de ") % (i + 1) + full)}" width="1200" height="800"' + (' loading="lazy"' if i else ' fetchpriority="high"') + '>'
+                  for i, u in enumerate(photos[:7]))
+    live = T(es, '/search/', '/es/buscar-casas/') + f"#home={h['mlsId']}"
+    which = st or 'MLS #' + str(mls_no)
+    book = BOOK + '?' + urllib.parse.urlencode({'a1': T(es, 'Home: ', 'Casa: ') + which + ', ' + town + (f" (MLS #{mls_no})" if mls_no else '')})
+    sms = 'sms:+16058389140?&body=' + urllib.parse.quote(T(es, "Hi Marcos, I'd like to see ", 'Hola Marcos, quiero ver ') + which + (f" (MLS #{mls_no})" if mls_no and st else ''))
+    dom = m.get('daysOnMarket')
+    yes = lambda v: v not in (None, '', 0)
+    facts = [(T(es, 'Bedrooms', 'Recámaras'), bd), (T(es, 'Full baths', 'Baños completos'), p.get('bathsFull')), (T(es, '3/4 baths', 'Baños 3/4'), p.get('bathsThreeQuarter')),
+             (T(es, 'Half baths', 'Medios baños'), p.get('bathsHalf')), (T(es, 'Finished sq ft', 'Pies² terminados'), sq and f'{sq:,}'),
+             (T(es, 'Price per sq ft', 'Precio por pie²'), sq and lp and money(lp / sq)), (T(es, 'Type', 'Tipo'), kind), (T(es, 'Style', 'Estilo'), p.get('style')),
+             (T(es, 'Year built', 'Año de construcción'), p.get('yearBuilt')), (T(es, 'Stories', 'Pisos'), p.get('stories')),
+             (T(es, 'Garage', 'Garaje'), p.get('garageSpaces') and T(es, '%d-car', 'para %d autos') % round(p['garageSpaces'])),
+             (T(es, 'Lot', 'Terreno'), lot(p)), (T(es, 'Heating', 'Calefacción'), p.get('heating')), (T(es, 'Cooling', 'Aire acondicionado'), p.get('cooling')),
+             (T(es, 'Foundation', 'Cimientos'), p.get('foundation')), (T(es, 'Flooring', 'Pisos'), as_list(p.get('flooring'))),
+             (T(es, 'Interior', 'Interior'), as_list(p.get('interiorFeatures'))), (T(es, 'Outside', 'Afuera'), as_list(p.get('exteriorFeatures'))),
+             (T(es, 'Subdivision', 'Vecindario'), p.get('subdivision')), (T(es, 'County', 'Condado'), (h.get('geo') or {}).get('county')),
+             (T(es, 'Yearly taxes', 'Impuestos al año'), tx.get('taxAnnualAmount') and money(tx['taxAnnualAmount']) + (f" ({tx['taxYear']})" if tx.get('taxYear') else '')),
+             ('HOA', ass.get('fee') and money(ass['fee']) + (f" / {str(ass.get('frequency')).lower()}" if ass.get('frequency') else '')),
+             (T(es, 'Days on market', 'Días en el mercado'), dom), ('MLS #', mls_no)]
+    facts_html = ''.join(f'<li>{k}: <b>{e(v)}</b></li>' for k, v in facts if yes(v))
+    schools = [(T(es, 'School district', 'Distrito escolar'), s.get('district')), (T(es, 'Elementary', 'Primaria'), s.get('elementarySchool')),
+               (T(es, 'Middle', 'Secundaria'), s.get('middleSchool')), (T(es, 'High', 'Preparatoria'), s.get('highSchool'))]
+    schools_html = ''.join(f'<li>{k}: <b>{e(v)}</b></li>' for k, v in schools if v)
+    pick = lambda k: (links[k][2] if es else links[k][1]) if links.get(k) else None
+    tlink = pick('town') or T(es, '/homes-for-sale/', '/es/casas-en-venta/')
+    more = sorted((x for x in same_town if x['mlsId'] != h['mlsId']), key=lambda x: abs((x.get('listPrice') or 0) - lp))
+    more_html = ''.join(card(x, url_of(x, es), es) for x in more[:4])
+    explore = [(T(es, f'All homes for sale in {town}', f'Todas las casas en venta en {town}'), pick('town'))]
+    if links.get('sub'): explore.append((T(es, f"Homes in {links['sub'][0]}", f"Casas en {links['sub'][0]}"), pick('sub')))
+    if links.get('district'): explore.append((T(es, f"Homes in the {links['district'][0]} School District", f"Casas en el distrito escolar {links['district'][0]}"), pick('district')))
+    explore_html = ''.join(f'<a href="{u}">{e(l)}</a>' for l, u in explore if u)
+    ld = {'@context': 'https://schema.org', '@type': 'RealEstateListing', 'name': full, 'url': SITE + url, 'description': desc, 'inLanguage': 'es' if es else 'en',
           'image': photos[:5], 'datePosted': (h.get('listDate') or '')[:10] or None,
           'offers': {'@type': 'Offer', 'price': lp, 'priceCurrency': 'USD', 'availability': 'https://schema.org/InStock'},
-          'about': {'@type': 'SingleFamilyResidence' if p.get('type') != 'CND' else 'Apartment',
+          'about': {'@type': 'Apartment' if condo else 'SingleFamilyResidence',
                     'address': {'@type': 'PostalAddress', 'streetAddress': st or None, 'addressLocality': town, 'addressRegion': a.get('state') or 'SD', 'postalCode': a.get('postalCode')},
                     'numberOfBedrooms': bd or None, 'numberOfBathroomsTotal': float(ba) if ba else None,
                     'floorSize': {'@type': 'QuantitativeValue', 'value': sq, 'unitCode': 'FTK'} if sq else None,
@@ -289,131 +337,250 @@ def home_page(h, same_town, updated):
     if (h.get('geo') or {}).get('lat') and show_addr(h):
         ld['about']['geo'] = {'@type': 'GeoCoordinates', 'latitude': h['geo']['lat'], 'longitude': h['geo']['lng']}
     strip = lambda o: {k: strip(v) for k, v in o.items() if v not in (None, '', [])} if isinstance(o, dict) else o
-    head = CSS + '<script type="application/ld+json">' + json.dumps(strip(ld)).replace('</', '<\\/') + '</script>\n'
+    head = CSS + alts(en_url, es_url) + '<script type="application/ld+json">' + json.dumps(strip(ld)).replace('</', '<\\/') + '</script>\n'
     remarks = h.get('remarks') or ''
     mo = payment(h)
     pay_html = ''
     if mo:
-        pay_html += (f'<div class="lp-box"><h3>Estimated payment</h3><div class="big">{money(mo)}/mo*</div>'
-                     f'<small>Principal, interest, taxes and insurance. <a href="/?price={int(lp)}#calculator">Change the numbers →</a></small></div>')
+        pay_html += (f'<div class="lp-box"><h3>{T(es, "Estimated payment", "Pago mensual aproximado")}</h3><div class="big">{money(mo)}{T(es, "/mo", "/mes")}*</div>'
+                     f'<small>{T(es, "Principal, interest, taxes and insurance.", "Préstamo, interés, impuestos y seguro.")} <a href="{T(es, "/", "/es/")}?price={int(lp)}#calculator">{T(es, "Change the numbers →", "Cambie los números →")}</a></small></div>')
     if is_dpa(h):
         five = round(lp * 0.95 * 0.05 / 100) * 100
-        pay_html += (f'<div class="lp-box lp-g5"><h3>First-time buyer?</h3><p style="margin:0">This price is under the {money(DPA_LIMIT)} limit for South Dakota’s '
-                     f'<b>Give Me Five</b> program: up to 5% of your loan (about {money(five)}) toward your down payment, if you qualify.</p>'
-                     f'<small><a href="/blog/give-me-five-down-payment-assistance/">See who qualifies →</a></small></div>')
+        pay_html += (f'<div class="lp-box lp-g5"><h3>{T(es, "First-time buyer?", "¿Su primera casa?")}</h3><p style="margin:0">'
+                     + T(es, f'This price is under the {money(DPA_LIMIT)} limit for South Dakota’s <b>Give Me Five</b> program: up to 5% of your loan (about {money(five)}) toward your down payment, if you qualify.',
+                            f'Este precio está bajo el límite de {money(DPA_LIMIT)} del programa <b>Give Me Five</b> de Dakota del Sur: hasta 5% de su préstamo (unos {money(five)}) para su pago inicial, si califica.')
+                     + f'</p><small><a href="{T(es, "/blog/give-me-five-down-payment-assistance/", "/es/blog/give-me-five-ayuda-pago-inicial/")}">{T(es, "See who qualifies →", "Vea quién califica →")}</a></small></div>')
     pay_html = f'<div class="lp-pay">{pay_html}</div>' if pay_html else ''
-    ptype = 'condominium' if p.get('type') == 'CND' else 'residential'
-    alert_html = f'''<div class="lp-alert" id="alerts"><h2>Get new homes like this by email</h2>
-      <p style="margin:0">New {e(town)} homes around {money(lp)}{f" with {bd}+ bedrooms" if bd else ""}, sent to you as soon as they hit the market. Free, and you can stop anytime.</p>
-      <form id="lp-al" novalidate data-q="{e(town)}" data-min="{int(round(lp * 0.8, -4))}" data-max="{int(round(lp * 1.2, -4))}" data-beds="{bd or ''}" data-type="{ptype}" data-mls="{h['mlsId']}">
-        <input type="text" name="name" placeholder="Name" aria-label="Name" autocomplete="name" maxlength="100">
-        <input type="email" name="email" placeholder="Email" aria-label="Email" autocomplete="email" maxlength="120">
-        <input type="tel" name="phone" placeholder="Phone (optional)" aria-label="Phone (optional)" autocomplete="tel" maxlength="40">
-        <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-        <label class="ok"><input type="checkbox" name="consent" value="yes"><span>Yes, email me new listings from Marcos Diaz, and use the homes I open on this site to fine-tune my alerts. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime. <a href="/privacy.html" target="_blank">Privacy</a></span></label>
-        <button type="submit">Start my alerts</button><p class="msg" role="alert"></p>
-      </form></div>'''
+    lead = T(es, f'New {e(town)} homes around {money(lp)}' + (f' with {bd}+ bedrooms' if bd else '') + ', sent to you as soon as they hit the market. Free, and you can stop anytime.',
+                 f'Casas nuevas en {e(town)} cerca de {money(lp)}' + (f' con {bd} recámaras o más' if bd else '') + ', apenas salgan a la venta. Es gratis y puede parar cuando quiera.')
+    alert_html = alert_box(es, town, int(round(lp * 0.8, -4)), int(round(lp * 1.2, -4)), bd or '', 'condominium' if condo else 'residential', h['mlsId'], lead)
+    crumbs = (f'<a href="{T(es, "/", "/es/")}">{T(es, "Home", "Inicio")}</a> / <a href="{T(es, "/homes-for-sale/", "/es/casas-en-venta/")}">{T(es, "Homes for sale", "Casas en venta")}</a> / <a href="{tlink}">{e(town)}</a>')
+    about_me = T(es, "I'm Marcos Diaz, a Broker Associate with Keller Williams Realty Sioux Falls. I can tell you what's around it, what similar homes sold for, and whether it's priced right. I'm bilingual, so we can talk in English or Spanish.",
+                     'Soy Marcos Diaz, Broker Associate con Keller Williams Realty Sioux Falls. Le puedo decir qué hay cerca, en cuánto se vendieron casas parecidas y si el precio es justo. Hablo español e inglés.')
     body = f'''  <section class="lp-hero"><div class="lp-wrap">
-    <p class="lp-crumbs"><a href="/">Home</a> / <a href="/homes-for-sale/">Homes for sale</a> / <a href="{tlink}">{e(town)}</a></p>
+    <p class="lp-crumbs">{crumbs}</p>
     <h1>{e(full)}</h1>
     <div class="lp-price">{price}</div>
-    <div class="lp-stats"><span>{bd} beds</span><span>{ba or 0} baths</span>{f"<span>{sq:,} sq ft</span>" if sq else ""}<span>{e(kind)}</span>{f"<span>Built {p['yearBuilt']}</span>" if p.get('yearBuilt') else ""}</div>
+    <div class="lp-stats"><span>{bd} {T(es, "beds", "recámaras")}</span><span>{ba or 0} {T(es, "baths", "baños")}</span>{f"<span>{sq:,} {T(es, 'sq ft', 'pies²')}</span>" if sq else ""}<span>{e(kind)}</span>{f"<span>{T(es, 'Built', 'Construida en')} {p['yearBuilt']}</span>" if p.get('yearBuilt') else ""}</div>
   </div></section>
   <section class="lp-body-sec"><div class="lp-wrap">
-    <p class="lp-attr">Listing courtesy of {e(attribution(h))}</p>
+    <p class="lp-attr">{T(es, "Listing courtesy of", "Cortesía de")} {e(attribution(h))}</p>
     {pay_html}
     {f'<div class="lp-gal">{gal}</div>' if gal else ''}
-    <p><a href="{live}">See all {len(photos)} photos, the map and drive times →</a></p>
+    <p><a href="{live}">{T(es, f"See all {len(photos)} photos, the map and drive times →", f"Vea las {len(photos)} fotos, el mapa y el tiempo de manejo →")}</a></p>
     <div class="lp-btns">
-      <a class="lp-btn gold" href="{e(book)}" target="_blank" rel="noopener">Request a showing</a>
-      <a class="lp-btn" href="tel:+16058389140">Call 605-838-9140</a>
-      <a class="lp-btn" href="{e(sms)}">Text Marcos</a>
-      <a class="lp-btn" href="/?price={int(lp)}#calculator">What would my payment be?</a>
+      <a class="lp-btn gold" href="{e(book)}" target="_blank" rel="noopener">{T(es, "Request a showing", "Pedir una visita")}</a>
+      <a class="lp-btn" href="tel:+16058389140">{T(es, "Call", "Llamar")} 605-838-9140</a>
+      <a class="lp-btn" href="{e(sms)}">{T(es, "Text Marcos", "Mandar texto")}</a>
     </div>
-    {f'<div class="lp-sec"><h2>About this home</h2><p>{e(remarks)}</p></div>' if remarks else ''}
-    <div class="lp-sec"><h2>Facts &amp; features</h2><ul class="lp-facts">{facts_html}</ul></div>
-    {f'<div class="lp-sec"><h2>Schools</h2><ul class="lp-facts">{schools_html}</ul><p><small>Always confirm schools with the district for a specific address.</small></p></div>' if schools_html else ''}
-    <div class="lp-sec"><h2>Thinking about this home?</h2><p>I'm Marcos Diaz, a Broker Associate with Keller Williams Realty Sioux Falls. I can tell you what's around it, what similar homes sold for, and whether it's priced right. I'm bilingual, so we can talk in English or Spanish. Call or text <a href="tel:+16058389140">605-838-9140</a>.</p></div>
+    {f'<div class="lp-sec"><h2>{T(es, "About this home", "Sobre esta casa")}</h2>' + (f'<p><small>{T(es, "", "Descripción del agente de la casa, en inglés:")}</small></p>' if es else '') + f'<p>{e(remarks)}</p></div>' if remarks else ''}
+    <div class="lp-sec"><h2>{T(es, "Facts &amp; features", "Detalles de la casa")}</h2><ul class="lp-facts">{facts_html}</ul></div>
+    {f'<div class="lp-sec"><h2>{T(es, "Schools", "Escuelas")}</h2><ul class="lp-facts">{schools_html}</ul><p><small>{T(es, "Always confirm schools with the district for a specific address.", "Siempre confirme las escuelas con el distrito para cada dirección.")}</small></p></div>' if schools_html else ''}
+    <div class="lp-sec"><h2>{T(es, "Thinking about this home?", "¿Le interesa esta casa?")}</h2><p>{about_me} {T(es, "Call or text", "Llame o mande un texto al")} <a href="tel:+16058389140">605-838-9140</a>.</p></div>
     {alert_html}
-    {f'<div class="lp-sec"><h2>More homes for sale in {e(town)}</h2><div class="lp-grid">{more_html}</div><p><a href="{tlink}">See more homes for sale →</a></p></div>' if more_html else ''}
-    <p class="lp-disc">{e(h.get("disclaimer") or "")} {disclaimer(False, updated)}</p>
-    {f'<p class="lp-foot">*{e(pay_note())}</p>' if mo else ''}
+    {f'<div class="lp-sec"><h2>{T(es, f"More homes for sale in {e(town)}", f"Más casas en venta en {e(town)}")}</h2><div class="lp-grid">{more_html}</div></div>' if more_html else ''}
+    {f'<div class="lp-towns">{explore_html}</div>' if explore_html else ''}
+    <p class="lp-disc">{e(h.get("disclaimer") or "")} {disclaimer(es, updated)}</p>
+    {f'<p class="lp-foot">*{e(pay_note(es))}</p>' if mo else ''}
   </div></section>
 {ALERT_JS}
 '''
-    _page(path, title, desc, body, canonical=SITE + url, head_extra=head, news=False)
-    if photos:
-        fp = os.path.join(ROOT, path); doc = open(fp).read()
-        doc = re.sub(r'<meta property="og:image" content="[^"]*">', lambda m: f'<meta property="og:image" content="{e(photos[0])}">\n<meta property="og:image:alt" content="{e(full)}">', doc, count=1)
-        open(fp, 'w').write(doc)
+    _page(path, title, desc, body, lang='es' if es else 'en', canonical=SITE + url, alt_es=es_url, alt_en=en_url, head_extra=head, news=False)
+    if photos: set_og_image(path, photos[0], full)
     return url
 
-# ---------- Town pages (EN + ES) ----------
-def town_page(town, slug, homes, updated, es):
-    homes = sorted(homes, key=lambda x: (x.get('listDate') or ''), reverse=True)
+# ---------- Collection pages (towns, prices, bedrooms, neighborhoods, districts...) ----------
+class Coll:
+    """One list page, in English and Spanish."""
+    def __init__(self, en_url, es_url, h1, title, desc_kw, homes, crumbs=(), area=None, q='', alert=None, sub=()):
+        self.en_url, self.es_url, self.h1, self.title, self.desc_kw = en_url, es_url, h1, title, desc_kw
+        self.homes, self.crumbs, self.area, self.q, self.alert, self.sub = homes, list(crumbs), area, q, alert or {}, list(sub)
+
+def coll_page(c, updated, es):
+    homes = sorted(c.homes, key=lambda x: (x.get('listDate') or ''), reverse=True)
+    n = len(homes)
     prices = sorted(x['listPrice'] for x in homes if x.get('listPrice'))
     med = prices[len(prices) // 2] if prices else 0
     new7 = sum(1 for x in homes if ((x.get('mls') or {}).get('daysOnMarket') or 99) <= 7)
-    area = next((v[1] for k, v in TOWNS.items() if v[0] == slug), None)
-    en_url, es_url = f'/homes-for-sale/{slug}/', f'/es/casas-en-venta/{slug}/'
-    url = es_url if es else en_url
-    search = ('/es/buscar-casas/' if es else '/search/') + '?q=' + urllib.parse.quote(town)
+    url = c.es_url if es else c.en_url
+    h1, title, kw = (x[1] if es else x[0] for x in (c.h1, c.title, c.desc_kw))
+    search = T(es, '/search/', '/es/buscar-casas/') + (('?q=' + urllib.parse.quote(c.q)) if c.q else '')
     if es:
-        title = f'Casas en venta en {town}, SD | {len(homes)} casas | Marcos Diaz'
-        desc = f'Vea {len(homes)} casas en venta en {town}, SD, con fotos y precios del MLS. Agente que habla español: Marcos Diaz, Keller Williams Realty Sioux Falls.'
-        cards = ''.join(card(x, f"/es/buscar-casas/#home={x['mlsId']}", True) for x in homes[:MAX_TOWN_CARDS])
-        lead = f'{len(homes)} casas en venta ahora' + (f' · precio medio {money(med)}' if med else '') + (f' · {new7} nuevas esta semana' if new7 else '')
-        body = f'''  <section class="lp-hero"><div class="lp-wrap">
-    <p class="lp-crumbs"><a href="/es/">Inicio</a> / <a href="/es/casas-en-venta/">Casas en venta</a> / {e(town)}</p>
-    <h1>Casas en venta en {e(town)}, SD</h1><p>{lead}</p>
-  </div></section>
-  <section class="lp-body-sec"><div class="lp-wrap">
-    <div class="lp-btns"><a class="lp-btn gold" href="{e(search)}">Ver todas en el mapa</a>{f'<a class="lp-btn" href="/es/areas/{area}.html">Conozca {e(town)}</a>' if area else ''}<a class="lp-btn" href="tel:+16058389140">Llame o envíe un texto: 605-838-9140</a></div>
-    {f'<div class="lp-grid">{cards}</div>' if cards else f'<p>No hay casas en venta en {e(town)} en este momento. Llámeme o envíeme un texto y le aviso cuando salga una.</p>'}
-    {f'<p><a href="{e(search)}">Ver las {len(homes)} casas en el mapa →</a></p>' if len(homes) > MAX_TOWN_CARDS else ''}
-    <p class="lp-disc">{disclaimer(True, updated)}</p>
-    {f'<p class="lp-foot">*{e(pay_note(True))}</p>' if homes else ''}
-  </div></section>
-'''
+        lead = f'{n} casas en venta ahora' + (f' · precio medio {money(med)}' if med else '') + (f' · {new7} nuevas esta semana' if new7 else '')
+        desc = f'Vea {n} {kw} con fotos, precios y pago mensual aproximado. Se actualiza cada día. Agente que habla español: Marcos Diaz, Keller Williams Realty Sioux Falls.'
     else:
-        title = f'{town}, SD Homes for Sale | {len(homes)} Listings | Marcos Diaz'
-        desc = f'See {len(homes)} homes for sale in {town}, SD with photos, prices and details from the MLS. Updated daily. Marcos Diaz, Keller Williams Realty Sioux Falls.'
-        cards = ''.join(card(x, url_of(x)) for x in homes[:MAX_TOWN_CARDS])
-        lead = f'{len(homes)} homes for sale right now' + (f' · median price {money(med)}' if med else '') + (f' · {new7} new this week' if new7 else '')
-        body = f'''  <section class="lp-hero"><div class="lp-wrap">
-    <p class="lp-crumbs"><a href="/">Home</a> / <a href="/homes-for-sale/">Homes for sale</a> / {e(town)}</p>
-    <h1>Homes for Sale in {e(town)}, SD</h1><p>{lead}</p>
+        lead = f'{n} homes for sale right now' + (f' · median price {money(med)}' if med else '') + (f' · {new7} new this week' if new7 else '')
+        desc = f'See {n} {kw} with photos, prices and estimated monthly payments. Updated daily. Marcos Diaz, Keller Williams Realty Sioux Falls.'
+    crumbs = [(T(es, 'Home', 'Inicio'), T(es, '/', '/es/')), (T(es, 'Homes for sale', 'Casas en venta'), T(es, '/homes-for-sale/', '/es/casas-en-venta/'))]
+    crumbs += [(lab[1] if es else lab[0], u[1] if es else u[0]) for lab, u in c.crumbs]
+    if c.en_url == '/homes-for-sale/': crumbs = crumbs[:1]
+    crumbs_html = ' / '.join(f'<a href="{u}">{e(l)}</a>' for l, u in crumbs) + ' / ' + e(h1)
+    cards = ''.join(card(x, url_of(x, es), es) for x in homes[:MAX_TOWN_CARDS])
+    sub_html = ''.join(f'<a href="{u[1] if es else u[0]}">{e(l[1] if es else l[0])} <b>({k})</b></a>' for l, u, k in c.sub)
+    a = c.alert
+    alert = alert_box(es, a.get('q', ''), a.get('minprice', ''), a.get('maxprice', ''), a.get('minbeds', ''), a.get('type', ''), '',
+                      T(es, 'New homes like these, sent to you as soon as they hit the market. Free, and you can stop anytime.',
+                            'Casas nuevas como estas, apenas salgan a la venta. Es gratis y puede parar cuando quiera.')) if homes and a else ''
+    area_btn = ''
+    if c.area: area_btn = f'<a class="lp-btn" href="{T(es, "/areas/", "/es/areas/")}{c.area}.html">{T(es, "Living in ", "Conozca ")}{e(c.q)}</a>'
+    empty = T(es, 'No homes like this are for sale right now. Call or text me and I’ll let you know as soon as one comes up.',
+                  'Ahora no hay casas así en venta. Llámeme o mándeme un texto y le aviso cuando salga una.')
+    body = f'''  <section class="lp-hero"><div class="lp-wrap">
+    <p class="lp-crumbs">{crumbs_html}</p>
+    <h1>{e(h1)}</h1><p>{lead}</p>
   </div></section>
   <section class="lp-body-sec"><div class="lp-wrap">
-    <div class="lp-btns"><a class="lp-btn gold" href="{e(search)}">See them all on the map</a>{f'<a class="lp-btn" href="/areas/{area}.html">Living in {e(town)}</a>' if area else ''}<a class="lp-btn" href="tel:+16058389140">Call or text 605-838-9140</a></div>
-    {f'<div class="lp-grid">{cards}</div>' if cards else f'<p>No homes are for sale in {e(town)} right now. Call or text me and I’ll let you know as soon as one comes up.</p>'}
-    {f'<p><a href="{e(search)}">See all {len(homes)} homes on the map →</a></p>' if len(homes) > MAX_TOWN_CARDS else ''}
-    <p class="lp-disc">{disclaimer(False, updated)}</p>
-    {f'<p class="lp-foot">*{e(pay_note())}</p>' if homes else ''}
+    <div class="lp-btns"><a class="lp-btn gold" href="{e(search)}">{T(es, "See them on the map", "Verlas en el mapa")}</a>{area_btn}<a class="lp-btn" href="tel:+16058389140">{T(es, "Call or text", "Llame o mande texto:")} 605-838-9140</a></div>
+    {f'<div class="lp-towns">{sub_html}</div>' if sub_html else ''}
+    {f'<div class="lp-grid">{cards}</div>' if cards else f'<p>{empty}</p>'}
+    {f'<p><a href="{e(search)}">{T(es, f"See all {n} homes on the map →", f"Ver las {n} casas en el mapa →")}</a></p>' if n > MAX_TOWN_CARDS else ''}
+    {alert}
+    <p class="lp-disc">{disclaimer(es, updated)}</p>
+    {f'<p class="lp-foot">*{e(pay_note(es))}</p>' if homes else ''}
   </div></section>
+{ALERT_JS if alert else ''}
 '''
-    alts = (f'<link rel="alternate" hreflang="en" href="{SITE}{en_url}">\n<link rel="alternate" hreflang="es" href="{SITE}{es_url}">\n'
-            f'<link rel="alternate" hreflang="x-default" href="{SITE}{en_url}">\n')
-    _page(url.strip('/') + '/index.html', title, desc, body, lang='es' if es else 'en', canonical=SITE + url,
-          alt_es=es_url, alt_en=en_url, head_extra=CSS + alts)
+    _page(url.strip('/') + '/index.html', f'{title} | Marcos Diaz', desc, body, lang='es' if es else 'en', canonical=SITE + url,
+          alt_es=c.es_url, alt_en=c.en_url, head_extra=CSS + alts(c.en_url, c.es_url))
+    photo = next((x['photos'][0] for x in homes if x.get('photos')), None)
+    if photo: set_og_image(url.strip('/') + '/index.html', photo, h1)
     return url
 
-def hub_page(by_town, es):
-    order = sorted(by_town, key=lambda t: (t != 'Sioux Falls', -len(by_town[t]), t))
-    base = '/es/casas-en-venta/' if es else '/homes-for-sale/'
-    links = ''.join(f'<a href="{base}{TOWNS.get(t, (slugify(t + " sd"),))[0]}/">{e(t)} <b>({len(by_town[t])})</b></a>' for t in order if by_town[t])
-    total = sum(len(v) for v in by_town.values())
-    if es:
-        title, desc = 'Casas en venta en Sioux Falls y pueblos cercanos | Marcos Diaz', f'{total} casas en venta en Sioux Falls, Tea, Harrisburg, Brandon y más. Escoja un pueblo para ver fotos y precios.'
-        body = f'<section class="lp-hero"><div class="lp-wrap"><h1>Casas en venta por pueblo</h1><p>{total} casas en venta ahora en Sioux Falls y pueblos cercanos.</p></div></section><section class="lp-body-sec"><div class="lp-wrap"><div class="lp-towns">{links}</div><div class="lp-btns"><a class="lp-btn gold" href="/es/buscar-casas/">Buscar en el mapa</a></div></div></section>\n'
-    else:
-        title, desc = 'Homes for Sale in Sioux Falls & Nearby Towns | Marcos Diaz', f'{total} homes for sale in Sioux Falls, Tea, Harrisburg, Brandon and nearby towns. Pick a town to see photos and prices.'
-        body = f'<section class="lp-hero"><div class="lp-wrap"><h1>Homes for Sale by Town</h1><p>{total} homes for sale right now in Sioux Falls and nearby towns.</p></div></section><section class="lp-body-sec"><div class="lp-wrap"><div class="lp-towns">{links}</div><div class="lp-btns"><a class="lp-btn gold" href="/search/">Search on the map</a></div></div></section>\n'
-    alts = (f'<link rel="alternate" hreflang="en" href="{SITE}/homes-for-sale/">\n<link rel="alternate" hreflang="es" href="{SITE}/es/casas-en-venta/">\n'
-            f'<link rel="alternate" hreflang="x-default" href="{SITE}/homes-for-sale/">\n')
-    _page(base.strip('/') + '/index.html', title, desc, body, lang='es' if es else 'en', canonical=SITE + base,
-          alt_es='/es/casas-en-venta/', alt_en='/homes-for-sale/', head_extra=CSS + alts)
-    return base
+# ---------- What goes in each set ----------
+PRICE_CAPS = [200000, 250000, 300000, 350000, 400000, 500000]
+def kfmt(n): return f'${n // 1000}K'
+def acres(h):
+    p = h.get('property') or {}
+    if p.get('acres'): return float(p['acres'])
+    if p.get('lotSizeArea'):
+        u = str(p.get('lotSizeAreaUnits') or '').lower()
+        return float(p['lotSizeArea']) if 'acre' in u or (not u and p['lotSizeArea'] < 200) else float(p['lotSizeArea']) / 43560
+    return 0
+THIS_YEAR = datetime.date.today().year
+def is_new(h): return ((h.get('property') or {}).get('yearBuilt') or 0) >= THIS_YEAR - 1
+def is_condo(h):
+    p = h.get('property') or {}
+    return p.get('type') == 'CND' or bool(re.search(r'condo|town', str(p.get('subTypeText') or ''), re.I))
+def is_ranch(h): return bool(re.search(r'ranch', str((h.get('property') or {}).get('style') or ''), re.I))
+def nice_sub(s):
+    s = re.sub(r'\b(ADDN?|ADDITION|ADD\.?|SUBD?|SUBDIVISION|PLAT|PH(ASE)?\s*\w+)\b\.?', '', str(s or ''), flags=re.I)
+    s = re.sub(r'\s+', ' ', s).strip(' -,')
+    return s.title() if s.isupper() or s.islower() else s
+def nice_district(s):
+    s = re.sub(r'\bschool district\b|\bsd\b|\bdist(rict)?\b', '', str(s or ''), flags=re.I)
+    s = re.sub(r'\s+', ' ', s).strip(' -,')
+    return s.title() if s.isupper() or s.islower() else s
+
+def price_beds_subs(homes, base_en, base_es, where_en, where_es, q, crumbs, alert_extra=None):
+    """Price-cap and bedroom pages for one place. Returns list of Coll."""
+    out, last = [], None
+    for cap in PRICE_CAPS:
+        hs = [x for x in homes if 0 < (x.get('listPrice') or 0) <= cap]
+        if len(hs) >= 5 and len(hs) < len(homes) and len(hs) != last:
+            last = len(hs); k = kfmt(cap).lower().replace('$', '')
+            out.append(Coll(f'{base_en}under-{k}/', f'{base_es}menos-de-{k}/',
+                            (f'Homes for Sale Under {kfmt(cap)} {where_en}', f'Casas en venta por menos de {kfmt(cap)} {where_es}'),
+                            (f'Homes Under {kfmt(cap)} {where_en}', f'Casas por menos de {kfmt(cap)} {where_es}'),
+                            (f'homes for sale under {kfmt(cap)} {where_en}', f'casas en venta por menos de {kfmt(cap)} {where_es}'),
+                            hs, crumbs, q=q, alert=dict(alert_extra or {}, q=q, maxprice=cap)))
+    for b in (3, 4, 5):
+        hs = [x for x in homes if ((x.get('property') or {}).get('bedrooms') or 0) >= b]
+        if len(hs) >= 5 and len(hs) < len(homes):
+            out.append(Coll(f'{base_en}{b}-bedrooms/', f'{base_es}{b}-recamaras/',
+                            (f'{b}+ Bedroom Homes for Sale {where_en}', f'Casas de {b} recámaras o más {where_es}'),
+                            (f'{b} Bedroom Homes for Sale {where_en}', f'Casas de {b} recámaras {where_es}'),
+                            (f'homes with {b}+ bedrooms for sale {where_en}', f'casas de {b} recámaras o más en venta {where_es}'),
+                            hs, crumbs, q=q, alert=dict(alert_extra or {}, q=q, minbeds=b)))
+    return out
+
+def build_sets(homes, by_town):
+    colls, town_coll, links = [], {}, defaultdict(dict)
+    H, HE = '/homes-for-sale/', '/es/casas-en-venta/'
+    # Towns + their price/bedroom pages + neighborhoods in town
+    subs_by_town = defaultdict(lambda: defaultdict(list))
+    for h in homes:
+        sd = nice_sub((h.get('property') or {}).get('subdivision'))
+        if sd and len(sd) > 2: subs_by_town[town_of(h)][sd].append(h)
+    for t, hs in by_town.items():
+        if not (t in TOWNS or len(hs) >= 3): continue
+        slug, area = TOWNS.get(t, (slugify(t + ' sd'), None))
+        en, es_ = f'{H}{slug}/', f'{HE}{slug}/'
+        crumb = [((t, t), (en, es_))]
+        kids = price_beds_subs(hs, en, es_, f'in {t}, SD', f'en {t}, SD', t, crumb)
+        nbhd = []
+        for sd, shs in sorted(subs_by_town[t].items(), key=lambda kv: -len(kv[1])):
+            if len(shs) < 3: continue
+            ss = slugify(sd)
+            c = Coll(f'{H}neighborhoods/{ss}/', f'{HE}vecindarios/{ss}/',
+                     (f'Homes for Sale in {sd}, {t}', f'Casas en venta en {sd}, {t}'),
+                     (f'{sd} Homes for Sale, {t} SD', f'Casas en venta en {sd}, {t} SD'),
+                     (f'homes for sale in the {sd} neighborhood of {t}, SD', f'casas en venta en el vecindario {sd} de {t}, SD'),
+                     shs, crumb, q=t, alert={'q': t})
+            nbhd.append(c)
+            for x in shs: links[x['mlsId']]['sub'] = (sd, c.en_url, c.es_url)
+        sub = [((c.h1[0].replace(f' in {t}, SD', ''), c.h1[1].replace(f' en {t}, SD', '')), (c.en_url, c.es_url), len(c.homes)) for c in kids]
+        sub += [((f'{c.h1[0].split(" in ")[1].split(",")[0]} neighborhood', f'Vecindario {c.h1[1].split(" en ")[1].split(",")[0]}'), (c.en_url, c.es_url), len(c.homes)) for c in nbhd]
+        tc = Coll(en, es_, (f'Homes for Sale in {t}, SD', f'Casas en venta en {t}, SD'),
+                  (f'{t}, SD Homes for Sale | {len(hs)} Listings', f'Casas en venta en {t}, SD | {len(hs)} casas'),
+                  (f'homes for sale in {t}, SD', f'casas en venta en {t}, SD'), hs, (), area, t, {'q': t}, sub)
+        town_coll[t] = tc
+        colls += [tc] + kids + nbhd
+        for x in hs: links[x['mlsId']]['town'] = (t, en, es_)
+    # School districts
+    dist = defaultdict(list)
+    for h in homes:
+        d = nice_district((h.get('school') or {}).get('district'))
+        if d and len(d) > 1: dist[d].append(h)
+    district_colls = []
+    for d, hs in sorted(dist.items(), key=lambda kv: -len(kv[1])):
+        if len(hs) < 3: continue
+        ds = slugify(d)
+        c = Coll(f'{H}school-districts/{ds}/', f'{HE}distritos-escolares/{ds}/',
+                 (f'Homes for Sale in the {d} School District', f'Casas en venta en el distrito escolar {d}'),
+                 (f'{d} School District Homes for Sale', f'Casas en el distrito escolar {d}'),
+                 (f'homes for sale in the {d} School District', f'casas en venta en el distrito escolar {d}'), hs, alert={})
+        district_colls.append(c)
+        for x in hs: links[x['mlsId']]['district'] = (d, c.en_url, c.es_url)
+    # Area-wide searches
+    wide = []
+    def add(en_slug, es_slug, h1, title, kw, hs, alert=None):
+        if len(hs) >= 3: wide.append(Coll(f'{H}{en_slug}/', f'{HE}{es_slug}/', h1, title, kw, hs, alert=alert or {}))
+    near = ('near Sioux Falls, SD', 'cerca de Sioux Falls, SD')
+    add('acreage', 'con-terreno', (f'Homes with Acreage for Sale {near[0]}', f'Casas con terreno (un acre o más) {near[1]}'),
+        ('Acreage Homes for Sale Near Sioux Falls', 'Casas con terreno cerca de Sioux Falls'),
+        (f'homes on 1+ acre for sale {near[0]}', f'casas con un acre o más en venta {near[1]}'), [x for x in homes if acres(x) >= 1])
+    add('new-construction', 'construccion-nueva', (f'New Construction Homes for Sale {near[0]}', f'Casas nuevas en venta {near[1]}'),
+        ('New Construction Homes Near Sioux Falls', 'Casas nuevas cerca de Sioux Falls'),
+        (f'new construction homes for sale {near[0]}', f'casas nuevas en venta {near[1]}'), [x for x in homes if is_new(x)])
+    add('condos-townhomes', 'condominios', (f'Condos & Townhomes for Sale {near[0]}', f'Condominios y casas adosadas en venta {near[1]}'),
+        ('Condos & Townhomes for Sale in Sioux Falls', 'Condominios en venta en Sioux Falls'),
+        (f'condos and townhomes for sale {near[0]}', f'condominios y casas adosadas en venta {near[1]}'), [x for x in homes if is_condo(x)], {'type': 'condominium'})
+    add('ranch-homes', 'casas-de-un-piso', (f'Ranch Homes for Sale {near[0]}', f'Casas estilo rancho (un piso) en venta {near[1]}'),
+        ('Ranch-Style Homes for Sale Near Sioux Falls', 'Casas de un piso cerca de Sioux Falls'),
+        (f'ranch-style homes for sale {near[0]}', f'casas estilo rancho en venta {near[1]}'), [x for x in homes if is_ranch(x)])
+    wide += price_beds_subs(homes, H, HE, near[0], near[1], '', [])
+    colls += district_colls + wide
+    # Hub
+    tlinks = [((t, t), (c.en_url, c.es_url), len(c.homes)) for t, c in sorted(town_coll.items(), key=lambda kv: (kv[0] != 'Sioux Falls', -len(kv[1].homes), kv[0])) if c.homes]
+    wl = [((c.h1[0].replace(' for Sale near Sioux Falls, SD', '').replace(' near Sioux Falls, SD', ''), c.h1[1].replace(' en venta cerca de Sioux Falls, SD', '').replace(' cerca de Sioux Falls, SD', '')), (c.en_url, c.es_url), len(c.homes)) for c in wide]
+    dl = [((c.h1[0].replace('Homes for Sale in the ', ''), c.h1[1].replace('Casas en venta en el distrito escolar ', 'Distrito ')), (c.en_url, c.es_url), len(c.homes)) for c in district_colls]
+    hub = Coll(H, HE, ('Homes for Sale in Sioux Falls & Nearby Towns', 'Casas en venta en Sioux Falls y pueblos cercanos'),
+               ('Homes for Sale in Sioux Falls & Nearby Towns', 'Casas en venta en Sioux Falls y pueblos cercanos'),
+               ('homes for sale in Sioux Falls, Tea, Harrisburg, Brandon and nearby towns', 'casas en venta en Sioux Falls, Tea, Harrisburg, Brandon y pueblos cercanos'),
+               [], sub=tlinks + wl + dl)
+    hub.homes_count = len(homes)
+    return [hub] + colls, links
+
+def hub_fix(c, n):
+    """The hub lists links, not homes: give it the total count without printing every card."""
+    for es in (False, True):
+        fp = os.path.join(ROOT, (c.es_url if es else c.en_url).strip('/') + '/index.html')
+        s = open(fp).read()
+        s = s.replace('<p>0 homes for sale right now</p>', f'<p>{n} homes for sale right now in Sioux Falls and nearby towns. Pick a town or a search below.</p>')
+        s = s.replace('<p>0 casas en venta ahora</p>', f'<p>{n} casas en venta ahora en Sioux Falls y pueblos cercanos. Escoja un pueblo o una búsqueda.</p>')
+        s = s.replace('See 0 homes for sale', f'See {n} homes for sale').replace('Vea 0 casas en venta', f'Vea {n} casas en venta')
+        s = re.sub(r'<p>(No homes like this are for sale right now|Ahora no hay casas así en venta)[^<]*</p>', '', s)
+        open(fp, 'w').write(s)
 
 # ---------- Main ----------
 def main():
@@ -424,18 +591,16 @@ def main():
     updated = last_update()
     by_town = defaultdict(list)
     for h in homes: by_town[town_of(h)].append(h)
+    for t in TOWNS: by_town.setdefault(t, [])  # every town with an area page gets a page, even with no homes today
+    colls, links = build_sets(homes, by_town)
     urls = []
     for t, hs in by_town.items():
-        for h in hs: urls.append((home_page(h, hs, updated), (h.get('modified') or '')[:10]))
-    # town pages: every town with an area page (even with no homes today), plus any other town with 3+ homes
-    for t in TOWNS: by_town.setdefault(t, [])
-    for t, hs in by_town.items():
-        if t in TOWNS or len(hs) >= 3:
-            slug = TOWNS.get(t, (slugify(t + ' sd'),))[0]
-            urls.append((town_page(t, slug, hs, updated, False), ''))
-            urls.append((town_page(t, slug, hs, updated, True), ''))
-    shown = {t: hs for t, hs in by_town.items() if t in TOWNS or len(hs) >= 3}
-    urls += [(hub_page(shown, False), ''), (hub_page(shown, True), '')]
+        for h in hs:
+            d = (h.get('modified') or '')[:10]
+            urls += [(home_page(h, hs, updated, False, links[h['mlsId']]), d), (home_page(h, hs, updated, True, links[h['mlsId']]), d)]
+    for c in colls:
+        urls += [(coll_page(c, updated, False), ''), (coll_page(c, updated, True), '')]
+    hub_fix(colls[0], len(homes))
 
     today = datetime.date.today().isoformat()
     sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
@@ -453,7 +618,7 @@ def main():
             s = open(fp).read()
             s = re.sub(r'href="https://marcos\.kw\.com/search/sale\?viewport=[^"]*"( class="btn[^"]*") target="_blank" rel="noopener"', lambda m: f'href="{base}{tslug}/"{m.group(1)}', s)
             open(fp, 'w').write(s)
-    print(f'Listing pages: {len(homes)} homes, {len(shown)} towns, {len(urls)} URLs in homes-sitemap.xml')
+    print(f'Listing pages: {len(homes)} homes, {len(colls)} list pages (x2 languages), {len(urls)} URLs in homes-sitemap.xml')
 
 if __name__ == '__main__':
     main()
