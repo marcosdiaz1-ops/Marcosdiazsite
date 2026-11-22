@@ -918,17 +918,18 @@
 
   // What's special about a home (like Zillow's "Fenced yard" tag), read from the listing's own MLS features and description
   var HL = [
-    ['fence', t('Fenced yard', 'Patio cercado'), function (p, x, r) { return /fence/.test(x) || /fenced[- ]in|fenced (back ?)?yard|privacy fenc/.test(r); }],
     ['walkout', t('Walkout basement', 'Sótano con salida'), function (p, x, r) { return /walk-?out/.test(x + ' ' + r); }],
-    ['kitchen', t('Updated kitchen', 'Cocina renovada'), function (p, x, r) { return /(updated|new|remodel(l)?ed|renovated|brand-new) kitchen/.test(r); }],
-    ['garage', '', function (p) { return (p.garageSpaces || 0) >= 3; }],
     ['shop', t('Shop / outbuilding', 'Taller o bodega'), function (p, x, r) { return /\bshop\b|pole barn|outbuilding|quonset/.test(x + ' ' + r); }],
+    ['pool', t('Pool', 'Alberca'), function (p, x, r) { return !!p.pool || /\bpool\b/.test(x) || /(in-?ground|above-?ground|heated) pool/.test(r); }],
     ['acre', '', function (p) { return (+p.acres || 0) >= 1; }],
     ['new', t('New construction', 'Construcción nueva'), function (p) { return (p.yearBuilt || 0) >= new Date().getFullYear() - 1; }],
-    ['pool', t('Pool', 'Alberca'), function (p, x, r) { return !!p.pool || /\bpool\b/.test(x) || /(in-?ground|above-?ground|heated) pool/.test(r); }],
-    ['primary', t('Main-floor primary suite', 'Recámara principal en planta baja'), function (p, x) { return /master bed main level|primary bed(room)? main/.test(x); }],
+    ['garage', '', function (p) { return (p.garageSpaces || 0) >= 3; }],
+    ['kitchen', t('Updated kitchen', 'Cocina renovada'), function (p, x, r) { return /(updated|new|remodel(l)?ed|renovated|brand-new) kitchen/.test(r); }],
     ['cul', t('Cul-de-sac', 'Calle cerrada'), function (p, x, r) { return /cul-de-sac/.test(x + ' ' + r); }],
+    ['fence', t('Fenced yard', 'Patio cercado'), function (p, x, r) { return /privacy fence|fence – other|fence - other|wood fence|chain link|fenced/.test(x) || /fenced[- ]in|fenced (back ?)?yard|privacy fenc/.test(r); }],
+    ['pfence', t('Partly fenced yard', 'Patio cercado en parte'), function (p, x) { return /partial fence/.test(x); }],
     ['bsmt', t('Finished basement', 'Sótano terminado'), function (p, x, r) { return /finished lower level/.test(r) || /finished basement/.test(r.replace(/unfinished basement/g, '')); }],
+    ['primary', t('Main-floor primary suite', 'Recámara principal en planta baja'), function (p, x) { return /master bed main level|primary bed(room)? main/.test(x); }],
     ['laundry', t('Main-floor laundry', 'Lavandería en planta baja'), function (p, x, r) { return /main floor laundry|main-floor laundry|main level laundry/.test(x + ' ' + r); }],
     ['wood', t('Hardwood floors', 'Pisos de madera'), function (p, x) { return /hardwood/.test(String(p.flooring || '').toLowerCase()); }],
     ['vault', t('Vaulted ceilings', 'Techos altos'), function (p, x) { return /vaulted/.test(x); }],
@@ -943,6 +944,7 @@
     var out = [];
     HL.forEach(function (d) {
       try { if (!d[2](p, x, r)) return; } catch (e) { return; }
+      if (d[0] === 'pfence' && out.indexOf(t('Fenced yard', 'Patio cercado')) > -1) return;
       if (d[0] === 'garage') out.push(Math.round(p.garageSpaces) + t('-car garage', ' autos de garaje'));
       else if (d[0] === 'acre') out.push((+p.acres >= 10 ? Math.round(+p.acres) : +(+p.acres).toFixed(1)) + t(' acres', ' acres'));
       else out.push(d[1]);
