@@ -325,6 +325,7 @@ function search_(a, since, limit) {
   const add = function (k, v) { if (v !== '' && v != null) q.push(k + '=' + encodeURIComponent(v)); };
   add('q', a.q); add('minprice', a.minprice); add('maxprice', a.maxprice);
   add('minbeds', a.minbeds); add('minbaths', a.minbaths); add('type', a.type);
+  if (a.type === 'residential') add('subtype', 'SingleFamilyResidence');  // "House" = single-family only (RASE files townhomes as residential too)
   if (!a.q && a.points) a.points.split('|').forEach(function (pt) { add('points', pt); });
   add('status', 'Active'); add('sort', '-listdate'); add('limit', limit || 50);
   const res = UrlFetchApp.fetch(LISTINGS_API + '?' + q.join('&'), { muteHttpExceptions: true });

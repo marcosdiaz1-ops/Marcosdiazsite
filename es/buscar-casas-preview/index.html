@@ -863,6 +863,8 @@
     if ($('f-beds').value) p.set('minbeds', $('f-beds').value);
     if ($('f-baths').value) p.set('minbaths', $('f-baths').value);
     if ($('f-type').value) p.set('type', $('f-type').value);
+    // RASE files townhomes and condos as "residential" too, so "House" also asks for single-family homes only
+    if ($('f-type').value === 'residential') p.set('subtype', 'SingleFamilyResidence');
     if ($('f-area').value) p.set('minarea', $('f-area').value);
     if ($('f-year').value) p.set('minyear', $('f-year').value);
     if ($('f-dom').value) p.set('maxdom', $('f-dom').value);
