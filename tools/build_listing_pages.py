@@ -152,6 +152,7 @@ def card(h, href, es=False):
     p, ph = h.get('property') or {}, (h.get('photos') or [None])[0]
     dom = (h.get('mls') or {}).get('daysOnMarket')
     tag = ('<span class="lp-new">' + ('Nueva' if es else 'New') + '</span>') if dom is not None and dom <= 7 else ''
+    if price_cut(h): tag += f'<span class="lp-cut">↓ {money(price_cut(h))}</span>'
     bd = f"{p.get('bedrooms') or 0} {'rec' if es else 'bd'} · {baths(p) or 0} {'baños' if es else 'ba'}" + (f" · {p['area']:,} {'pies²' if es else 'sq ft'}" if p.get('area') else '')
     where = (street(h) + ', ' if street(h) else '') + town_of(h)
     alt = ('Casa en venta: ' if es else 'Home for sale: ') + where
@@ -184,6 +185,7 @@ CSS = '''<style>
 .lp-img{display:block;position:relative;aspect-ratio:3/2;background:#e9e3d8}
 .lp-img{overflow:hidden}.lp-img img{width:100%;height:100%;object-fit:cover;display:block}
 .lp-new{position:absolute;left:10px;top:10px;background:var(--gold);color:#fff;font-size:12px;padding:3px 8px;border-radius:6px}
+.lp-cut{position:absolute;right:10px;top:10px;background:#1f6b45;color:#fff;font-size:12px;padding:3px 8px;border-radius:6px}
 .lp-body{display:flex;flex-direction:column;gap:2px;padding:12px 14px}
 .lp-body b{font-size:1.25rem;color:var(--navy)}.lp-body small{color:#555;margin-top:6px;line-height:1.4}
 .lp-towns{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
@@ -461,6 +463,29 @@ def is_new(h): return ((h.get('property') or {}).get('yearBuilt') or 0) >= THIS_
 def is_condo(h):
     p = h.get('property') or {}
     return p.get('type') == 'CND' or bool(re.search(r'condo|town', str(p.get('subTypeText') or ''), re.I))
+def price_cut(h):
+    o, l = h.get('originalListPrice') or 0, h.get('listPrice') or 0
+    return o - l if o and l and o > l else 0
+def is_new_week(h):
+    d = (h.get('mls') or {}).get('daysOnMarket')
+    return d is not None and d <= 7
+
+def fresh_subs(homes, base_en, base_es, where_en, where_es, q, crumbs, always=False):
+    """'New this week' and 'Price cuts' pages. Area-wide ones are always built; town ones need 3+ homes."""
+    out = []
+    for en_s, es_s, test, h1, kw in (
+        ('new-this-week', 'nuevas-esta-semana', is_new_week,
+         (f'New Listings This Week {where_en}', f'Casas nuevas esta semana {where_es}'),
+         (f'homes listed for sale this week {where_en}', f'casas que salieron a la venta esta semana {where_es}')),
+        ('price-cuts', 'bajaron-de-precio', price_cut,
+         (f'Price Cuts: Homes for Sale {where_en}', f'Casas que bajaron de precio {where_es}'),
+         (f'homes with price reductions {where_en}', f'casas que bajaron de precio {where_es}'))):
+        hs = [x for x in homes if test(x)]
+        if always or len(hs) >= 3:
+            if en_s == 'price-cuts': hs = sorted(hs, key=lambda x: -price_cut(x))
+            out.append(Coll(f'{base_en}{en_s}/', f'{base_es}{es_s}/', h1, h1, kw, hs, crumbs, q=q, alert={'q': q} if q else {}))
+    return out
+
 def is_ranch(h): return bool(re.search(r'ranch', str((h.get('property') or {}).get('style') or ''), re.I))
 def nice_sub(s):
     s = re.sub(r'\b(ADDN?|ADDITION|ADD\.?|SUBD?|SUBDIVISION|PLAT|PH(ASE)?\s*\w+)\b\.?', '', str(s or ''), flags=re.I)
@@ -506,7 +531,7 @@ def build_sets(homes, by_town):
         slug, area = TOWNS.get(t, (slugify(t + ' sd'), None))
         en, es_ = f'{H}{slug}/', f'{HE}{slug}/'
         crumb = [((t, t), (en, es_))]
-        kids = price_beds_subs(hs, en, es_, f'in {t}, SD', f'en {t}, SD', t, crumb)
+        kids = fresh_subs(hs, en, es_, f'in {t}, SD', f'en {t}, SD', t, crumb) + price_beds_subs(hs, en, es_, f'in {t}, SD', f'en {t}, SD', t, crumb)
         nbhd = []
         for sd, shs in sorted(subs_by_town[t].items(), key=lambda kv: -len(kv[1])):
             if len(shs) < 3: continue
@@ -558,7 +583,7 @@ def build_sets(homes, by_town):
     add('ranch-homes', 'casas-de-un-piso', (f'Ranch Homes for Sale {near[0]}', f'Casas estilo rancho (un piso) en venta {near[1]}'),
         ('Ranch-Style Homes for Sale Near Sioux Falls', 'Casas de un piso cerca de Sioux Falls'),
         (f'ranch-style homes for sale {near[0]}', f'casas estilo rancho en venta {near[1]}'), [x for x in homes if is_ranch(x)])
-    wide += price_beds_subs(homes, H, HE, near[0], near[1], '', [])
+    wide = fresh_subs(homes, H, HE, near[0], near[1], '', [], always=True) + wide + price_beds_subs(homes, H, HE, near[0], near[1], '', [])
     colls += district_colls + wide
     # Hub
     tlinks = [((t, t), (c.en_url, c.es_url), len(c.homes)) for t, c in sorted(town_coll.items(), key=lambda kv: (kv[0] != 'Sioux Falls', -len(kv[1].homes), kv[0])) if c.homes]

@@ -17,6 +17,8 @@
  *   6. Besides new listings, alert emails include PRICE DROPS on homes that match and homes
  *      BACK ON THE MARKET. A hidden "Snapshots" tab remembers each person's matching homes and
  *      prices so it can spot the changes.
+ *   7. Monday 7 AM "who to call this week" email to Marcos: new sign-ups, the most active
+ *      people (ranked), homes they keep opening, and everyone gone quiet for 2+ weeks.
  *
  * Setup (one time, about 5 minutes):
  *   - Open the Listing Alert Leads sheet → Extensions → Apps Script → delete what's there,
@@ -461,9 +463,85 @@ function setup() {
   activity_(); snapSheet_();
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'sendAlerts') ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('sendAlerts').timeBased().everyDays(1).atHour(8).create();
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'weeklyLeadReport') ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('weeklyLeadReport').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(7).create();
   // quick test that the listings connection works
   const test = search_({ q: 'Sioux Falls' }, null);
   console.log('Setup done. Listings connection OK: ' + test.length + ' homes found.');
+}
+
+// ---------- Monday "who to call this week" report ----------
+function weeklyLeadReport() {
+  const sh = sheet_(), rows = sh.getDataRange().getValues().slice(1).filter(function (r) { return r[C.Email]; });
+  const now = new Date(), DAY = 864e5, weekAgo = new Date(now - 7 * DAY), twoWeeks = new Date(now - 14 * DAY);
+  const tz = Session.getScriptTimeZone(), day = function (d) { return Utilities.formatDate(new Date(d), tz, 'MMM d'); };
+
+  // what each person opened (Activity tab)
+  const act = activity_(), last = act.getLastRow(), byId = {};
+  if (last >= 2) {
+    const start = Math.max(2, last - 5000);
+    act.getRange(start, 1, last - start + 1, ACT_HEADERS.length).getValues().forEach(function (x) {
+      const id = String(x[9] || '').toLowerCase(); if (!id) return;
+      const p = byId[id] || (byId[id] = { week: 0, lastSeen: null, homes: {}, prices: [], cities: {} });
+      const when = new Date(x[0]);
+      if (!p.lastSeen || when > p.lastSeen) p.lastSeen = when;
+      if (when < weekAgo) return;
+      p.week++;
+      const k = String(x[3]);
+      const hm = p.homes[k] || (p.homes[k] = { n: 0, price: x[4], addr: x[8], city: x[7] });
+      hm.n++;
+      if (x[4]) p.prices.push(Number(x[4]));
+      if (x[7]) p.cities[x[7]] = (p.cities[x[7]] || 0) + 1;
+    });
+  }
+
+  const people = rows.map(function (r) {
+    const id = String(r[C.ID] || '').toLowerCase(), a = byId[id] || { week: 0, lastSeen: null, homes: {}, prices: [], cities: {} };
+    const homes = Object.keys(a.homes).map(function (k) { return Object.assign({ mls: k }, a.homes[k]); }).sort(function (x, y) { return y.n - x.n; });
+    const signed = new Date(r[C['Signed up']]);
+    const isNew = signed >= weekAgo;
+    const repeat = homes.length && homes[0].n >= 2 ? homes[0] : null;
+    const score = a.week + (repeat ? repeat.n * 3 : 0) + (isNew ? 5 : 0) + (r[C.Phone] ? 2 : 0);
+    return { r: r, a: a, homes: homes, isNew: isNew, repeat: repeat, score: score, signed: signed,
+             active: String(r[C.Status]).trim() === 'Active' };
+  });
+  const act7 = people.filter(function (p) { return p.active && (p.a.week || p.isNew); }).sort(function (x, y) { return y.score - x.score; });
+  const quiet = people.filter(function (p) { return p.active && !p.isNew && (!p.a.lastSeen || p.a.lastSeen < twoWeeks) && p.signed < twoWeeks; });
+  const totalActive = people.filter(function (p) { return p.active; }).length;
+  const newCount = people.filter(function (p) { return p.isNew; }).length;
+  const views = people.reduce(function (s, p) { return s + p.a.week; }, 0);
+
+  const btn = function (href, label, bg) { return '<a href="' + href + '" style="background:' + bg + ';color:#fff;padding:7px 12px;text-decoration:none;border-radius:4px;font-size:13px;margin-right:6px">' + label + '</a>'; };
+  const person = function (p, i) {
+    const r = p.r, name = String(r[C.Name]), first = name.split(' ')[0], tel = String(r[C.Phone] || '').replace(/[^0-9+]/g, '');
+    const pr = p.a.prices.slice().sort(function (x, y) { return x - y; });
+    const towns = Object.keys(p.a.cities).sort(function (x, y) { return p.a.cities[y] - p.a.cities[x]; }).slice(0, 3).join(', ');
+    const bits = [];
+    if (p.isNew) bits.push('<b style="color:#b98b5c">New this week</b> (' + day(p.signed) + ')');
+    if (p.a.week) bits.push(p.a.week + ' home view' + (p.a.week === 1 ? '' : 's'));
+    if (towns) bits.push(esc_(towns));
+    if (pr.length) bits.push(money_(pr[0]) + (pr.length > 1 && pr[pr.length - 1] !== pr[0] ? '–' + money_(pr[pr.length - 1]) : ''));
+    if (!p.a.week && r[C.Search]) bits.push('alert: ' + esc_(String(r[C.Search])));
+    const rep = p.repeat ? '<br>🔥 Opened <b>' + esc_((p.repeat.addr ? p.repeat.addr + ', ' : '') + (p.repeat.city || '')) + '</b> (' + money_(p.repeat.price) + ') ' + p.repeat.n + ' times · <a href="' + SEARCH_PAGE + '#home=' + encodeURIComponent(p.repeat.mls) + '">see it</a>' : '';
+    return '<tr><td style="padding:10px 0;border-bottom:1px solid #e2d8ca;vertical-align:top">' +
+      '<b style="font-size:16px">' + (i + 1) + '. ' + esc_(name) + '</b>' + (String(r[C.Language]) === 'Español' ? ' (Español)' : '') + '<br>' +
+      '<span style="color:#4a5063">' + bits.join(' · ') + '</span>' + rep + '<br>' +
+      '<span style="font-size:13px">' + esc_(String(r[C.Email])) + (tel ? ' · ' + esc_(String(r[C.Phone])) : ' · no phone') + '</span>' +
+      '<div style="margin-top:8px">' + (tel ? btn('tel:' + tel, 'Call ' + esc_(first), '#b98b5c') + btn('sms:' + tel, 'Text', '#13203b') : '') + btn('mailto:' + encodeURIComponent(String(r[C.Email])), 'Email', '#4a5063') + '</div>' +
+      '</td></tr>';
+  };
+  const top = act7.slice(0, 15);
+  const html = '<div style="font-family:Arial,sans-serif;font-size:15px;color:#1a2237;max-width:620px">' +
+    '<h2 style="margin:0 0 6px;color:#13203b">Who to call this week</h2>' +
+    '<p style="margin:0 0 14px;color:#4a5063">' + newCount + ' new sign-up' + (newCount === 1 ? '' : 's') + ' · ' + views + ' home views · ' + totalActive + ' people getting alerts</p>' +
+    (top.length ? '<p style="margin:0">Most active first:</p><table cellpadding="0" cellspacing="0" width="100%">' + top.map(person).join('') + '</table>' + (act7.length > 15 ? '<p>+ ' + (act7.length - 15) + ' more in the sheet.</p>' : '')
+                : '<p>No one signed up or opened homes this week.</p>') +
+    (quiet.length ? '<h3 style="color:#13203b;margin:22px 0 4px">Gone quiet (no homes opened in 2+ weeks)</h3><p style="margin:0;color:#4a5063">A quick check-in text can bring them back:</p><p>' +
+      quiet.slice(0, 20).map(function (p) { const tel = String(p.r[C.Phone] || '').replace(/[^0-9+]/g, ''); return esc_(String(p.r[C.Name])) + (tel ? ' · <a href="sms:' + tel + '">text</a>' : ' · <a href="mailto:' + encodeURIComponent(String(p.r[C.Email])) + '">email</a>') + (p.a.lastSeen ? ' (last seen ' + day(p.a.lastSeen) + ')' : ''); }).join('<br>') +
+      (quiet.length > 20 ? '<br>+ ' + (quiet.length - 20) + ' more' : '') + '</p>' : '') +
+    '<p style="color:#8a8579;font-size:12px;margin-top:22px">From your Listing Alert Leads sheet: ' + SpreadsheetApp.getActive().getUrl() + '</p></div>';
+  const subject = '📋 Who to call this week: ' + (top.length ? top.slice(0, 3).map(function (p) { return String(p.r[C.Name]).split(' ')[0]; }).join(', ') + (top.length > 3 ? ' + ' + (top.length - 3) + ' more' : '') : 'quiet week');
+  GmailApp.sendEmail(OWNER_EMAIL, subject, subject, { htmlBody: html, name: '605homesearch Alerts' });
 }
 
 // ---------- Helpers ----------
