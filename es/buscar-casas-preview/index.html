@@ -838,9 +838,13 @@
   }
   map.on('zoomend', drawPins);
 
+  // While the list is showing on a phone the map is hidden and has no size, so use the last area it showed
+  var lastBounds = null;
+  function mapShown() { var el = map.getContainer(); return el.offsetWidth > 0 && el.offsetHeight > 0; }
   function areaPoints() {
     if (drawPts) return drawPts;
-    var b = map.getBounds();
+    var b = mapShown() || !lastBounds ? map.getBounds() : lastBounds;
+    if (mapShown()) lastBounds = b;
     return [[b.getNorth(), b.getWest()], [b.getNorth(), b.getEast()], [b.getSouth(), b.getEast()], [b.getSouth(), b.getWest()]]
       .map(function (pt) { return pt[0].toFixed(5) + ',' + pt[1].toFixed(5); });
   }
@@ -1493,6 +1497,7 @@
   document.addEventListener('click', function (e) { if (!e.target.closest('.sp-q')) acClose(); });
   $('sp-more').onclick = function () { load(true); };
   map.on('moveend', function () {
+    if (!mapShown()) return;  // e.g. the phone's address bar hiding while the list scrolls
     if (skipMove) { skipMove = false; return; }
     if (savedMode) return;
     if ($('f-q').value.trim()) return;
@@ -1504,9 +1509,10 @@
   var MAP_IC = '<svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>';
   var LIST_IC = '<svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
   function setView(v, first) {
+    if (mapShown()) lastBounds = map.getBounds();
     $('sp-body').className = 'sp-body show-' + v;
     $('v-toggle').innerHTML = v === 'list' ? MAP_IC + t('Map', 'Mapa') : LIST_IC + t('List', 'Lista');
-    if (v === 'map') setTimeout(function () { map.invalidateSize(); }, 50);
+    if (v === 'map') setTimeout(function () { skipMove = true; map.invalidateSize(); if (lastBounds) map.fitBounds(lastBounds, { animate: false }); skipMove = false; }, 50);
     else if (!first) window.scrollTo({ top: Math.max(0, $('sp-body').getBoundingClientRect().top + window.pageYOffset - 140) });
   }
   $('v-toggle').onclick = function () { setView(/show-list/.test($('sp-body').className) ? 'map' : 'list'); };
