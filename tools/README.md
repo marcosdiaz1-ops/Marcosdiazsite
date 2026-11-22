@@ -18,3 +18,4 @@
 - `build_resources.py`: ITIN mortgage and low-credit pages (EN + ES, Spanish-first SEO), with FAQPage schema.
 
 - `go_live_search.py`: when RASE approves, makes the new map/photo search the real Search Homes page (EN + ES). `--undo` puts the old page back.
+- `build_listing_pages.py`: Google-friendly pages for every home (/homes/...) and town (/homes-for-sale/, /es/casas-en-venta/), built from the MLS feed during each publish and every 4 hours. Off until go-live (data/listing-pages-on).

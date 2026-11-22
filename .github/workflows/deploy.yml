@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Refresh the Google-friendly listing pages (only does anything once the new search is live)
+    - cron: '17 */4 * * *'
 
 permissions:
   contents: read
@@ -15,13 +18,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  gate:
+    # Scheduled runs only publish after go-live (data/listing-pages-on exists)
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ] || [ -f data/listing-pages-on ]; then echo "run=true" >> "$GITHUB_OUTPUT"; else echo "run=false" >> "$GITHUB_OUTPUT"; fi
+
   deploy:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Build listing pages from the live MLS feed (after go-live)
+        if: hashFiles('data/listing-pages-on') != ''
+        continue-on-error: ${{ github.event_name != 'schedule' }}
+        run: python3 tools/build_listing_pages.py
       - name: Force browsers to load the latest design files
         run: find . -name "*.html" -not -path "./.git/*" -exec sed -i "s/?v=BUILD/?v=${GITHUB_SHA::7}/g" {} +
       - name: Keep build tools off the public site
@@ -46,6 +66,7 @@ jobs:
   indexnow:
     # Tell Bing (and other IndexNow search engines) which pages changed
     needs: deploy
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:

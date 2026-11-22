@@ -9,6 +9,8 @@ What it does:
   - Removes the "noindex" tag and the demo banner.
   - Saves the old Search Homes page to tools/search-old-kw-page.html so --undo can restore it.
   - Rebuilds the Spanish search (es/buscar-casas/) with tools/build_es_search.py live.
+  - Turns on the Google-friendly listing and town pages (tools/build_listing_pages.py), which
+    are rebuilt from the MLS feed on every publish and every 4 hours (deploy.yml).
 Listing alert emails and the affordability calculator already link to /search/, so they
 start opening the new search as soon as this is pushed.
 """
@@ -20,9 +22,11 @@ PREVIEW = os.path.join(ROOT, 'search-preview/index.html')
 BACKUP = os.path.join(ROOT, 'tools/search-old-kw-page.html')
 ES_LIVE = os.path.join(ROOT, 'es/buscar-casas/index.html')
 ES_BACKUP = os.path.join(ROOT, 'tools/buscar-casas-old-kw-page.html')
+FLAG = os.path.join(ROOT, 'data/listing-pages-on')
 
 if '--undo' in sys.argv:
     shutil.copy(BACKUP, LIVE); shutil.copy(ES_BACKUP, ES_LIVE)
+    if os.path.exists(FLAG): os.remove(FLAG)
     print('Old search pages restored.'); sys.exit(0)
 
 live = open(LIVE).read()
@@ -42,4 +46,5 @@ open(LIVE, 'w').write(new)
 subprocess.run([sys.executable, os.path.join(ROOT, 'tools/build_es_search.py'), 'live'], check=True)
 es = open(ES_LIVE).read()
 assert 'noindex' not in es and 'hreflang="es"' in es
+open(FLAG, 'w').write('on\n')
 print('New search is now at /search/ and /es/buscar-casas/. Commit and push to publish.')
