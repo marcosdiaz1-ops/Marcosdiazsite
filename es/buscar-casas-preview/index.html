@@ -18,7 +18,7 @@
   .sp-hero a { color: var(--gold-soft); }
   .sp { padding: 0 0 40px; }
   /* Filter bar */
-  .sp-bar { position: sticky; top: 64px; z-index: 900; margin: -22px 0 16px; }
+  .sp-bar { position: sticky; top: 64px; z-index: 1100; margin: -22px 0 16px; }
   .sp-filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(19,32,59,.10); }
   .sp-q { position: relative; flex: 1 1 280px; min-width: 200px; }
   .sp-q input { width: 100%; font: inherit; font-size: 15px; padding: 10px 44px 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
@@ -98,6 +98,17 @@
   .hd-env a { font-size: 15px; color: var(--navy); border: 1.5px solid var(--navy); border-radius: 10px; padding: 8px 14px; text-decoration: none; }
   .hd-flood { margin-top: 12px; background: #f3f6fb; border-left: 4px solid #2a6fdb; border-radius: 8px; padding: 10px 14px; font-size: 15px; }
   .hd-flood.hi { background: #fdf3f2; border-color: #c0392b; }
+  /* Search suggestions as you type */
+  body.ac-on .sp-toggle { display: none !important; }
+  .sp-ac { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 36px rgba(19,32,59,.2); z-index: 1200; overflow: hidden; max-height: 70vh; overflow-y: auto; }
+  .sp-ac .ac-h { font: 600 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); padding: 10px 14px 4px; }
+  .sp-ac .ac-i { display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .sp-ac .ac-i.on, .sp-ac .ac-i:hover { background: #eef1f7; }
+  .sp-ac .ac-i svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--navy); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-ac .ac-i img { width: 46px; height: 34px; object-fit: cover; border-radius: 6px; flex: none; background: var(--sand); }
+  .sp-ac .ac-i small { display: block; color: #666; font-size: 13px; }
+  .sp-ac .ac-i b { font-weight: 600; }
+  .sp-ac .ac-load { padding: 9px 14px; color: #666; font-size: 14px; }
   .sp-legend { background: rgba(255,255,255,.92); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--ink); display: flex; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
   .sp-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; border: 1px solid #fff; }
   .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
@@ -1358,7 +1369,78 @@
     }).then(function () { f.querySelector('.al-send').disabled = false; });
   });
 
-  $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); if ($('f-q').value.trim() && drawPts) clearDrawing(false); load(false); });
+  $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); acClose(); if ($('f-q').value.trim() && drawPts) clearDrawing(false); load(false); });
+
+  // ---- Suggestions pop up as you type: towns, ZIP codes, and matching homes ----
+  var PLACES = [
+    ['Sioux Falls', '57103 57104 57105 57106 57107 57108 57110'], ['Tea', '57064'], ['Harrisburg', '57032'], ['Brandon', '57005'],
+    ['Hartford', '57033'], ['Crooks', '57020'], ['Lennox', '57039'], ['Canton', '57013'], ['Garretson', '57030'], ['Worthing', '57077'],
+    ['Renner', '57055'], ['Baltic', '57003'], ['Dell Rapids', '57022'], ['Valley Springs', '57068'], ['Colton', '57018'], ['Humboldt', '57035'],
+    ['Parker', '57053'], ['Beresford', '57004'], ['Chancellor', '57015'], ['Marion', '57043'], ['Montrose', '57048'], ['Madison', '57042']
+  ];
+  var acBox = document.createElement('div'); acBox.className = 'sp-ac'; acBox.id = 'sp-ac'; acBox.hidden = true; acBox.setAttribute('role', 'listbox');
+  $('f-q').parentNode.appendChild(acBox);
+  $('f-q').setAttribute('autocomplete', 'off'); $('f-q').setAttribute('aria-autocomplete', 'list'); $('f-q').setAttribute('aria-controls', 'sp-ac');
+  var acItems = [], acSel = -1, acTimer = null, acReq = 0;
+  var PIN_IC = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+  function acClose() { acBox.hidden = true; acItems = []; acSel = -1; document.body.classList.remove('ac-on'); }
+  function acPaint(homesHtml) {
+    var html = '', places = acItems.filter(function (x) { return x.kind === 'place'; });
+    if (places.length) html += '<div class="ac-h">' + t('Places', 'Lugares') + '</div>' + places.map(function (x) { return '<div class="ac-i" role="option" data-k="' + acItems.indexOf(x) + '">' + PIN_IC + '<div><b>' + esc(x.label) + '</b>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div>'; }).join('');
+    html += homesHtml || '';
+    acBox.innerHTML = html; acBox.hidden = !html; document.body.classList.toggle('ac-on', !!html);
+    acMark();
+  }
+  function acMark() { acBox.querySelectorAll('.ac-i').forEach(function (el) { el.classList.toggle('on', +el.dataset.k === acSel); }); }
+  function acHomesHtml() {
+    var hs = acItems.filter(function (x) { return x.kind === 'home'; });
+    if (!hs.length) return '';
+    return '<div class="ac-h">' + t('Homes for sale', 'Casas en venta') + '</div>' + hs.map(function (x) {
+      var h = x.h, a = h.address || {}, p = h.property || {};
+      return '<div class="ac-i" role="option" data-k="' + acItems.indexOf(x) + '"><img src="' + esc((h.photos || [])[0] || '') + '" alt=""><div><b>' + esc(showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible')) + '</b><small>' +
+        esc((a.city || '') + ' · ' + money(h.listPrice) + ' · ' + (p.bedrooms || 0) + t(' bd', ' rec') + (h.listingId ? ' · MLS #' + h.listingId : '')) + '</small></div></div>';
+    }).join('');
+  }
+  function acUpdate() {
+    var v = $('f-q').value.trim(), lv = v.toLowerCase();
+    if (!v) { acClose(); return; }
+    var places = [];
+    PLACES.forEach(function (pl) {
+      if (pl[0].toLowerCase().indexOf(lv) === 0 || (lv.length > 2 && pl[0].toLowerCase().indexOf(lv) > -1)) places.push({ kind: 'place', q: pl[0], label: pl[0] + ', SD', sub: pl[1].split(' ').length > 1 ? t('City', 'Ciudad') : 'ZIP ' + pl[1] });
+      pl[1].split(' ').forEach(function (z) { if (/^\d{2,}$/.test(v) && z.indexOf(v) === 0) places.push({ kind: 'place', q: z, label: z, sub: pl[0] + ', SD' }); });
+    });
+    acItems = places.slice(0, 5).concat(acItems.filter(function (x) { return x.kind === 'home' && x.for === v; }));
+    acSel = -1; acPaint(acHomesHtml());
+    if (v.length < 3 || !LIVE) return;
+    clearTimeout(acTimer);
+    acTimer = setTimeout(function () {
+      var my = ++acReq;
+      if (!acItems.some(function (x) { return x.kind === 'home'; })) { acBox.hidden = false; acBox.insertAdjacentHTML('beforeend', '<div class="ac-load">' + t('Looking for homes…', 'Buscando casas…') + '</div>'); }
+      fetch(API + '?q=' + encodeURIComponent(v) + '&limit=6', { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : []; }).then(function (list) {
+        if (my !== acReq || $('f-q').value.trim() !== v) return;
+        acItems = acItems.filter(function (x) { return x.kind === 'place'; }).concat((list || []).filter(function (h) { return h && h.internetEntireListingDisplay !== false; }).slice(0, 6).map(function (h) { return { kind: 'home', h: h, for: v }; }));
+        acPaint(acHomesHtml());
+      }).catch(function () {});
+    }, 220);
+  }
+  function acPick(i) {
+    var x = acItems[i]; if (!x) return;
+    acClose();
+    if (x.kind === 'place') { $('f-q').value = x.q; if (drawPts) clearDrawing(false); load(false); }
+    else { $('f-q').blur(); show(x.h); }
+  }
+  $('f-q').addEventListener('input', acUpdate);
+  $('f-q').addEventListener('focus', function () { if (this.value.trim()) acUpdate(); });
+  $('f-q').addEventListener('keydown', function (e) {
+    if (acBox.hidden || !acItems.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); acSel = Math.min(acSel + 1, acItems.length - 1); acMark(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); acSel = Math.max(acSel - 1, -1); acMark(); }
+    else if (e.key === 'Enter' && acSel > -1) { e.preventDefault(); acPick(acSel); }
+    else if (e.key === 'Escape') acClose();
+  });
+  acBox.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  acBox.addEventListener('click', function (e) { var el = e.target.closest('.ac-i'); if (el) acPick(+el.dataset.k); });
+  document.addEventListener('click', function (e) { if (!e.target.closest('.sp-q')) acClose(); });
   $('sp-more').onclick = function () { load(true); };
   map.on('moveend', function () {
     if (skipMove) { skipMove = false; return; }
