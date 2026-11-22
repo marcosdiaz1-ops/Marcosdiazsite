@@ -161,7 +161,9 @@ def highlights(h, es=False):
     if p.get('pool') or re.search(r'\bpool\b', x) or re.search(r'(in-?ground|above-?ground|heated) pool', r): out.append(T2('Pool', 'Alberca'))
     try: ac = float(p.get('acres') or 0)
     except Exception: ac = 0
-    if ac >= 1: out.append(f"{round(ac) if ac >= 10 else round(ac, 1):g} acres")
+    if ac >= 1:
+        n = round(ac) if ac >= 10 else round(ac, 1)
+        out.append(f"{n:g} acre" + ('' if n == 1 else 's'))
     if (p.get('yearBuilt') or 0) >= THIS_YEAR - 1: out.append(T2('New construction', 'Construcción nueva'))
     if (p.get('garageSpaces') or 0) >= 3: out.append(f"{round(p['garageSpaces'])}" + T2('-car garage', ' autos de garaje'))
     if re.search(r'(updated|new|remodell?ed|renovated|brand-new) kitchen', r): out.append(T2('Updated kitchen', 'Cocina renovada'))

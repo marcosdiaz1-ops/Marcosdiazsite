@@ -946,7 +946,7 @@
       try { if (!d[2](p, x, r)) return; } catch (e) { return; }
       if (d[0] === 'pfence' && out.indexOf(t('Fenced yard', 'Patio cercado')) > -1) return;
       if (d[0] === 'garage') out.push(Math.round(p.garageSpaces) + t('-car garage', ' autos de garaje'));
-      else if (d[0] === 'acre') out.push((+p.acres >= 10 ? Math.round(+p.acres) : +(+p.acres).toFixed(1)) + t(' acres', ' acres'));
+      else if (d[0] === 'acre') { var ac = +p.acres >= 10 ? Math.round(+p.acres) : +(+p.acres).toFixed(1); out.push(ac + (ac === 1 ? t(' acre', ' acre') : t(' acres', ' acres'))); }
       else out.push(d[1]);
     });
     return (h._hl = out);
