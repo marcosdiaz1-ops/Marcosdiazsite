@@ -550,7 +550,7 @@ function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).se
 function clean_(v, n) { return String(v || '').replace(/[<>]/g, '').replace(/^[=+\-@]+/, '').trim().slice(0, n); }
 function digits_(v) { const d = String(v || '').replace(/[^0-9]/g, '').slice(0, 9); return d ? Number(d) : ''; }
 function cleanPoints_(v) {
-  return String(v || '').split('|').filter(function (pt) { return /^-?\d{1,3}\.\d{1,6},-?\d{1,3}\.\d{1,6}$/.test(pt); }).slice(0, 4).join('|');
+  return String(v || '').split('|').filter(function (pt) { return /^-?\d{1,3}\.\d{1,6},-?\d{1,3}\.\d{1,6}$/.test(pt); }).slice(0, 30).join('|');
 }
 function validEmail_(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
 function esc_(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
