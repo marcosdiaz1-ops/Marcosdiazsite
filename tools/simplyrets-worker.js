@@ -22,6 +22,7 @@ function cors(origin) {
     'Access-Control-Allow-Origin': ok,
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Expose-Headers': 'X-Total-Count',
     'Vary': 'Origin',
   };
 }
@@ -71,7 +72,9 @@ export default {
             : data);
         } catch (e) { /* not JSON: pass through */ }
       }
-      res = new Response(body, { status: r.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' } });
+      const rh = { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' };
+      const total = r.headers.get('X-Total-Count'); if (total) rh['X-Total-Count'] = total;  // how many homes match (asked for with count=true)
+      res = new Response(body, { status: r.status, headers: rh });
       if (r.ok) ctx.waitUntil(cache.put(cacheKey, res.clone()));
     }
     const out = new Response(res.body, res);

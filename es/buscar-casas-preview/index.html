@@ -109,6 +109,31 @@
   .sp-ac .ac-i small { display: block; color: #666; font-size: 13px; }
   .sp-ac .ac-i b { font-weight: 600; }
   .sp-ac .ac-load { padding: 9px 14px; color: #666; font-size: 14px; }
+  /* Sort + Map/List pill (phones), sort menu (computers) */
+  .sp-toggle { align-items: center; }
+  .sp-toggle button { display: inline-flex; align-items: center; gap: 7px; }
+  .sp-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-toggle .sep { width: 1px; height: 22px; background: rgba(255,255,255,.35); }
+  .sp-sortd { font: inherit; font-size: 14px; color: var(--navy); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; background: #fff; }
+  .sp-sheet { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-radius: 18px 18px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); z-index: 2700; box-shadow: 0 -10px 30px rgba(0,0,0,.2); }
+  .sp-sheet h3 { font-size: 20px; margin: 0 0 8px; }
+  .sp-sheet label { display: flex; align-items: center; gap: 10px; padding: 12px 2px; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .sp-sheet input { accent-color: var(--navy); width: 20px; height: 20px; }
+  .sp-sheet-shade { position: fixed; inset: 0; background: rgba(13,23,48,.45); z-index: 2650; }
+  /* Swipe through photos on each card */
+  .sp-card .ph { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--sand); }
+  .sp-card .ph::-webkit-scrollbar { display: none; }
+  .sp-card .ph .sl { flex: 0 0 100%; scroll-snap-align: start; position: relative; }
+  .sp-card .ph .sl img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sp-card .phw { position: relative; }
+  .sp-card .phw > span.st { position: absolute; left: 10px; top: 10px; z-index: 2; background: var(--navy); color: #fff; font-size: 12px; font-weight: 500; letter-spacing: .04em; padding: 3px 10px; border-radius: 20px; }
+  .sp-card .phw .fav { z-index: 2; }
+  .sp-card .dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 5px; background: rgba(0,0,0,.35); padding: 4px 7px; border-radius: 10px; z-index: 2; pointer-events: none; }
+  .sp-card .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); }
+  .sp-card .dots i.on { background: #fff; }
+  .sp-card .nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); color: var(--navy); font-size: 20px; line-height: 1; cursor: pointer; display: none; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  .sp-card .nav.p { left: 8px; } .sp-card .nav.n { right: 8px; }
+  @media (hover: hover) { .sp-card:hover .nav { display: grid; place-items: center; } }
   .sp-legend { background: rgba(255,255,255,.92); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--ink); display: flex; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
   .sp-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; border: 1px solid #fff; }
   .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
@@ -253,7 +278,7 @@
   .al-done b { display: block; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
   .hd-alert { display: block; width: 100%; text-align: center; font: inherit; font-size: 15px; font-weight: 500; color: var(--gold-ink); background: none; border: 0; text-decoration: underline; margin-top: 12px; cursor: pointer; }
   /* ===== Favorites, compare, tags, drive time ===== */
-  .sp-card .ph .fav { position: absolute; left: auto; right: 8px; top: 8px; background: rgba(255,255,255,.92); color: var(--navy); width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; border: 0; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .sp-card .phw .fav { position: absolute; left: auto; right: 8px; top: 8px; background: rgba(255,255,255,.92); color: var(--navy); width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; border: 0; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
   .fav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
   .fav.on svg { fill: #c0392b; stroke: #c0392b; }
   .sp-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
@@ -327,6 +352,10 @@
     body.pop-on .sp-toggle { display: none; }
     .pop-shade.on { display: block; position: fixed; inset: 0; background: rgba(13,23,48,.45); z-index: 2550; }
     .sp-toggle { display: flex; bottom: calc(74px + env(safe-area-inset-bottom)); }
+    .sp-hero { padding: 84px 0 34px; }
+    .sp-hero h1 { font-size: 1.7rem; margin: 0; }
+    .sp-hero p { display: none; }
+    .sp-sortd { display: none !important; }
     .sp-filters > button { flex: 1; }
     .sp-body { display: block; height: auto; min-height: 0; }
     #sp-map { height: 68vh; }
@@ -422,12 +451,12 @@
       </form>
       </div>
 
-      <div class="sp-toggle"><button type="button" data-v="map" class="on">Mapa</button><button type="button" data-v="list">Lista</button></div>
+      <div class="sp-toggle"><button type="button" id="v-toggle"></button><span class="sep"></span><button type="button" id="sort-btn"><svg viewBox="0 0 24 24"><path d="M7 4v16M3 16l4 4 4-4M14 6h7M14 11h5M14 16h3"/></svg><span id="sort-btn-t">Sort</span></button></div>
 
       <div class="sp-body show-map" id="sp-body">
         <div id="sp-map"></div>
         <div class="sp-list">
-          <div class="sp-head"><div class="sp-count" id="sp-count">Cargando casas…</div><span class="sp-headr"><button type="button" class="sp-saved" id="sp-saved"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg><span id="sp-savedn">Guardadas (0)</span></button></span></div>
+          <div class="sp-head"><div class="sp-count" id="sp-count">Cargando casas…</div><span class="sp-headr"><select class="sp-sortd" id="sort-d" aria-label="Sort"></select><button type="button" class="sp-saved" id="sp-saved"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg><span id="sp-savedn">Guardadas (0)</span></button></span></div>
           <div class="sp-cmpbar" id="sp-cmpbar"><span id="sp-cmptxt">Marque 2 o 3 casas para comparar</span><button type="button" id="sp-cmpgo" disabled>Comparar</button></div>
           <div class="sp-cards" id="sp-cards"></div>
           <button class="sp-more" id="sp-more" hidden>Ver más casas</button>
@@ -566,7 +595,10 @@
   var AUTH = LIVE ? null : 'Basic ' + btoa('simplyrets:simplyrets');
   var HEADERS = AUTH ? { Authorization: AUTH } : {};
   if (LIVE) { var db = document.querySelector('.demo-banner'); if (db) db.remove(); }
-  var PAGE = 24;
+  var PAGE = 24, totalCount = null;
+  var SORTS = [['-listdate', t('Newest', 'Más nuevas')], ['listprice', t('Price (low to high)', 'Precio (de menor a mayor)')], ['-listprice', t('Price (high to low)', 'Precio (de mayor a menor)')],
+               ['-beds', t('Most bedrooms', 'Más recámaras')], ['-baths', t('Most bathrooms', 'Más baños')]];
+  var sortVal = '-listdate';
   var offset = 0, results = [], markers = {}, moveTimer = null, skipMove = false;
 
   var map = L.map('sp-map', { scrollWheelZoom: true });
@@ -832,6 +864,8 @@
     if ($('f-dom').value) p.set('maxdom', $('f-dom').value);
     if (!q) areaPoints().forEach(function (pt) { p.append('points', pt); });
     p.set('limit', PAGE);
+    if (sortVal) p.set('sort', sortVal);
+    if (!more) p.set('count', 'true');
     p.set('offset', more ? offset : 0);
     return API + '?' + p.toString();
   }
@@ -840,7 +874,7 @@
     if (!more && savedMode) { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); }
     if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); if (LIVE) loadPins(); syncUrl(); }
     fetch(query(more), { headers: HEADERS })
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); if (!more) { var tc = parseInt(r.headers.get('X-Total-Count'), 10); totalCount = isFinite(tc) ? tc : null; } return r.json(); })
       .then(function (data) {
         if (!more) results = LIVE ? [] : [sampleListing()];
         results = results.concat(data.filter(function (h) { return h.internetEntireListingDisplay !== false; }));
@@ -890,11 +924,19 @@
   function statusTxt(h) { var st = String((h.mls && (h.mls.statusText || h.mls.status)) || 'Active'); return ES ? ({ Active: 'Activa', Pending: 'Pendiente', ActiveUnderContract: 'Bajo contrato', 'Active Under Contract': 'Bajo contrato' }[st] || st) : st; }
   function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
 
+  // up to 6 photos per card: swipe on a phone, arrows on a computer
+  function cardPhotos(h) {
+    var ph = (h.photos || []).slice(0, 6), alt = esc(t('Photo of ', 'Foto de ') + (showAddr(h) ? cleanAddr((h.address || {}).full) : (h.address || {}).city || ''));
+    var slides = ph.length ? ph.map(function (u, k) { return '<div class="sl"><img src="' + esc(u) + '" alt="' + alt + '"' + (k ? ' loading="lazy"' : '') + '></div>'; }).join('') : '<div class="sl"></div>';
+    return '<div class="phw"><div class="ph">' + slides + '</div><span class="st">' + esc(statusTxt(h)) + '</span>' + favBtn(h) +
+      (ph.length > 1 ? '<button type="button" class="nav p" aria-label="' + t('Previous photo', 'Foto anterior') + '">‹</button><button type="button" class="nav n" aria-label="' + t('Next photo', 'Foto siguiente') + '">›</button><div class="dots">' + ph.map(function (u, k) { return '<i' + (k ? '' : ' class="on"') + '></i>'; }).join('') + '</div>' : '') + '</div>';
+  }
   function render(fit) {
     var real = results.filter(function (h) { return !h._sample; }).length;
     var pinMode = !!allPins && !savedMode;
-    if (pinMode && allPins.length) real = allPins.length;
-    $('sp-count').textContent = real ? real + ((pinMode ? allPins.length < 500 : $('sp-more').hidden) ? '' : '+') + (drawPts ? t(' homes in the area you drew', ' casas en el área que dibujó') : t(' homes in this area', ' casas en esta área')) + (LIVE ? '' : ' (plus 1 test listing)') : (drawPts ? t('No homes match inside your drawing. Try a bigger area or fewer filters.', 'No hay casas dentro de su dibujo. Dibuje un área más grande o quite filtros.') : t('No homes match. Try zooming out or changing filters.', 'No hay casas que coincidan. Aleje el mapa o cambie los filtros.'));
+    var exact = !savedMode && totalCount != null && LIVE;
+    if (exact) real = totalCount; else if (pinMode && allPins.length) real = allPins.length;
+    $('sp-count').textContent = real ? real.toLocaleString() + ((exact || (pinMode ? allPins.length < 500 : $('sp-more').hidden)) ? '' : '+') + (drawPts ? t(' homes in the area you drew', ' casas en el área que dibujó') : t(' homes in this area', ' casas en esta área')) + (LIVE ? '' : ' (plus 1 test listing)') : (drawPts ? t('No homes match inside your drawing. Try a bigger area or fewer filters.', 'No hay casas dentro de su dibujo. Dibuje un área más grande o quite filtros.') : t('No homes match. Try zooming out or changing filters.', 'No hay casas que coincidan. Aleje el mapa o cambie los filtros.'));
     layer.clearLayers(); markers = {};
     var pts = [];
     $('sp-cards').innerHTML = results.map(function (h, i) {
@@ -907,7 +949,7 @@
       }
       var photo = (h.photos && h.photos[0]) || '';
       return '<div class="sp-card" data-i="' + i + '">' +
-        '<div class="ph" style="background-image:url(\'' + esc(photo) + '\')"><span>' + esc(statusTxt(h)) + '</span>' + favBtn(h) + '</div>' +
+        cardPhotos(h) +
         '<div class="in"><div class="pr">' + money(h.listPrice) + '</div>' +
         '<div class="st">' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba · ', ' baños · ') + (p.area ? p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + '</div>' +
         '<div class="ad">' + (showAddr(h) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city) + '</div>' +
@@ -925,7 +967,13 @@
     var h = results[i], pin = h && document.querySelector('.pin[data-m="' + String(h.mlsId).replace(/"/g, '') + '"]'); if (pin) pin.classList.toggle('hi', on);
   }
 
+  $('sp-cards').addEventListener('scroll', function (e) {
+    var ph = e.target; if (!ph.classList || !ph.classList.contains('ph')) return;
+    var k = Math.round(ph.scrollLeft / ph.clientWidth);
+    ph.parentNode.querySelectorAll('.dots i').forEach(function (d, j) { d.classList.toggle('on', j === k); });
+  }, true);
   $('sp-cards').addEventListener('click', function (e) {
+    var nv = e.target.closest('.nav'); if (nv) { e.stopPropagation(); var ph = nv.parentNode.querySelector('.ph'); ph.scrollBy({ left: (nv.classList.contains('n') ? 1 : -1) * ph.clientWidth, behavior: 'smooth' }); return; }
     var f = e.target.closest('.fav'); if (f) { e.stopPropagation(); toggleFav(f.dataset.fav, results[+f.closest('.sp-card').dataset.i]); return; }
     if (e.target.closest('.cmp')) return;
     var c = e.target.closest('.sp-card'); if (c) openDetail(+c.dataset.i);
@@ -1452,13 +1500,31 @@
     clearTimeout(moveTimer); moveTimer = setTimeout(function () { load(false); }, 350);
   });
 
-  document.querySelectorAll('.sp-toggle button').forEach(function (b) {
-    b.onclick = function () {
-      document.querySelectorAll('.sp-toggle button').forEach(function (x) { x.classList.toggle('on', x === b); });
-      $('sp-body').className = 'sp-body show-' + b.dataset.v;
-      if (b.dataset.v === 'map') setTimeout(function () { map.invalidateSize(); }, 50);
-    };
-  });
+  // Phones open on the list (like Zillow); the pill switches to the map and back
+  var MAP_IC = '<svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>';
+  var LIST_IC = '<svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
+  function setView(v, first) {
+    $('sp-body').className = 'sp-body show-' + v;
+    $('v-toggle').innerHTML = v === 'list' ? MAP_IC + t('Map', 'Mapa') : LIST_IC + t('List', 'Lista');
+    if (v === 'map') setTimeout(function () { map.invalidateSize(); }, 50);
+    else if (!first) window.scrollTo({ top: Math.max(0, $('sp-body').getBoundingClientRect().top + window.pageYOffset - 140) });
+  }
+  $('v-toggle').onclick = function () { setView(/show-list/.test($('sp-body').className) ? 'map' : 'list'); };
+  setView(window.matchMedia('(max-width: 860px)').matches ? 'list' : 'map', true);
+  // Sort
+  $('sort-d').innerHTML = SORTS.map(function (o) { return '<option value="' + o[0] + '">' + t('Sort: ', 'Orden: ') + o[1] + '</option>'; }).join('');
+  $('sort-btn-t').textContent = t('Sort', 'Ordenar');
+  function setSort(v) { sortVal = v; $('sort-d').value = v; load(false); }
+  $('sort-d').onchange = function () { setSort(this.value); };
+  $('sort-btn').onclick = function () {
+    var shade = document.createElement('div'); shade.className = 'sp-sheet-shade';
+    var sh = document.createElement('div'); sh.className = 'sp-sheet'; sh.setAttribute('role', 'dialog');
+    sh.innerHTML = '<h3>' + t('Sort by', 'Ordenar por') + '</h3>' + SORTS.map(function (o) { return '<label><input type="radio" name="sort-r" value="' + o[0] + '"' + (o[0] === sortVal ? ' checked' : '') + '>' + o[1] + '</label>'; }).join('');
+    function close() { shade.remove(); sh.remove(); }
+    shade.onclick = close;
+    sh.addEventListener('change', function (e) { close(); setSort(e.target.value); });
+    document.body.appendChild(shade); document.body.appendChild(sh);
+  };
 
   // Listing data "last updated" time for the disclaimer (SimplyRETS: OPTIONS on the API root, or the X-SimplyRETS-Last-Update header).
   (LIVE ? fetch(LIVE_API.replace(/\/$/, '') + '/last-update') : fetch('https://api.simplyrets.com/', { method: 'OPTIONS', headers: HEADERS }))
