@@ -148,11 +148,40 @@ def lot(p):
 
 def as_list(v): return ', '.join(v) if isinstance(v, list) else (v or '')
 
+# What's special about a home (same rules as the search page), read from its MLS features and description
+def highlights(h, es=False):
+    p = h.get('property') or {}
+    lc = lambda v: (','.join(v) if isinstance(v, list) else str(v or '')).lower()
+    x = ' | '.join(lc(v) for v in [p.get('exteriorFeatures'), p.get('interiorFeatures'), p.get('lotDescription'), p.get('fencing'), (p.get('parking') or {}).get('description')])
+    r = str(h.get('remarks') or '').lower()
+    T2 = lambda en, sp: sp if es else en
+    out = []
+    if re.search(r'fence', x) or re.search(r'fenced[- ]in|fenced (back ?)?yard|privacy fenc', r): out.append(T2('Fenced yard', 'Patio cercado'))
+    if re.search(r'walk-?out', x + ' ' + r): out.append(T2('Walkout basement', 'Sótano con salida'))
+    if re.search(r'(updated|new|remodell?ed|renovated|brand-new) kitchen', r): out.append(T2('Updated kitchen', 'Cocina renovada'))
+    if (p.get('garageSpaces') or 0) >= 3: out.append(f"{round(p['garageSpaces'])}" + T2('-car garage', ' autos de garaje'))
+    if re.search(r'\bshop\b|pole barn|outbuilding|quonset', x + ' ' + r): out.append(T2('Shop / outbuilding', 'Taller o bodega'))
+    try: ac = float(p.get('acres') or 0)
+    except Exception: ac = 0
+    if ac >= 1: out.append(f"{round(ac) if ac >= 10 else round(ac, 1):g} acres")
+    if (p.get('yearBuilt') or 0) >= THIS_YEAR - 1: out.append(T2('New construction', 'Construcción nueva'))
+    if p.get('pool') or re.search(r'\bpool\b', x) or re.search(r'(in-?ground|above-?ground|heated) pool', r): out.append(T2('Pool', 'Alberca'))
+    if re.search(r'master bed main level|primary bed(room)? main', x): out.append(T2('Main-floor primary suite', 'Recámara principal en planta baja'))
+    if 'cul-de-sac' in x + ' ' + r: out.append(T2('Cul-de-sac', 'Calle cerrada'))
+    if 'finished lower level' in r or 'finished basement' in r.replace('unfinished basement', ''): out.append(T2('Finished basement', 'Sótano terminado'))
+    if re.search(r'main[- ](floor|level) laundry', x + ' ' + r): out.append(T2('Main-floor laundry', 'Lavandería en planta baja'))
+    if 'hardwood' in lc(p.get('flooring')): out.append(T2('Hardwood floors', 'Pisos de madera'))
+    if 'vaulted' in x: out.append(T2('Vaulted ceilings', 'Techos altos'))
+    if 'sprinkler' in x: out.append(T2('Sprinkler system', 'Riego automático'))
+    if (p.get('fireplaces') or 0) > 0: out.append(T2('Fireplace', 'Chimenea'))
+    return out
+
 def card(h, href, es=False):
     p, ph = h.get('property') or {}, (h.get('photos') or [None])[0]
     dom = (h.get('mls') or {}).get('daysOnMarket')
     tag = ('<span class="lp-new">' + ('Nueva' if es else 'New') + '</span>') if dom is not None and dom <= 7 else ''
     if price_cut(h): tag += f'<span class="lp-cut">↓ {money(price_cut(h))}</span>'
+    elif not tag and highlights(h, es): tag = f'<span class="lp-new lp-hl">{e(highlights(h, es)[0])}</span>'
     bd = f"{p.get('bedrooms') or 0} {'rec' if es else 'bd'} · {baths(p) or 0} {'baños' if es else 'ba'}" + (f" · {p['area']:,} {'pies²' if es else 'sq ft'}" if p.get('area') else '')
     where = (street(h) + ', ' if street(h) else '') + town_of(h)
     alt = ('Casa en venta: ' if es else 'Home for sale: ') + where
@@ -185,6 +214,8 @@ CSS = '''<style>
 .lp-img{display:block;position:relative;aspect-ratio:3/2;background:#e9e3d8}
 .lp-img{overflow:hidden}.lp-img img{width:100%;height:100%;object-fit:cover;display:block}
 .lp-new{position:absolute;left:10px;top:10px;background:var(--gold);color:#fff;font-size:12px;padding:3px 8px;border-radius:6px}
+.lp-hl{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.25);font-weight:600}
+.lp-hls{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}.lp-hls span{background:#f1ebe2;color:var(--navy);border-radius:20px;padding:6px 12px;font-size:.92rem;font-weight:500}
 .lp-cut{position:absolute;right:10px;top:10px;background:#1f6b45;color:#fff;font-size:12px;padding:3px 8px;border-radius:6px}
 .lp-body{display:flex;flex-direction:column;gap:2px;padding:12px 14px}
 .lp-body b{font-size:1.25rem;color:var(--navy)}.lp-body small{color:#555;margin-top:6px;line-height:1.4}
@@ -367,6 +398,7 @@ def home_page(h, same_town, updated, es, links):
   </div></section>
   <section class="lp-body-sec"><div class="lp-wrap">
     <p class="lp-attr">{T(es, "Listing courtesy of", "Cortesía de")} {e(attribution(h))}</p>
+    {('<div class="lp-hls">' + ''.join(f'<span>{e(x)}</span>' for x in highlights(h, es)[:8]) + '</div>') if highlights(h, es) else ''}
     {pay_html}
     {f'<div class="lp-gal">{gal}</div>' if gal else ''}
     <p><a href="{live}">{T(es, f"See all {len(photos)} photos, the map and drive times →", f"Vea las {len(photos)} fotos, el mapa y el tiempo de manejo →")}</a></p>

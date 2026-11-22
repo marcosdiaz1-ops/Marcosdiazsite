@@ -304,6 +304,9 @@
   .cmp-t .best { color: #2f6b3a; font-weight: 600; }
   .cmp-t .co { font-size: 12px; color: var(--ink); }
   .hd-hist { font-size: 15px; color: var(--ink); margin-top: 12px; }
+  .sp-card .phw > span.st.hl { background: #fff; color: var(--navy); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .hd-hls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .hd-hls span { background: #f1ebe2; color: var(--navy); border-radius: 20px; padding: 6px 12px; font-size: 14px; font-weight: 500; }
   .hd-hist b { color: #9a4a1c; font-weight: 600; }
   .hd-dpa { margin-top: 14px; background: #e9f1ea; border: 1px solid #c7dccb; border-radius: 12px; padding: 12px 14px; font-size: 15px; color: #1f4a28; }
   .hd-dpa a { color: #1f4a28; font-weight: 500; }
@@ -930,11 +933,45 @@
   function statusTxt(h) { var st = String((h.mls && (h.mls.statusText || h.mls.status)) || 'Active'); return ES ? ({ Active: 'Activa', Pending: 'Pendiente', ActiveUnderContract: 'Bajo contrato', 'Active Under Contract': 'Bajo contrato' }[st] || st) : st; }
   function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
 
+  // What's special about a home (like Zillow's "Fenced yard" tag), read from the listing's own MLS features and description
+  var HL = [
+    ['fence', t('Fenced yard', 'Patio cercado'), function (p, x, r) { return /fence/.test(x) || /fenced[- ]in|fenced (back ?)?yard|privacy fenc/.test(r); }],
+    ['walkout', t('Walkout basement', 'Sótano con salida'), function (p, x, r) { return /walk-?out/.test(x + ' ' + r); }],
+    ['kitchen', t('Updated kitchen', 'Cocina renovada'), function (p, x, r) { return /(updated|new|remodel(l)?ed|renovated|brand-new) kitchen/.test(r); }],
+    ['garage', '', function (p) { return (p.garageSpaces || 0) >= 3; }],
+    ['shop', t('Shop / outbuilding', 'Taller o bodega'), function (p, x, r) { return /\bshop\b|pole barn|outbuilding|quonset/.test(x + ' ' + r); }],
+    ['acre', '', function (p) { return (+p.acres || 0) >= 1; }],
+    ['new', t('New construction', 'Construcción nueva'), function (p) { return (p.yearBuilt || 0) >= new Date().getFullYear() - 1; }],
+    ['pool', t('Pool', 'Alberca'), function (p, x, r) { return !!p.pool || /\bpool\b/.test(x) || /(in-?ground|above-?ground|heated) pool/.test(r); }],
+    ['primary', t('Main-floor primary suite', 'Recámara principal en planta baja'), function (p, x) { return /master bed main level|primary bed(room)? main/.test(x); }],
+    ['cul', t('Cul-de-sac', 'Calle cerrada'), function (p, x, r) { return /cul-de-sac/.test(x + ' ' + r); }],
+    ['bsmt', t('Finished basement', 'Sótano terminado'), function (p, x, r) { return /finished lower level/.test(r) || /finished basement/.test(r.replace(/unfinished basement/g, '')); }],
+    ['laundry', t('Main-floor laundry', 'Lavandería en planta baja'), function (p, x, r) { return /main floor laundry|main-floor laundry|main level laundry/.test(x + ' ' + r); }],
+    ['wood', t('Hardwood floors', 'Pisos de madera'), function (p, x) { return /hardwood/.test(String(p.flooring || '').toLowerCase()); }],
+    ['vault', t('Vaulted ceilings', 'Techos altos'), function (p, x) { return /vaulted/.test(x); }],
+    ['sprink', t('Sprinkler system', 'Riego automático'), function (p, x) { return /sprinkler/.test(x); }],
+    ['fire', t('Fireplace', 'Chimenea'), function (p) { return (p.fireplaces || 0) > 0; }]
+  ];
+  function highlights(h) {
+    if (h._hl) return h._hl;
+    var p = h.property || {}, lc = function (v) { return (Array.isArray(v) ? v.join(',') : String(v || '')).toLowerCase(); };
+    var x = [p.exteriorFeatures, p.interiorFeatures, p.lotDescription, p.fencing, p.parking && p.parking.description].map(lc).join(' | ');
+    var r = String(h.remarks || '').toLowerCase();
+    var out = [];
+    HL.forEach(function (d) {
+      try { if (!d[2](p, x, r)) return; } catch (e) { return; }
+      if (d[0] === 'garage') out.push(Math.round(p.garageSpaces) + t('-car garage', ' autos de garaje'));
+      else if (d[0] === 'acre') out.push((+p.acres >= 10 ? Math.round(+p.acres) : +(+p.acres).toFixed(1)) + t(' acres', ' acres'));
+      else out.push(d[1]);
+    });
+    return (h._hl = out);
+  }
   // up to 6 photos per card: swipe on a phone, arrows on a computer
   function cardPhotos(h) {
     var ph = (h.photos || []).slice(0, 6), alt = esc(t('Photo of ', 'Foto de ') + (showAddr(h) ? cleanAddr((h.address || {}).full) : (h.address || {}).city || ''));
     var slides = ph.length ? ph.map(function (u, k) { return '<div class="sl"><img src="' + esc(u) + '" alt="' + alt + '"' + (k ? ' loading="lazy"' : '') + '></div>'; }).join('') : '<div class="sl"></div>';
-    return '<div class="phw"><div class="ph">' + slides + '</div><span class="st">' + esc(statusTxt(h)) + '</span>' + favBtn(h) +
+    var st = statusTxt(h), hl = /^(Active|Activa)$/.test(st) ? highlights(h)[0] : '';
+    return '<div class="phw"><div class="ph">' + slides + '</div><span class="st' + (hl ? ' hl' : '') + '">' + esc(hl || st) + '</span>' + favBtn(h) +
       (ph.length > 1 ? '<button type="button" class="nav p" aria-label="' + t('Previous photo', 'Foto anterior') + '">‹</button><button type="button" class="nav n" aria-label="' + t('Next photo', 'Foto siguiente') + '">›</button><div class="dots">' + ph.map(function (u, k) { return '<i' + (k ? '' : ' class="on"') + '></i>'; }).join('') + '</div>' : '') + '</div>';
   }
   function render(fit) {
@@ -1062,6 +1099,7 @@
         '<div class="hd-head"><div><div class="hd-price">' + money(h.listPrice) + '</div><div class="hd-addr">' + esc(addr) + '</div></div>' +
         '<div class="hd-stats"><div><b>' + (p.bedrooms || 0) + '</b>' + t('beds', 'recámaras') + '</div><div><b>' + baths(h) + '</b>' + t('baths', 'baños') + '</div>' + (p.area ? '<div><b>' + p.area.toLocaleString() + '</b>' + t('sq ft', 'pies²') + '</div>' : '') + '</div></div>' +
         '<p class="hd-attr">' + attrHtml(h, true) + '</p>' +
+        (highlights(h).length ? '<div class="hd-hls">' + highlights(h).slice(0, 8).map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' : '') +
         histHtml(h) + dpaHtml(h) +
         '<div class="hd-chips">' + chips.map(function (c) { return '<div class="hd-chip">' + ic(c[0]) + '<span>' + esc(c[1]) + '</span></div>'; }).join('') + '</div>' +
         (remarks ? '<div class="hd-sec"><h2>' + t('About this home', 'Sobre esta casa') + '</h2><p id="hd-rem">' + esc(remarks.length > 420 ? remarks.slice(0, 420).replace(/\s+\S*$/, '') + '…' : remarks) + '</p>' + (remarks.length > 420 ? '<button type="button" class="hd-more" id="hd-remmore">' + t('Show more', 'Ver más') + '</button>' : '') + '</div>' : '') +
