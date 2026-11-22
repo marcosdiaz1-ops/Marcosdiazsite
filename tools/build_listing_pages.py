@@ -31,6 +31,36 @@ SITE = 'https://605homesearch.com'
 API = os.environ.get('LISTINGS_API', 'https://listings.605homesearch.com')
 BOOK = 'https://calendly.com/marcosdiaz1-kw/home-showing'
 MAX_TOWN_CARDS = 60
+ALERTS_URL = 'https://script.google.com/macros/s/AKfycbxklqP-b5JNN1e2hsuwLXQvC0P6_4ZmJBORJLDojLWMwqWiUx5JFn0oiKDVXvu4c-6-/exec'
+DPA_LIMIT = 410000  # South Dakota Housing "Give Me Five" purchase price limit
+try:
+    RATE = float(json.load(open(os.path.join(ROOT, 'data/rate.json')))['rate'])
+except Exception:
+    RATE = 7.25
+DOWN, INS_YR, TAX_PCT = 0.05, 1800, 0.012  # same defaults as the homepage payment calculator
+
+def payment(h):
+    """Estimated monthly payment: 5% down, 30-year fixed at this week's average rate, taxes, insurance, HOA."""
+    price = h.get('listPrice') or 0
+    if not price: return 0
+    loan, r, n = price * (1 - DOWN), RATE / 100 / 12, 360
+    pi = loan * r / (1 - (1 + r) ** -n)
+    tx = (h.get('tax') or {}).get('taxAnnualAmount') or price * TAX_PCT
+    ass = h.get('association') or {}
+    fee, fq = ass.get('fee') or 0, str(ass.get('frequency') or 'monthly').lower()
+    hoa = fee / 12 if 'ann' in fq or 'year' in fq else fee / 3 if 'quarter' in fq else fee
+    return int(round((pi + tx / 12 + INS_YR / 12 + hoa) / 10.0) * 10)
+
+def pay_note(es=False):
+    if es:
+        return (f'Estimado con 5% de enganche y préstamo fijo a 30 años al {RATE}% (promedio nacional de esta semana, Freddie Mac); '
+                'incluye impuestos, seguro y cuota HOA si hay. No es una oferta de préstamo ni la APR. Su tasa, APR y pago serán diferentes.')
+    return (f'Estimate assumes 5% down and a 30-year fixed loan at {RATE}% (this week’s national average, Freddie Mac), plus taxes, '
+            'insurance and any HOA. Not a loan offer or APR. Your rate, APR and payment will be different.')
+
+def is_dpa(h):
+    ty = str((h.get('property') or {}).get('type') or '')
+    return bool(h.get('listPrice')) and h['listPrice'] <= DPA_LIMIT and not re.search(r'LND|land|MLF|multi', ty, re.I)
 e = lambda s: html.escape(str(s if s is not None else ''), quote=True)
 money = lambda n: '${:,.0f}'.format(n) if n else ''
 
@@ -124,7 +154,7 @@ def card(h, href, es=False):
     alt = ('Casa en venta: ' if es else 'Home for sale: ') + where
     return (f'<a class="lp-card" href="{href}">'
             + (f'<span class="lp-img"><img src="{e(ph)}" alt="{e(alt)}" loading="lazy" width="400" height="267">{tag}</span>' if ph else f'<span class="lp-img lp-noimg">{tag}</span>')
-            + f'<span class="lp-body"><b>{money(h.get("listPrice"))}</b><span>{e(bd)}</span><span>{e(where)}</span>'
+            + f'<span class="lp-body"><b>{money(h.get("listPrice"))}</b>' + (f'<em class="lp-mo">{"Aprox." if es else "Est."} {money(payment(h))}{"/mes" if es else "/mo"}*</em>' if payment(h) else '') + f'<span>{e(bd)}</span><span>{e(where)}</span>'
             + f'<small>{e(("Cortesía de " if es else "Listing courtesy of ") + attribution(h))}</small></span></a>')
 
 CSS = '''<style>
@@ -157,8 +187,49 @@ CSS = '''<style>
 .lp-towns a{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--navy)}
 .lp-disc{font-size:.85rem;color:#555;border-top:1px solid var(--line);padding-top:14px;margin:30px 0}
 .lp-body-sec{padding:10px 0 40px}
+.lp-mo{font-style:normal;font-size:.9rem;color:var(--gold-ink,#8a6237)}
+.lp-pay{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin:18px 0}
+.lp-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.lp-box h3{font-size:1.15rem;margin:0 0 4px}.lp-box .big{font-size:1.6rem;color:var(--navy);font-weight:500}
+.lp-box small{display:block;color:#555;line-height:1.45;margin-top:6px}
+.lp-g5{border-left:4px solid var(--gold)}
+.lp-alert{background:var(--navy);color:#d9d2c6;border-radius:16px;padding:22px 20px;margin:30px 0}
+.lp-alert h2{color:#fff;margin:0 0 4px}.lp-alert a{color:var(--gold-soft)}
+.lp-alert form{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:14px}
+.lp-alert input[type=text],.lp-alert input[type=email],.lp-alert input[type=tel]{font:inherit;font-size:16px;padding:11px 12px;border-radius:10px;border:0;width:100%}
+.lp-alert .ok{grid-column:1/-1;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.45}.lp-alert .ok input{margin-top:3px;flex:none;accent-color:var(--gold)}
+.lp-alert button{grid-column:1/-1;font:inherit;font-weight:500;background:var(--gold);color:#fff;border:0;border-radius:10px;padding:13px;cursor:pointer}
+.lp-alert .msg{grid-column:1/-1;margin:0;min-height:1em}
+.lp-foot{font-size:.8rem;color:#666}
 </style>
 '''
+
+ALERT_JS = """<script>
+(function () {
+  var URL_ = '""" + ALERTS_URL + """', RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function getAid() { try { var v = localStorage.getItem('mdAlertId'); return RE.test(v || '') ? v : ''; } catch (e) { return ''; } }
+  function newId() { return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }); }
+  var f = document.getElementById('lp-al'); if (!f) return;
+  var aid = getAid();
+  if (aid) { var v = new URLSearchParams(); v.set('action', 'view'); v.set('id', aid); v.set('mlsId', f.dataset.mls); fetch(URL_, { method: 'POST', mode: 'no-cors', body: v, keepalive: true }).catch(function () {}); }
+  var msg = f.querySelector('.msg');
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = f.name.value.trim(), email = f.email.value.trim();
+    if (!name || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email)) { msg.textContent = 'Please add your name and a good email.'; return; }
+    if (!f.consent.checked) { msg.textContent = 'Please check the box so I can email you.'; return; }
+    var d = new URLSearchParams(), id = getAid() || newId();
+    d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim()); d.set('freq', 'Daily'); d.set('consent', 'yes');
+    d.set('botcheck', f.botcheck.value); d.set('id', id); d.set('lang', 'en'); d.set('source', location.href.slice(0, 200));
+    d.set('q', f.dataset.q); d.set('minprice', f.dataset.min); d.set('maxprice', f.dataset.max); d.set('minbeds', f.dataset.beds); d.set('type', f.dataset.type);
+    f.querySelector('button').disabled = true;
+    fetch(URL_, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
+      try { localStorage.setItem('mdAlertId', id); } catch (e) {}
+      f.innerHTML = '<p style="grid-column:1/-1;margin:0;color:#fff"><b>You’re all set!</b> Check your email. I sent you the homes that match right now.</p>';
+    }).catch(function () { msg.textContent = 'That didn’t go through. Please try again, or text me at 605-838-9140.'; f.querySelector('button').disabled = false; });
+  });
+})();
+</script>"""
 
 def disclaimer(es, updated):
     if es:
@@ -220,6 +291,28 @@ def home_page(h, same_town, updated):
     strip = lambda o: {k: strip(v) for k, v in o.items() if v not in (None, '', [])} if isinstance(o, dict) else o
     head = CSS + '<script type="application/ld+json">' + json.dumps(strip(ld)).replace('</', '<\\/') + '</script>\n'
     remarks = h.get('remarks') or ''
+    mo = payment(h)
+    pay_html = ''
+    if mo:
+        pay_html += (f'<div class="lp-box"><h3>Estimated payment</h3><div class="big">{money(mo)}/mo*</div>'
+                     f'<small>Principal, interest, taxes and insurance. <a href="/?price={int(lp)}#calculator">Change the numbers →</a></small></div>')
+    if is_dpa(h):
+        five = round(lp * 0.95 * 0.05 / 100) * 100
+        pay_html += (f'<div class="lp-box lp-g5"><h3>First-time buyer?</h3><p style="margin:0">This price is under the {money(DPA_LIMIT)} limit for South Dakota’s '
+                     f'<b>Give Me Five</b> program: up to 5% of your loan (about {money(five)}) toward your down payment, if you qualify.</p>'
+                     f'<small><a href="/blog/give-me-five-down-payment-assistance/">See who qualifies →</a></small></div>')
+    pay_html = f'<div class="lp-pay">{pay_html}</div>' if pay_html else ''
+    ptype = 'condominium' if p.get('type') == 'CND' else 'residential'
+    alert_html = f'''<div class="lp-alert" id="alerts"><h2>Get new homes like this by email</h2>
+      <p style="margin:0">New {e(town)} homes around {money(lp)}{f" with {bd}+ bedrooms" if bd else ""}, sent to you as soon as they hit the market. Free, and you can stop anytime.</p>
+      <form id="lp-al" novalidate data-q="{e(town)}" data-min="{int(round(lp * 0.8, -4))}" data-max="{int(round(lp * 1.2, -4))}" data-beds="{bd or ''}" data-type="{ptype}" data-mls="{h['mlsId']}">
+        <input type="text" name="name" placeholder="Name" aria-label="Name" autocomplete="name" maxlength="100">
+        <input type="email" name="email" placeholder="Email" aria-label="Email" autocomplete="email" maxlength="120">
+        <input type="tel" name="phone" placeholder="Phone (optional)" aria-label="Phone (optional)" autocomplete="tel" maxlength="40">
+        <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+        <label class="ok"><input type="checkbox" name="consent" value="yes"><span>Yes, email me new listings from Marcos Diaz, and use the homes I open on this site to fine-tune my alerts. If I add my phone, Marcos may call or text me about homes. I can unsubscribe anytime. <a href="/privacy.html" target="_blank">Privacy</a></span></label>
+        <button type="submit">Start my alerts</button><p class="msg" role="alert"></p>
+      </form></div>'''
     body = f'''  <section class="lp-hero"><div class="lp-wrap">
     <p class="lp-crumbs"><a href="/">Home</a> / <a href="/homes-for-sale/">Homes for sale</a> / <a href="{tlink}">{e(town)}</a></p>
     <h1>{e(full)}</h1>
@@ -228,6 +321,7 @@ def home_page(h, same_town, updated):
   </div></section>
   <section class="lp-body-sec"><div class="lp-wrap">
     <p class="lp-attr">Listing courtesy of {e(attribution(h))}</p>
+    {pay_html}
     {f'<div class="lp-gal">{gal}</div>' if gal else ''}
     <p><a href="{live}">See all {len(photos)} photos, the map and drive times →</a></p>
     <div class="lp-btns">
@@ -240,11 +334,18 @@ def home_page(h, same_town, updated):
     <div class="lp-sec"><h2>Facts &amp; features</h2><ul class="lp-facts">{facts_html}</ul></div>
     {f'<div class="lp-sec"><h2>Schools</h2><ul class="lp-facts">{schools_html}</ul><p><small>Always confirm schools with the district for a specific address.</small></p></div>' if schools_html else ''}
     <div class="lp-sec"><h2>Thinking about this home?</h2><p>I'm Marcos Diaz, a Broker Associate with Keller Williams Realty Sioux Falls. I can tell you what's around it, what similar homes sold for, and whether it's priced right. I'm bilingual, so we can talk in English or Spanish. Call or text <a href="tel:+16058389140">605-838-9140</a>.</p></div>
+    {alert_html}
     {f'<div class="lp-sec"><h2>More homes for sale in {e(town)}</h2><div class="lp-grid">{more_html}</div><p><a href="{tlink}">See more homes for sale →</a></p></div>' if more_html else ''}
     <p class="lp-disc">{e(h.get("disclaimer") or "")} {disclaimer(False, updated)}</p>
+    {f'<p class="lp-foot">*{e(pay_note())}</p>' if mo else ''}
   </div></section>
+{ALERT_JS}
 '''
     _page(path, title, desc, body, canonical=SITE + url, head_extra=head, news=False)
+    if photos:
+        fp = os.path.join(ROOT, path); doc = open(fp).read()
+        doc = re.sub(r'<meta property="og:image" content="[^"]*">', lambda m: f'<meta property="og:image" content="{e(photos[0])}">\n<meta property="og:image:alt" content="{e(full)}">', doc, count=1)
+        open(fp, 'w').write(doc)
     return url
 
 # ---------- Town pages (EN + ES) ----------
@@ -271,6 +372,7 @@ def town_page(town, slug, homes, updated, es):
     {f'<div class="lp-grid">{cards}</div>' if cards else f'<p>No hay casas en venta en {e(town)} en este momento. Llámeme o envíeme un texto y le aviso cuando salga una.</p>'}
     {f'<p><a href="{e(search)}">Ver las {len(homes)} casas en el mapa →</a></p>' if len(homes) > MAX_TOWN_CARDS else ''}
     <p class="lp-disc">{disclaimer(True, updated)}</p>
+    {f'<p class="lp-foot">*{e(pay_note(True))}</p>' if homes else ''}
   </div></section>
 '''
     else:
@@ -287,6 +389,7 @@ def town_page(town, slug, homes, updated, es):
     {f'<div class="lp-grid">{cards}</div>' if cards else f'<p>No homes are for sale in {e(town)} right now. Call or text me and I’ll let you know as soon as one comes up.</p>'}
     {f'<p><a href="{e(search)}">See all {len(homes)} homes on the map →</a></p>' if len(homes) > MAX_TOWN_CARDS else ''}
     <p class="lp-disc">{disclaimer(False, updated)}</p>
+    {f'<p class="lp-foot">*{e(pay_note())}</p>' if homes else ''}
   </div></section>
 '''
     alts = (f'<link rel="alternate" hreflang="en" href="{SITE}{en_url}">\n<link rel="alternate" hreflang="es" href="{SITE}{es_url}">\n'
