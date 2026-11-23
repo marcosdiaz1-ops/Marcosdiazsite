@@ -23,6 +23,9 @@ const SITE = 'https://605homesearch.com';
 // e.g. '6058389140@vtext.com' (Verizon), '6058389140@tmomail.net' (T-Mobile),
 // '6058389140@txt.att.net' (AT&T). Leave '' to skip.
 const SMS_EMAIL = '';
+// Instant phone alerts through the free ntfy app (ntfy.sh). Subscribe to this topic in the app.
+// Keep the name private: anyone who knows it could read the alerts.
+const NTFY_TOPIC = 'md605-leads-1edb47408730';
 const MAX_AUTOREPLIES_PER_DAY = 25; // safety limit against spam abuse
 
 const HEADERS = ['Date', 'Name', 'Phone', 'Email', 'Looking to', 'Timeline', 'Language', 'Status', 'Notes'];
@@ -41,18 +44,21 @@ function doPost(e) {
     looking: clean_(p['Looking to'], 60),
     timeline: clean_(p['Timeline'], 60),
     language: /espa/i.test(p['Language'] || '') ? 'Español' : 'English',
+    message: clean_(p['message'], 600),
   };
-  if (!lead.name || !lead.phone || !lead.email) return out_({ ok: false, error: 'missing fields' });
+  // A name plus a phone or an email is enough (the "ask a question" box on listings allows either one)
+  if (!lead.name || (!lead.phone && !validEmail_(lead.email))) return out_({ ok: false, error: 'missing fields' });
 
   const lock = LockService.getScriptLock();
   lock.tryLock(10000);
   try {
     const sheet = sheet_();
-    sheet.appendRow([new Date(), lead.name, "'" + lead.phone, lead.email, lead.looking, lead.timeline, lead.language, 'New', '']);
+    sheet.appendRow([new Date(), lead.name, lead.phone ? "'" + lead.phone : '', lead.email, lead.looking, lead.timeline, lead.language, 'New', lead.message]);
   } finally {
     lock.releaseLock();
   }
 
+  try { pushLead_(lead); } catch (err) { console.error('phone alert failed', err); }
   try { alertOwner_(lead); } catch (err) { console.error('alert failed', err); }
   try { if (validEmail_(lead.email) && underDailyLimit_()) autoReply_(lead); } catch (err) { console.error('autoreply failed', err); }
 
@@ -64,6 +70,26 @@ function doGet() {
 }
 
 // ---------- Alerts and replies ----------
+// Instant push to Marcos's phone (ntfy app): name, what they want, and buttons to call, text or email them
+function pushLead_(lead) {
+  if (!NTFY_TOPIC) return;
+  const tel = (lead.phone || '').replace(/[^0-9+]/g, '');
+  const actions = [];
+  if (tel) actions.push({ action: 'view', label: 'Call', url: 'tel:' + tel, clear: false });
+  if (tel) actions.push({ action: 'view', label: 'Text', url: 'sms:' + tel, clear: false });
+  if (lead.email) actions.push({ action: 'view', label: 'Email', url: 'mailto:' + lead.email, clear: false });
+  UrlFetchApp.fetch('https://ntfy.sh', {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    payload: JSON.stringify({
+      topic: NTFY_TOPIC, priority: 5, tags: ['house'],
+      title: 'New lead: ' + lead.name + (lead.language === 'Español' ? ' (Español)' : ''),
+      message: [lead.looking || 'Website inquiry', lead.timeline, lead.phone, lead.email, lead.message].filter(String).join('\n'),
+      click: tel ? 'tel:' + tel : 'mailto:' + lead.email,
+      actions: actions.slice(0, 3),
+    }),
+  });
+}
+
 function alertOwner_(lead) {
   const first = lead.name.split(' ')[0];
   const subject = '🔔 NEW LEAD: ' + lead.name + ' – ' + (lead.looking || 'Website inquiry') + (lead.timeline ? ' (' + lead.timeline + ')' : '');
@@ -77,6 +103,7 @@ function alertOwner_(lead) {
     row_('Looking to', lead.looking) +
     row_('Timeline', lead.timeline) +
     row_('Language', lead.language) +
+    (lead.message ? row_('Message', lead.message) : '') +
     '<p style="margin-top:18px"><a href="tel:' + telDigits + '" style="background:#b98b5c;color:#fff;padding:10px 18px;text-decoration:none">Call ' + esc_(first) + '</a>' +
     ' &nbsp; <a href="sms:' + telDigits + '" style="background:#13203b;color:#fff;padding:10px 18px;text-decoration:none">Text ' + esc_(first) + '</a></p>' +
     '<p style="color:#8a8579;font-size:12px">An automatic reply was sent to the lead. Saved to your Website Leads sheet: ' + SpreadsheetApp.getActive().getUrl() + '</p></div>';

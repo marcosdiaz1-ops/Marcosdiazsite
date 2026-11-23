@@ -44,6 +44,8 @@ const LISTINGS_API = 'https://listings.605homesearch.com/properties';
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxklqP-b5JNN1e2hsuwLXQvC0P6_4ZmJBORJLDojLWMwqWiUx5JFn0oiKDVXvu4c-6-/exec';
 const MAX_HOMES_PER_EMAIL = 12;
 const MAX_EMAILS_PER_RUN = 80;                    // stay well under Gmail's daily sending limit
+// Instant phone alerts through the free ntfy app (same private topic as the website leads script)
+const NTFY_TOPIC = 'md605-leads-1edb47408730';
 const MAX_SIGNUPS_PER_DAY = 40;                   // safety limit against spam abuse
 const OFFICE = 'Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 · 605-275-0555';
 
@@ -92,6 +94,7 @@ function doPost(e) {
   let homes = [];
   try { homes = search_(a, null).slice(0, 6); } catch (err) { console.error('search failed', err); }
   try { changes_(a, id, new Date()); } catch (err) { console.error('snapshot failed', err); }
+  try { pushOwner_(a); } catch (err) { console.error('phone alert failed', err); }
   try { notifyOwner_(a); } catch (err) { console.error('owner alert failed', err); }
   try { sendEmail_(a, id, homes, true); } catch (err) { console.error('welcome failed', err); }
   return json_({ ok: true });
@@ -358,6 +361,25 @@ function describe_(a, es) {
 }
 
 // ---------- Emails ----------
+function pushOwner_(a) {
+  if (!NTFY_TOPIC) return;
+  const tel = (a.phone || '').replace(/[^0-9+]/g, '');
+  const actions = [];
+  if (tel) actions.push({ action: 'view', label: 'Call', url: 'tel:' + tel, clear: false });
+  if (tel) actions.push({ action: 'view', label: 'Text', url: 'sms:' + tel, clear: false });
+  actions.push({ action: 'view', label: 'Email', url: 'mailto:' + a.email, clear: false });
+  UrlFetchApp.fetch('https://ntfy.sh', {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    payload: JSON.stringify({
+      topic: NTFY_TOPIC, priority: 4, tags: ['bell'],
+      title: 'Alert sign-up: ' + a.name + (a.lang === 'Español' ? ' (Español)' : ''),
+      message: [describe_(a, false), a.freq + ' emails', a.phone, a.email].filter(String).join('\n'),
+      click: tel ? 'tel:' + tel : 'mailto:' + a.email,
+      actions: actions,
+    }),
+  });
+}
+
 function notifyOwner_(a) {
   const first = a.name.split(' ')[0];
   const subject = '🔔 NEW ALERT LEAD: ' + a.name + ' – ' + describe_(a, false);
