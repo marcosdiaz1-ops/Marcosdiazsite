@@ -44,6 +44,30 @@ export default {
       return new Response(await r.text(), { status: r.status, headers: { ...headers, 'Content-Type': 'application/json' } });
     }
 
+    // Upcoming public open houses, as a small list: [{ mlsId, start, end }]. Broker-only and private ones are left out.
+    if (url.pathname === '/openhouses') {
+      const cache = caches.default;
+      const key = new Request(url.origin + '/openhouses', { method: 'GET' });
+      let res = await cache.match(key);
+      if (!res) {
+        const r = await fetch(UPSTREAM + '/openhouses?limit=500', { headers: { Authorization: auth, Accept: 'application/json' } });
+        let body = '[]';
+        if (r.ok) {
+          try {
+            const list = await r.json();
+            body = JSON.stringify((Array.isArray(list) ? list : [])
+              .filter(o => o && o.listing && o.listing.mlsId && o.startTime && !/broker|private|office|caravan|agent|realtor/i.test(o.type || '') && o.listing.internetEntireListingDisplay !== false)
+              .map(o => ({ mlsId: o.listing.mlsId, start: o.startTime, end: o.endTime || null })));
+          } catch (e) { body = '[]'; }
+        }
+        res = new Response(body, { status: r.ok ? 200 : r.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=900' } });
+        if (r.ok) ctx.waitUntil(cache.put(key, res.clone()));
+      }
+      const out = new Response(res.body, res);
+      Object.entries(headers).forEach(([k, v]) => out.headers.set(k, v));
+      return out;
+    }
+
     // Listing search (/properties) and single listing (/properties/<mlsId>) only
     if (!/^\/properties(\/[A-Za-z0-9_-]+)?$/.test(url.pathname)) return new Response('Not found', { status: 404, headers });
 
