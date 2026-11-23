@@ -450,4 +450,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/sioux-falls-news-week-of-nov-16-2026/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/noticias-sioux-falls-semana-16-nov-2026/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/blog/closing-costs-sioux-falls/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/closing-costs-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/costos-de-cierre-sioux-falls/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/costos-de-cierre-sioux-falls/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/closing-costs-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/costos-de-cierre-sioux-falls/"/>
+  </url>
 </urlset>
