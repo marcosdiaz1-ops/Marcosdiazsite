@@ -10,8 +10,8 @@
 //   schedule_showing / Schedule → a showing booked through Calendly
 //   contact_click / Contact    → someone taps to call, text or email Marcos
 (function () {
-  var GA_ID = '';
-  var PIXEL_ID = '';
+  var GA_ID = 'G-P0MLBTYWCZ';
+  var PIXEL_ID = '1122392776904091';
 
   if (window.__mdAnalytics) return;
   window.__mdAnalytics = true;
