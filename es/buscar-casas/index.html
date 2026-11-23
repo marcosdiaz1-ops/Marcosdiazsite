@@ -475,6 +475,7 @@
     .sp-body.show-map .sp-list { display: none; }
   }
 </style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://605homesearch.com/es/buscar-casas/#webpage", "url": "https://605homesearch.com/es/buscar-casas/", "name": "Buscar casas en venta en Sioux Falls | Marcos Diaz", "inLanguage": "es", "isPartOf": {"@type": "WebSite", "url": "https://605homesearch.com/", "name": "Marcos Diaz, Keller Williams Realty Sioux Falls"}, "about": {"@type": "RealEstateAgent", "@id": "https://605homesearch.com/#marcos-diaz", "name": "Marcos Diaz, Broker Associate", "url": "https://605homesearch.com/", "telephone": "+1-605-838-9140", "parentOrganization": {"@type": "Organization", "name": "Keller Williams Realty Sioux Falls"}}, "publisher": {"@id": "https://605homesearch.com/#marcos-diaz"}, "description": "Busque todas las casas en venta en Sioux Falls y sus alrededores con listados del MLS en vivo. ¿Preguntas? Llame o envíe un mensaje a Marcos Diaz al 605-838-9140."}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://605homesearch.com/es/"}, {"@type": "ListItem", "position": 2, "name": "Buscar casas en venta en Sioux Falls", "item": "https://605homesearch.com/es/buscar-casas/"}]}]}</script>
 </head>
 <body class="subpage">
 
@@ -1932,7 +1933,7 @@
     if (!$('f-q').value.trim()) d.set('points', areaPoints().join('|'));
     f.querySelector('.al-send').disabled = true;
     fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
-      alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false;
+      alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false; if (window.gtag) gtag('event', 'generate_lead', { method: 'listing_alert' });
     }).catch(function () {
       $('al-msg').textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.');
     }).then(function () { f.querySelector('.al-send').disabled = false; });

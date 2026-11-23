@@ -1,4 +1,9 @@
 // Shared site behavior for 605homesearch.com (English + Spanish pages)
+// Visitor tracking (Google Analytics + Meta Pixel): IDs live in /analytics.js
+(function () {
+  if (window.__mdAnalytics || document.querySelector('script[src^="/analytics.js"]')) return;
+  var s = document.createElement('script'); s.src = '/analytics.js?v=2'; s.async = true; document.head.appendChild(s);
+})();
 (function () {
   const ES = (document.documentElement.lang || 'en').toLowerCase().startsWith('es');
   const T = ES ? {

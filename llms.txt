@@ -1,34 +1,80 @@
 # Marcos Diaz, Broker Associate – Keller Williams Realty Sioux Falls
 
-> Real estate agent helping people buy and sell homes in Sioux Falls, South Dakota
-> and nearby towns. Licensed in South Dakota. Se habla español.
+> Bilingual (English and Spanish) real estate agent helping people buy and sell homes in
+> Sioux Falls, South Dakota and nearby towns. Licensed in South Dakota. Member of the
+> National Association of REALTORS®. Se habla español.
+
+Marcos Diaz works with home buyers (including first-time buyers, veterans using VA loans,
+and buyers who need down payment help, an ITIN mortgage, or are working on their credit)
+and home sellers (free home value reports and seller net sheets). He serves English- and
+Spanish-speaking clients and can handle the whole process in either language.
+
+## Contact
+- Phone/text: 605-838-9140
+- Email: marcosdiaz1@kw.com
+- Brokerage: Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 (office 605-275-0555)
+- Website: https://605homesearch.com/ (Spanish: https://605homesearch.com/es/)
 
 ## What I help with
 - Buying a home, including first-time buyers
 - VA home loans for veterans and military families
-- Down payment assistance, including South Dakota's Give Me Five program
+- Down payment assistance, including South Dakota Housing's Give Me Five program
 - ITIN mortgages and buying with low credit
 - Selling a home: free home value report and seller net sheet
 - Off-market home search
 - Free moving trailer for clients
 
 ## Areas served
-Sioux Falls (including southwest and southeast Sioux Falls), Tea, Harrisburg,
-Brandon, Hartford, Crooks, Garretson, Lennox, and Canton, SD.
+Sioux Falls (including southwest and southeast Sioux Falls), Tea, Harrisburg, Brandon,
+Hartford, Crooks, Garretson, Lennox, and Canton, South Dakota.
 
-## Contact
-Phone/text: 605-838-9140
-Email: marcosdiaz1@kw.com
-Brokerage: Keller Williams Realty Sioux Falls, 6300 S Connie Ave, Sioux Falls, SD 57108 (office 605-275-0555)
+## Search homes for sale
+- [Search all homes for sale (map + photos, live MLS data)](https://605homesearch.com/search/): from the REALTOR® Association of the Sioux Empire MLS. Visitors can save homes, get new-listing email alerts, and request a showing any day from 9am to 8pm.
+- [Homes for sale by town, neighborhood, school district and price](https://605homesearch.com/homes-for-sale/)
+- [Buscar casas (español)](https://605homesearch.com/es/buscar-casas/)
 
-## Key pages
-- Home (English): https://605homesearch.com/
-- Inicio (Español): https://605homesearch.com/es/
-- Search homes: https://605homesearch.com/search/
-- Home value: https://605homesearch.com/home-value/
-- Down payment assistance: https://605homesearch.com/down-payment-assistance/
-- Give Me Five: https://605homesearch.com/give-me-five/
-- ITIN mortgage: https://605homesearch.com/itin-mortgage-sioux-falls/
-- Market update: https://605homesearch.com/market/
-- Blog: https://605homesearch.com/blog/
-- Free guides: https://605homesearch.com/guides/
+## Buyers
+- [Down payment assistance in Sioux Falls](https://605homesearch.com/down-payment-assistance/)
+- [Give Me Five: see how much you could get](https://605homesearch.com/give-me-five/)
+- [ITIN mortgage in Sioux Falls](https://605homesearch.com/itin-mortgage-sioux-falls/)
+- [Buy a home with low credit](https://605homesearch.com/buy-a-home-with-low-credit/)
+- [How much house can I afford? (calculator)](https://605homesearch.com/calculators/affordability/)
+- [First-time home buyer guide for Sioux Falls](https://605homesearch.com/blog/first-time-home-buyer-guide-sioux-falls/)
+- [VA home loans in Sioux Falls](https://605homesearch.com/blog/va-home-loans-sioux-falls/)
+- [Contract for deed vs. mortgage](https://605homesearch.com/blog/contract-for-deed-vs-mortgage-sioux-falls/)
+- [Free buyer, seller and relocation guides](https://605homesearch.com/guides/)
+
+## Sellers
+- [Free home value report](https://605homesearch.com/home-value/)
+- [Seller net sheet calculator](https://605homesearch.com/calculators/seller-net-sheet/)
+- [Owner-occupied property tax in Sioux Falls](https://605homesearch.com/blog/owner-occupied-property-tax-sioux-falls/)
+
+## Market and local news
+- [Sioux Falls housing market report (updated monthly)](https://605homesearch.com/market/)
+- [Blog, including weekly Sioux Falls news](https://605homesearch.com/blog/)
+
+## Neighborhoods and towns
+- [Sioux Falls](https://605homesearch.com/areas/sioux-falls.html)
+- [Southwest Sioux Falls](https://605homesearch.com/areas/southwest-sioux-falls.html)
+- [Southeast Sioux Falls](https://605homesearch.com/areas/southeast-sioux-falls.html)
+- [Tea](https://605homesearch.com/areas/tea.html)
+- [Harrisburg](https://605homesearch.com/areas/harrisburg.html)
+- [Brandon](https://605homesearch.com/areas/brandon.html)
+- [Hartford](https://605homesearch.com/areas/hartford.html)
+- [Crooks](https://605homesearch.com/areas/crooks.html)
+- [Garretson](https://605homesearch.com/areas/garretson.html)
+- [Lennox](https://605homesearch.com/areas/lennox.html)
+- [Canton](https://605homesearch.com/areas/canton.html)
+
+## En español
+- [Inicio](https://605homesearch.com/es/)
+- [Ayuda para el pago inicial](https://605homesearch.com/es/ayuda-pago-inicial/)
+- [Préstamo ITIN en Sioux Falls](https://605homesearch.com/es/prestamo-itin-sioux-falls/)
+- [Comprar casa con poco crédito](https://605homesearch.com/es/comprar-casa-con-poco-credito/)
+- [Préstamos VA en Sioux Falls](https://605homesearch.com/es/blog/prestamos-va-sioux-falls/)
+- [¿Cuánto vale su casa?](https://605homesearch.com/es/valor-de-casa/)
+- [Reporte del mercado](https://605homesearch.com/es/mercado/)
+
+## Optional
+- [Sitemap](https://605homesearch.com/sitemap.xml)
+- [Privacy notice](https://605homesearch.com/privacy.html)

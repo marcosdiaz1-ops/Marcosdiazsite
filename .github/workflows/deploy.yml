@@ -42,6 +42,9 @@ jobs:
         if: hashFiles('data/listing-pages-on') != ''
         continue-on-error: ${{ github.event_name != 'schedule' }}
         run: python3 tools/build_listing_pages.py
+      - name: Add schema.org data to any page missing it (helps Google and AI assistants)
+        continue-on-error: true
+        run: python3 tools/add_page_schema.py
       - name: Force browsers to load the latest design files
         run: find . -name "*.html" -not -path "./.git/*" -exec sed -i "s/?v=BUILD/?v=${GITHUB_SHA::7}/g" {} +
       - name: Keep build tools off the public site
@@ -89,7 +92,7 @@ jobs:
           python3 - <<'PY'
           import os, re, subprocess, json, urllib.request
           site = "https://605homesearch.com"
-          skip = ("tools/", "automation/", "google", "thank-you", "review/", "search-preview/")
+          skip = ("tools/", "automation/", "google", "thank-you", "review/", "search-preview/", "lp/", "es/lp/")
           sm = open("sitemap.xml").read()
           all_urls = re.findall(r"<loc>([^<]+)</loc>", sm)
           urls = []

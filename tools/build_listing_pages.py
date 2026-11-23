@@ -286,7 +286,7 @@ ALERT_JS = """<script>
     ['q', 'minprice', 'maxprice', 'minbeds', 'type'].forEach(function (k) { if (f.dataset[k]) d.set(k, f.dataset[k]); });
     f.querySelector('button').disabled = true;
     fetch(URL_, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
-      try { localStorage.setItem('mdAlertId', id); } catch (e) {}
+      try { localStorage.setItem('mdAlertId', id); } catch (e) {} if (window.gtag) gtag('event', 'generate_lead', { method: 'listing_alert' });
       f.innerHTML = '<p style="grid-column:1/-1;margin:0;color:#fff"><b>' + t('You’re all set!', '¡Listo!') + '</b> ' + t('Check your email. I sent you the homes that match right now.', 'Revise su correo. Le mandé las casas que hay ahora.') + '</p>';
     }).catch(function () { msg.textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.'); f.querySelector('button').disabled = false; });
   });

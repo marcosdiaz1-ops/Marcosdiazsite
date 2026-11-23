@@ -1905,7 +1905,7 @@
     if (!$('f-q').value.trim()) d.set('points', areaPoints().join('|'));
     f.querySelector('.al-send').disabled = true;
     fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
-      alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false;
+      alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false; if (window.gtag) gtag('event', 'generate_lead', { method: 'listing_alert' });
     }).catch(function () {
       $('al-msg').textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.');
     }).then(function () { f.querySelector('.al-send').disabled = false; });
