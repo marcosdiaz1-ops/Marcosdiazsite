@@ -159,6 +159,18 @@
   .hd-ask .msg { font-size: 14px; color: #9a2a1c; margin: 4px 0; }
   .hd-ask.done .msg { color: #1f6b35; font-size: 16px; font-weight: 500; }
   .hd-ask .hp { position: absolute; left: -9999px; }
+  .sp-recent { margin: 0 0 14px; }
+  .sp-recent-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .sp-recent-h b { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .sp-recent-h button { font: inherit; font-size: 13px; color: var(--text); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 4px; }
+  .sp-recent .hd-simrow { padding-bottom: 6px; }
+  .sp-recent .hd-sim { flex-basis: 190px; }
+  .sp-recent .hd-sim .tx { padding: 8px 10px 10px; font-size: 13px; }
+  .sp-recent .hd-sim .tx b { font-size: 16px; }
+  .hd-txt { font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; }
+  .hd-txt:hover { background: var(--sand); }
+  .hd-txt svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 440px) { .hd-txt .lbl { display: none; } .hd-txt { padding: 8px 10px; } .hd-txt svg { width: 22px; height: 22px; } }
   .hd-ask .more { display: none; }
   .hd-ask.open .more { display: block; }
   .hd-ask textarea { min-height: 52px; }
@@ -537,6 +549,7 @@
         <div class="sp-list">
           <div class="sp-head"><div class="sp-count" id="sp-count">Cargando casas…</div><span class="sp-headr"><select class="sp-sortd" id="sort-d" aria-label="Sort"></select><button type="button" class="sp-saved" id="sp-saved"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg><span id="sp-savedn">Guardadas (0)</span></button></span></div>
           <div class="sp-cmpbar" id="sp-cmpbar"><span id="sp-cmptxt">Marque 2 o 3 casas para comparar</span><button type="button" id="sp-cmpgo" disabled>Comparar</button></div>
+          <div class="sp-recent" id="sp-recent" hidden></div>
           <div class="sp-cards" id="sp-cards"></div>
           <button class="sp-more" id="sp-more" hidden>Ver más casas</button>
         </div>
@@ -1170,7 +1183,7 @@
 
     $('sp-detail').innerHTML =
       '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>' + t('Back to search', 'Volver a la búsqueda') + '</button>' +
-      '<span>' + favBtn(h, true) + '<button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg><span class="lbl">' + t('Share', 'Compartir') + '</span></button></span></div>' +
+      '<span>' + favBtn(h, true) + '<a class="hd-txt" id="hd-txt" href="' + textHref(h) + '"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></svg><span class="lbl">' + t('Text', 'Texto') + '</span></a><button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg><span class="lbl">' + t('Share', 'Compartir') + '</span></button></span></div>' +
       '<div class="hd-galwrap">' +
         '<div class="hd-gal n' + Math.min(n, 5) + '" id="hd-gal">' + (window.innerWidth <= 900 ? mobileTiles : tiles) + '</div>' +
         '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? t('New listing', 'Nueva en el mercado') : esc(statusTxt(h))) + '</span>' +
@@ -1209,6 +1222,7 @@
         '<a class="hd-btn hd-b2" href="tel:+16058389140">' + t('Call', 'Llamar') + ' 605-838-9140</a>' +
         '<a class="hd-btn hd-b3" href="#hd-s-pay" data-go="hd-s-pay">' + t('What would my payment be?', '¿Cuánto sería mi pago?') + '</a>' +
         '<a class="hd-link" href="' + sms + '">' + t('Or text me about this home', 'O envíeme un texto sobre esta casa') + '</a>' +
+        '<a class="hd-link" href="' + textHref(h) + '">' + t('Text this home to someone', 'Mandar esta casa por texto') + '</a>' +
         (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>' + t('Email me new homes like this', 'Envíenme casas nuevas como esta') + '</button>' : '') +
         askHtml(h, street) +
         '<p class="hd-note">' + t('Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.', '¿No está seguro? Le puedo decir qué hay cerca, en cuánto se vendieron casas parecidas y si el precio es justo.') + '</p>' +
@@ -1232,7 +1246,49 @@
     if ($('hd-map')) hdMapSetup(h);
     similar(h);
     askWire(h, street);
+    remember(h);
   }
+
+  // Text a home to someone (opens the phone's messages app with the link filled in)
+  function textHref(h) {
+    var a = h.address || {};
+    var msg = t('Check out this home: ', 'Mira esta casa: ') + money(h.listPrice) + ' · ' + ((h.property || {}).bedrooms || 0) + t(' bd, ', ' rec, ') + baths(h) + t(' ba · ', ' baños · ') + (showAddr(h) ? cleanAddr(a.full) + ', ' : '') + (a.city || '') + '\n' + location.origin + location.pathname + '#home=' + h.mlsId;
+    return 'sms:?&body=' + encodeURIComponent(msg);
+  }
+
+  // ===== Recently viewed homes (kept only in this browser) =====
+  var seen = {};
+  function recentIds() { try { var v = JSON.parse(localStorage.getItem('mdRecent') || '[]'); return Array.isArray(v) ? v.map(String) : []; } catch (e) { return []; } }
+  function remember(h) {
+    if (!h || !h.mlsId || h._sample) return;
+    seen[h.mlsId] = h;
+    var v = recentIds().filter(function (x) { return x !== String(h.mlsId); });
+    v.unshift(String(h.mlsId));
+    try { localStorage.setItem('mdRecent', JSON.stringify(v.slice(0, 12))); } catch (e) {}
+  }
+  function drawRecent() {
+    var box = $('sp-recent'), ids = recentIds();
+    if (savedMode || !ids.length) { box.hidden = true; return; }
+    Promise.all(ids.slice(0, 10).map(function (id) {
+      if (seen[id]) return seen[id];
+      return fetch(API + '/' + encodeURIComponent(id), { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    })).then(function (list) {
+      list = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false && !/closed|sold|withdrawn|expired|cancel/i.test(String((h.mls || {}).status || '')); });
+      list.forEach(function (h) { seen[h.mlsId] = h; });
+      if (!list.length || savedMode) { box.hidden = true; return; }
+      box.innerHTML = '<div class="sp-recent-h"><b>' + t('Pick up where you left off', 'Casas que vio') + '</b><button type="button" id="sp-recent-x">' + t('Clear', 'Borrar') + '</button></div>' +
+        '<div class="hd-simrow">' + list.map(function (o) {
+          var p = o.property || {}, a = o.address || {}, ph = (o.photos || [])[0];
+          return '<button type="button" class="hd-sim" data-rec="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(ph) + '\')"' : '') + '>' + (cut(o) ? '<span>↓ ' + t('Price cut', 'Bajó de precio') + '</span>' : '') + '</div>' +
+            '<div class="tx"><b>' + money(o.listPrice) + '</b>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(o) + t(' ba', ' baños') + '<br>' + (showAddr(o) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city || '') + '<small>' + attrHtml(o, false) + '</small></div></button>';
+        }).join('') + '</div>';
+      box.hidden = false;
+    });
+  }
+  $('sp-recent').addEventListener('click', function (e) {
+    if (e.target.id === 'sp-recent-x') { try { localStorage.removeItem('mdRecent'); } catch (x) {} $('sp-recent').hidden = true; return; }
+    var b = e.target.closest('[data-rec]'); if (b && seen[b.dataset.rec]) show(seen[b.dataset.rec]);
+  });
 
   // ===== Virtual tours, open houses, questions, schools =====
   function tourUrl(h) { var u = String(h.virtualTourUrl || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
@@ -1526,7 +1582,7 @@
       }).catch(function () {});
   }
   function closeDetail(fromPop) {
-    $('sp-modal').classList.remove('open'); document.body.classList.remove('sp-lock'); closeLb();
+    $('sp-modal').classList.remove('open'); document.body.classList.remove('sp-lock'); closeLb(); drawRecent();
     if (fromPop !== true && /^#home=/.test(location.hash)) history.pushState({}, '', location.pathname + location.search);
   }
   window.addEventListener('popstate', function () {
@@ -1631,7 +1687,7 @@
   var savedMode = false, cmpSel = [];
   function showSaved() {
     var ids = favs();
-    savedMode = true; cmpSel = cmpSel.filter(function (x) { return ids.indexOf(x) > -1; });
+    savedMode = true; cmpSel = cmpSel.filter(function (x) { return ids.indexOf(x) > -1; }); $('sp-recent').hidden = true;
     $('sp-saved').classList.add('on'); $('sp-more').hidden = true;
     pinReq++; drawPins();
     $('sp-cmpbar').classList.toggle('on', ids.length > 1); updCmp();
@@ -1647,7 +1703,7 @@
         back.onclick = leaveSaved; $('sp-count').appendChild(back);
       });
   }
-  function leaveSaved() { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); load(false); }
+  function leaveSaved() { savedMode = false; cmpSel = []; setTimeout(drawRecent, 0); $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); load(false); }
   $('sp-saved').onclick = function () { if (savedMode) leaveSaved(); else showSaved(); };
   updSaved();
 
@@ -2047,7 +2103,7 @@
 
   load(false);
   var deep = (location.hash.match(/^#home=(\d+)/) || [])[1];
-  if (deep) openById(deep);
+  if (deep) openById(deep); else drawRecent();
 })();
 </script>
 </body>
