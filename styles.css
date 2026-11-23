@@ -729,3 +729,37 @@ html, body { overflow-x: clip; }
 }
 
 .page-body .source { margin-top: 28px; font-size: .85rem; color: #6b675f; }
+
+/* ---- Shorter homepage (Nov 2026) ---- */
+.about-short { padding: 70px 0 90px; }
+.results-grid.one { grid-template-columns: 1fr; max-width: 760px; }
+.area-grid.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.area-grid.chips .area-card { padding: 12px 40px 12px 18px; border-radius: 999px; }
+.area-grid.chips .area-card span { font-family: var(--sans); font-size: 1rem; }
+.area-grid.chips .area-card::after { right: 16px; }
+.area-grid.chips .area-card:hover::after { right: 12px; }
+.tools-band { padding: 0 0 90px; background: var(--sand); }
+.areas-sec + .tools-band { margin-top: -40px; padding-top: 0; }
+.tool-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.tool-links a { display: flex; flex-direction: column; gap: 4px; padding: 22px 24px; background: #fff; border: 1px solid var(--line); text-decoration: none; transition: .25s; }
+.tool-links a:hover { border-color: var(--gold); transform: translateY(-2px); }
+.tool-links strong { font-family: var(--serif); font-weight: 500; font-size: 1.35rem; color: var(--ink); }
+.tool-links span { font-size: .88rem; color: #6b665b; }
+@media (max-width: 960px) { .tool-links { grid-template-columns: repeat(2, 1fr); } .about-short { padding: 50px 0 60px; } }
+@media (max-width: 560px) {
+  .tool-links { grid-template-columns: 1fr; gap: 10px; }
+  .tool-links a { padding: 16px 18px; }
+  .about-short .about-photo { max-width: 260px; margin: 0 auto 10px; }
+  .about-short .about-photo::before { display: none; }
+}
+@media (max-width: 560px) {
+  /* homepage: shorter service cards and track record on phones */
+  .service-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .service { aspect-ratio: 3 / 4; }
+  .service-body { padding: 14px; }
+  .service h3 { font-size: 1.15rem; margin: 2px 0 0; }
+  .service p { display: none; }
+  .results { padding: 80px 0; }
+  .results-grid.one .sold li:nth-child(n+4) { display: none; }
+  .results-grid.one { margin-top: 36px; }
+}

@@ -2,14 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://605homesearch.com/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-23</lastmod>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/"/>
   </url>
   <url>
     <loc>https://605homesearch.com/es/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-23</lastmod>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/"/>
@@ -463,5 +463,47 @@
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/closing-costs-sioux-falls/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/costos-de-cierre-sioux-falls/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/buyers/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/buyers/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/compradores/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/compradores/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/buyers/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/compradores/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/sellers/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/sellers/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/vendedores/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/vendedores/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/sellers/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/vendedores/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/about/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/about/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/sobre-mi/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/sobre-mi/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/about/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/sobre-mi/"/>
   </url>
 </urlset>
