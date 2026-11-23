@@ -296,6 +296,27 @@ function hotLead_(r, id, mlsId, mine, h, addr) {
     (tel ? '<p><a href="tel:' + tel + '" style="background:#b98b5c;color:#fff;padding:10px 18px;text-decoration:none">Call ' + esc_(first) + '</a> &nbsp; <a href="sms:' + tel + '" style="background:#13203b;color:#fff;padding:10px 18px;text-decoration:none">Text ' + esc_(first) + '</a></p>' : '') +
     '<p style="color:#8a8579;font-size:12px">From your Listing Alert Leads sheet (Activity tab): ' + SpreadsheetApp.getActive().getUrl() + '</p></div>';
   GmailApp.sendEmail(OWNER_EMAIL, subject, subject, { htmlBody: html, name: '605homesearch Alerts' });
+  try { pushHot_(name, n, where, h, mlsId, tel, String(r[C.Email])); } catch (err) { console.error('hot phone alert failed', err); }
+}
+
+// 🔥 alert on Marcos's phone (ntfy app) with buttons to call/text them or open the home
+function pushHot_(name, n, where, h, mlsId, tel, email) {
+  if (!NTFY_TOPIC) return;
+  const home = SEARCH_PAGE + '#home=' + encodeURIComponent(mlsId);
+  const actions = [];
+  if (tel) actions.push({ action: 'view', label: 'Call', url: 'tel:' + tel, clear: false });
+  if (tel) actions.push({ action: 'view', label: 'Text', url: 'sms:' + tel, clear: false });
+  actions.push({ action: 'view', label: 'See home', url: home, clear: false });
+  UrlFetchApp.fetch('https://ntfy.sh', {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    payload: JSON.stringify({
+      topic: NTFY_TOPIC, priority: 5, tags: ['fire'],
+      title: 'Hot lead: ' + name + ' opened a home ' + n + ' times',
+      message: [money_(h.listPrice) + ' · ' + where, tel ? 'Phone: ' + tel : '', email ? 'Email: ' + email : ''].filter(String).join('\n'),
+      click: tel ? 'tel:' + tel : home,
+      actions: actions,
+    }),
+  });
 }
 
 function activity_() {
