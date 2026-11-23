@@ -839,6 +839,20 @@ function weeklyLeadReport() {
   GmailApp.sendEmail(OWNER_EMAIL, subject, subject, { htmlBody: html, name: '605homesearch Alerts' });
 }
 
+// ---------- Test: emails Marcos samples of the alert emails using real homes for sale ----------
+// Pick "sendTestEmails" in the function menu → Run. Sends 2 emails to OWNER_EMAIL only.
+function sendTestEmails() {
+  const a = { name: OWNER_NAME, email: OWNER_EMAIL, q: 'Sioux Falls', maxprice: 400000, minbeds: 3, lang: 'English' };
+  const homes = search_(a, null, 20);
+  if (homes.length < 6) throw new Error('Not enough homes found for the test');
+  const oh = openHouses_();
+  homes.forEach(function (h) { if (oh[h.mlsId]) h._oh = oh[h.mlsId][0]; });
+  const one = Object.assign({}, homes[0], { _kind: 'new' });
+  sendEmail_(a, 'test', [one], false, 1, [one], homes.slice(3, 6));
+  const mix = [Object.assign({}, homes[0], { _kind: 'new' }), Object.assign({}, homes[1], { _kind: 'drop', _was: (homes[1].listPrice || 0) + 10000, _saved: true }), Object.assign({}, homes[2], { _kind: 'back' })];
+  sendEmail_(a, 'test', mix, false, 3, mix, homes.slice(3, 6));
+}
+
 // ---------- Helpers ----------
 function sheet_() { return SpreadsheetApp.getActive().getSheets()[0]; }
 function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
