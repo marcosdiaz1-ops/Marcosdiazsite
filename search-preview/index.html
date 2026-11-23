@@ -43,6 +43,8 @@
   .pop-2 label { flex: 1; font-size: 13px; color: var(--text); }
   .pop-2 input, .pop select { display: block; width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid #c9c2b5; border-radius: 10px; background: #fff; color: var(--ink); margin-top: 4px; }
   .pop select { margin: 0 0 12px; }
+  .pm-chk { display: flex; align-items: center; gap: 8px; font-size: 15px; margin: 2px 0 14px; cursor: pointer; }
+  .pm-chk input { width: 18px; height: 18px; accent-color: var(--navy); }
   .pop-2 span { padding-bottom: 12px; color: var(--text); }
   .pop-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px; }
   .pop-chips button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--ivory); color: var(--ink); border-radius: 20px; padding: 4px 10px; cursor: pointer; }
@@ -407,7 +409,7 @@
       <form class="sp-filters" id="sp-form" autocomplete="off">
         <div class="sp-q"><input type="search" id="f-q" placeholder="City, ZIP, address, or MLS #" aria-label="City, ZIP, address, or MLS #"><button type="submit" class="sp-qgo" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div>
         <input type="hidden" id="f-min"><input type="hidden" id="f-max"><input type="hidden" id="f-beds"><input type="hidden" id="f-baths"><input type="hidden" id="f-type">
-        <input type="hidden" id="f-area"><input type="hidden" id="f-year"><input type="hidden" id="f-dom"><input type="hidden" id="f-acres">
+        <input type="hidden" id="f-area"><input type="hidden" id="f-year"><input type="hidden" id="f-dom"><input type="hidden" id="f-acres"><input type="hidden" id="f-pend">
         <div class="fpills" id="pills">
           <div class="fpill"><button type="button" class="pill-b" data-pop="price" aria-expanded="false"><span id="pl-price">Price</span><i></i></button>
             <div class="pop" id="pop-price" role="dialog" aria-label="Price">
@@ -447,6 +449,7 @@
               <select id="pm-year"><option value="">Any year</option><option value="1980">1980 or newer</option><option value="2000">2000 or newer</option><option value="2010">2010 or newer</option><option value="2020">2020 or newer</option></select>
               <div class="pop-h">Days on market</div>
               <select id="pm-dom"><option value="">Any</option><option value="1">New in last 1 day</option><option value="7">New in last 7 days</option><option value="14">New in last 14 days</option><option value="30">New in last 30 days</option></select>
+              <label class="pm-chk"><input type="checkbox" id="pm-pend"> Show pending homes too</label>
               <div class="pop-f"><button type="button" class="pop-reset" data-reset="more">Reset</button><button type="button" class="pop-apply" data-apply="more">Apply</button></div>
             </div>
           </div>
@@ -771,7 +774,7 @@
   function searchUrl() {
     var u = new URLSearchParams();
     var q = $('f-q').value.trim(); if (q) u.set('q', q);
-    [['f-min', 'minprice'], ['f-max', 'maxprice'], ['f-beds', 'minbeds'], ['f-baths', 'minbaths'], ['f-type', 'type'], ['f-area', 'minarea'], ['f-acres', 'minacres'], ['f-year', 'minyear'], ['f-dom', 'maxdom']]
+    [['f-min', 'minprice'], ['f-max', 'maxprice'], ['f-beds', 'minbeds'], ['f-baths', 'minbaths'], ['f-type', 'type'], ['f-area', 'minarea'], ['f-acres', 'minacres'], ['f-year', 'minyear'], ['f-dom', 'maxdom'], ['f-pend', 'pending']]
       .forEach(function (x) { if ($(x[0]).value) u.set(x[1], $(x[0]).value); });
     if (drawPts) u.set('d', drawPts.join('|'));
     else if (!q) { var c = map.getCenter(); u.set('c', c.lat.toFixed(4) + ',' + c.lng.toFixed(4) + ',' + map.getZoom()); }
@@ -846,6 +849,8 @@
     var p = new URLSearchParams();
     var q = $('f-q').value.trim();
     if (q) p.set('q', q);
+    // Only homes buyers can still make an offer on, unless "Show pending homes too" is checked (or they typed an MLS #)
+    if (!/^\d{5,}$/.test(q || '')) { p.append('status', 'Active'); if ($('f-pend').value) p.append('status', 'Pending'); }
     if ($('f-min').value) p.set('minprice', $('f-min').value);
     if ($('f-max').value) p.set('maxprice', $('f-max').value);
     if ($('f-beds').value) p.set('minbeds', $('f-beds').value);
@@ -1586,7 +1591,7 @@
       [['pb-beds', 'f-beds'], ['pb-baths', 'f-baths']].forEach(function (x) { $(x[0]).querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === $(x[1]).value); }); });
     }
     if (k === 'type') document.querySelectorAll('#pt-type input').forEach(function (r) { r.checked = r.value === $('f-type').value; });
-    if (k === 'more') { $('pm-area').value = $('f-area').value; $('pm-year').value = $('f-year').value; $('pm-dom').value = $('f-dom').value; $('pm-acres').value = $('f-acres').value; }
+    if (k === 'more') { $('pm-area').value = $('f-area').value; $('pm-year').value = $('f-year').value; $('pm-dom').value = $('f-dom').value; $('pm-acres').value = $('f-acres').value; $('pm-pend').checked = !!$('f-pend').value; }
   }
   document.querySelectorAll('.pill-b').forEach(function (b) {
     b.addEventListener('click', function (e) {
@@ -1626,14 +1631,14 @@
       $('f-beds').value = bb ? bb.dataset.v : ''; $('f-baths').value = ba ? ba.dataset.v : '';
     }
     if (k === 'type') { var r = document.querySelector('#pt-type input:checked'); $('f-type').value = r ? r.value : ''; }
-    if (k === 'more') { $('f-area').value = $('pm-area').value; $('f-year').value = $('pm-year').value; $('f-dom').value = $('pm-dom').value; $('f-acres').value = $('pm-acres').value; }
+    if (k === 'more') { $('f-area').value = $('pm-area').value; $('f-year').value = $('pm-year').value; $('f-dom').value = $('pm-dom').value; $('f-acres').value = $('pm-acres').value; $('f-pend').value = $('pm-pend').checked ? '1' : ''; }
     closePops(); pillLabels(); load(false);
   }
   function resetPop(k) {
     if (k === 'price') { $('pp-min').value = ''; $('pp-max').value = ''; }
     if (k === 'beds') ['pb-beds', 'pb-baths'].forEach(function (id) { $(id).querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.v === ''); }); });
     if (k === 'type') document.querySelectorAll('#pt-type input').forEach(function (r) { r.checked = r.value === ''; });
-    if (k === 'more') { $('pm-area').value = ''; $('pm-year').value = ''; $('pm-dom').value = ''; $('pm-acres').value = ''; }
+    if (k === 'more') { $('pm-area').value = ''; $('pm-year').value = ''; $('pm-dom').value = ''; $('pm-acres').value = ''; $('pm-pend').checked = false; }
   }
   document.addEventListener('click', function (e) {
     var a = e.target.closest('[data-apply]'); if (a) { applyPop(a.dataset.apply); return; }
@@ -1641,7 +1646,7 @@
   });
   function pillLabels() {
     var mn = $('f-min').value, mx = $('f-max').value, bd = $('f-beds').value, ba = $('f-baths').value, ty = $('f-type').value;
-    var more = [$('f-area').value, $('f-acres').value, $('f-year').value, $('f-dom').value].filter(Boolean).length;
+    var more = [$('f-area').value, $('f-acres').value, $('f-year').value, $('f-dom').value, $('f-pend').value].filter(Boolean).length;
     $('pl-price').textContent = mn && mx ? short(+mn) + '–' + short(+mx) : mx ? t('Up to ', 'Hasta ') + short(+mx) : mn ? short(+mn) + '+' : t('Price', 'Precio');
     $('pl-beds').textContent = bd || ba ? [bd && bd + t('+ bd', '+ rec'), ba && ba + t('+ ba', '+ baños')].filter(Boolean).join(', ') : t('Beds & baths', 'Recámaras y baños');
     $('pl-type').textContent = ty ? typeName(ty) : t('Home type', 'Tipo de casa');
@@ -1658,7 +1663,7 @@
     function setSel(id, v) { if (v && /^\d+(\.\d+)?$/.test(v)) $(id).value = v; }
     setSel('f-min', u.get('minprice')); setSel('f-max', u.get('maxprice'));
     setSel('f-beds', u.get('minbeds')); setSel('f-baths', u.get('minbaths'));
-    setSel('f-area', u.get('minarea')); setSel('f-year', u.get('minyear')); setSel('f-dom', u.get('maxdom')); setSel('f-acres', u.get('minacres'));
+    setSel('f-area', u.get('minarea')); setSel('f-year', u.get('minyear')); setSel('f-dom', u.get('maxdom')); setSel('f-acres', u.get('minacres')); if (u.get('pending') === '1') $('f-pend').value = '1';
     if (u.get('type') && /^(residential|condominium)$/.test(u.get('type'))) $('f-type').value = u.get('type');
     if (u.get('q')) $('f-q').value = u.get('q').slice(0, 80);
     pillLabels();
