@@ -1239,7 +1239,7 @@
   }
 
   var RATE = 7.25;
-  fetch('/data/rate.json').then(function (r) { return r.json(); }).then(function (d) { if (d && +d.rate) RATE = +d.rate; }).catch(function () {});
+  var rateReady = fetch('/data/rate.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) { if (d && +d.rate) RATE = +d.rate; }).catch(function () {});
   function hoaMonthly(h) {
     var as = h.association || {}, fee = +as.fee || 0, fq = String(as.frequency || 'monthly').toLowerCase();
     return /ann|year/.test(fq) ? fee / 12 : /quarter/.test(fq) ? fee / 3 : fee;
@@ -1273,6 +1273,9 @@
     }
     ['pc-down', 'pc-rate', 'pc-term'].forEach(function (id) { $(id).addEventListener('input', run); });
     run();
+    // if a shared link opened the home before this week's rate arrived, switch to it (unless they typed their own)
+    var touched = false; $('pc-rate').addEventListener('input', function () { touched = true; });
+    rateReady.then(function () { if (!touched && $('pc-rate') && +$('pc-rate').value !== RATE) { $('pc-rate').value = RATE; run(); } });
   }
   function dpaNote(h) { return isDpa(h) ? ' <a href="' + DPA_URL + '">' + t('This home’s price works with Give Me Five down payment help →', 'El precio de esta casa sirve para la ayuda Give Me Five →') + '</a>' : ''; }
 
