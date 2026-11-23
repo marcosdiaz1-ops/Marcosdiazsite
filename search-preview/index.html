@@ -1006,7 +1006,7 @@
   }
 
   function statusTxt(h) { var st = String((h.mls && (h.mls.statusText || h.mls.status)) || 'Active'); return ES ? ({ Active: 'Activa', Pending: 'Pendiente', ActiveUnderContract: 'Bajo contrato', 'Active Under Contract': 'Bajo contrato' }[st] || st) : st; }
-  function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
+  function baths(p) { var f = p.property || {}, n = function (x) { return +x || 0; }; return (n(f.bathsFull) + n(f.bathsThreeQuarter) + 0.5 * n(f.bathsHalf)) || n(f.bathrooms) || ''; }
 
   // What's special about a home (like Zillow's "Fenced yard" tag), read from the listing's own MLS features and description
   var HL = [

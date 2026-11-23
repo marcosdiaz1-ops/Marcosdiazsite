@@ -2,6 +2,7 @@
 
   python3 tools/go_live_search.py           # search-preview/ -> search/, then Spanish search
   python3 tools/go_live_search.py --undo    # put the old KW/Paragon search page back
+  python3 tools/go_live_search.py --sync    # after go-live: publish newer changes made on search-preview/
 
 What it does:
   - Copies search-preview/index.html to search/index.html, but keeps the live page's
@@ -30,10 +31,11 @@ if '--undo' in sys.argv:
     print('Old search pages restored.'); sys.exit(0)
 
 live = open(LIVE).read()
-if 'id="sp-' in live or 'sp-filters' in live:
-    sys.exit('search/ is already the new search. Nothing to do.')
-
-shutil.copy(LIVE, BACKUP); shutil.copy(ES_LIVE, ES_BACKUP)
+SYNC = '--sync' in sys.argv   # after go-live: copy later changes from search-preview/ to the live pages
+if ('id="sp-' in live or 'sp-filters' in live) and not SYNC:
+    sys.exit('search/ is already the new search. To copy newer preview changes over, run with --sync.')
+if not SYNC:
+    shutil.copy(LIVE, BACKUP); shutil.copy(ES_LIVE, ES_BACKUP)
 
 head = re.search(r'<title>.*?<link rel="alternate" hreflang="x-default"[^\n]*\n', live, re.S).group(0)
 new = open(PREVIEW).read()

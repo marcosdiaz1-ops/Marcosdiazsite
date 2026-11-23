@@ -117,6 +117,23 @@ def last_update():
         return ''
 
 # ---------- Small helpers ----------
+NUM_FIELDS = ('bedrooms', 'bathrooms', 'bathsFull', 'bathsHalf', 'bathsThreeQuarter', 'area', 'acres', 'lotSizeArea', 'garageSpaces', 'yearBuilt', 'stories', 'fireplaces')
+def _num(v):
+    if isinstance(v, (int, float)) or v is None: return v
+    try:
+        f = float(str(v).replace(',', '').strip())
+        return int(f) if f.is_integer() else f
+    except ValueError:
+        return None
+def numbers(h):
+    """The MLS sometimes sends numbers as text ("2.5"); make them real numbers so math and formatting work."""
+    p = h.get('property') or {}
+    for k in NUM_FIELDS:
+        if k in p: p[k] = _num(p[k])
+    for k in ('listPrice', 'originalListPrice'):
+        if k in h: h[k] = _num(h[k])
+    return h
+
 def baths(p):
     b = (p.get('bathsFull') or 0) + (p.get('bathsThreeQuarter') or 0) + 0.5 * (p.get('bathsHalf') or 0)
     b = b or p.get('bathrooms') or 0
@@ -649,6 +666,7 @@ def hub_fix(c, n):
 # ---------- Main ----------
 def main():
     raw = fetch_listings()
+    for h in raw: numbers(h)
     homes = [h for h in raw if h.get('mlsId') and h.get('internetEntireListingDisplay') is not False and town_of(h)
              and str((h.get('mls') or {}).get('status') or 'Active').replace(' ', '').lower() in ('active', 'activeundercontract', '')]
     if not homes: sys.exit('No listings could be shown – stopping so the site is not emptied.')
