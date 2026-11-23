@@ -245,6 +245,12 @@
   .hd-status.new i { background: var(--gold); }
   .hd-grid { display: grid; grid-template-columns: 1fr 340px; gap: 36px; margin-top: 26px; align-items: start; }
   .hd-grid > * { min-width: 0; }
+  .hd-galwrap { position: relative; }
+  @media (max-width: 900px) {
+    .hd-grid { grid-template-columns: 1fr; padding: 0 18px; }
+    .hd-side { position: static; margin-top: 8px; }
+    .hd-count { position: absolute; right: 12px; bottom: 12px; background: rgba(0,0,0,.65); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 20px; pointer-events: none; }
+  }
   .hd-head { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
   .hd-price { font-family: var(--sans); font-size: 40px; font-weight: 600; color: var(--ink); line-height: 1.1; }
   .hd-addr { font-size: 19px; color: var(--ink); font-weight: 400; margin-top: 4px; }
