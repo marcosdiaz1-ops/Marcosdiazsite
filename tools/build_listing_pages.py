@@ -418,7 +418,7 @@ def home_page(h, same_town, updated, es, links):
     <p class="lp-crumbs">{crumbs}</p>
     <h1>{e(full)}</h1>
     <div class="lp-price">{price}</div>
-    <div class="lp-stats"><span>{bd} {T(es, "beds", "recámaras")}</span><span>{ba or 0} {T(es, "baths", "baños")}</span>{f"<span>{sq:,} {T(es, 'sq ft', 'pies²')}</span>" if sq else ""}<span>{e(kind)}</span>{f"<span>{T(es, 'Built', 'Construida en')} {p['yearBuilt']}</span>" if p.get('yearBuilt') else ""}</div>
+    <div class="lp-stats"><span>{bd} {T(es, "bed" if str(bd) == "1" else "beds", "recámara" if str(bd) == "1" else "recámaras")}</span><span>{ba or 0} {T(es, "bath" if str(ba) == "1" else "baths", "baño" if str(ba) == "1" else "baños")}</span>{f"<span>{sq:,} {T(es, 'sq ft', 'pies²')}</span>" if sq else ""}<span>{e(kind)}</span>{f"<span>{T(es, 'Built', 'Construida en')} {p['yearBuilt']}</span>" if p.get('yearBuilt') else ""}</div>
   </div></section>
   <section class="lp-body-sec"><div class="lp-wrap">
     <p class="lp-attr">{T(es, "Listing courtesy of", "Cortesía de")} {e(attribution(h))}</p>
