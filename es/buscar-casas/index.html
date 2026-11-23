@@ -1731,13 +1731,19 @@
   function toggleFav(id, h) {
     id = String(id); var v = favs(), i = v.indexOf(id);
     if (i > -1) v.splice(i, 1); else { v.unshift(id); if (h) trackView(h); }
-    setFavs(v);
+    setFavs(v); syncSave(id, i === -1);
     document.querySelectorAll('.fav[data-fav="' + id + '"]').forEach(function (b) {
       var on = i === -1; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
       var sp = b.querySelector('span'); if (sp) sp.textContent = on ? t('Saved', 'Guardada') : t('Save', 'Guardar');
     });
     toast(i === -1 ? t('Saved. Tap “Saved” to see your homes.', 'Guardada. Toque “Guardadas” para verlas.') : t('Removed from saved', 'Quitada de guardadas'));
     if (savedMode && i > -1) showSaved();
+  }
+  // tell the listing alerts system, so saved homes get price cut / open house / pending / sold emails
+  function syncSave(id, on) {
+    var aid = getAid(); if (!ALERTS_URL || !aid) return;
+    var d = new URLSearchParams(); d.set('action', 'save'); d.set('id', aid); d.set('mlsId', String(id)); d.set('on', on ? '1' : '0');
+    fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d, keepalive: true }).catch(function () {});
   }
   function updSaved() { var n = favs().length; $('sp-savedn').textContent = t('Saved', 'Guardadas') + ' (' + n + ')'; }
   document.addEventListener('click', function (e) { var b = e.target.closest('.hd-top .fav'); if (b && cur) toggleFav(b.dataset.fav, cur); });
@@ -1926,7 +1932,7 @@
     var d = new URLSearchParams();
     d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim());
     d.set('freq', f.freq.value); d.set('consent', 'yes'); d.set('botcheck', f.botcheck.value);
-    var aid = getAid() || newId(); d.set('id', aid);
+    var aid = getAid() || newId(); d.set('id', aid); d.set('saved', favs().join(','));
     d.set('lang', document.documentElement.lang || 'en'); d.set('source', location.href.slice(0, 200));
     d.set('q', $('f-q').value.trim()); d.set('minprice', $('f-min').value); d.set('maxprice', $('f-max').value);
     d.set('minbeds', $('f-beds').value); d.set('minbaths', $('f-baths').value); d.set('type', $('f-type').value);
