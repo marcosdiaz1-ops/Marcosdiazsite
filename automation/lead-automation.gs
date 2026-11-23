@@ -73,21 +73,11 @@ function doGet() {
 // Instant push to Marcos's phone (ntfy app): name, what they want, and buttons to call, text or email them
 function pushLead_(lead) {
   if (!NTFY_TOPIC) return;
-  const tel = (lead.phone || '').replace(/[^0-9+]/g, '');
-  const actions = [];
-  if (tel) actions.push({ action: 'view', label: 'Call', url: 'tel:' + tel, clear: false });
-  if (tel) actions.push({ action: 'view', label: 'Text', url: 'sms:' + tel, clear: false });
-  if (lead.email) actions.push({ action: 'view', label: 'Email', url: 'mailto:' + lead.email, clear: false });
-  UrlFetchApp.fetch('https://ntfy.sh', {
-    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-    payload: JSON.stringify({
-      topic: NTFY_TOPIC, priority: 5, tags: ['house'],
-      title: 'New lead: ' + lead.name + (lead.language === 'Español' ? ' (Español)' : ''),
-      message: [lead.looking || 'Website inquiry', lead.timeline, lead.phone, lead.email, lead.message].filter(String).join('\n'),
-      click: tel ? 'tel:' + tel : 'mailto:' + lead.email,
-      actions: actions.slice(0, 3),
-    }),
-  });
+  // Sent by email to ntfy (uses the Gmail permission this script already has). The subject becomes the alert title.
+  // (A richer version with Call/Text buttons needs the "connect to an external service" permission: UrlFetchApp to https://ntfy.sh.)
+  const title = 'New lead: ' + lead.name + (lead.language === 'Español' ? ' (Español)' : '');
+  const body = [lead.looking || 'Website inquiry', lead.timeline, lead.phone ? 'Phone: ' + lead.phone : '', lead.email ? 'Email: ' + lead.email : '', lead.message].filter(String).join('\n');
+  GmailApp.sendEmail('ntfy-' + NTFY_TOPIC + '@ntfy.sh', title, body);
 }
 
 function alertOwner_(lead) {
