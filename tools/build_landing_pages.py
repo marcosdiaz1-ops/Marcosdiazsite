@@ -119,7 +119,7 @@ def page(es, slug, other, p):
 <header class="lp-header">
   <div class="wrap">
     <a href="{'/es/' if es else '/'}" class="brand">
-      <img src="/images/logo.svg" alt="" width="34" height="34">
+      <img src="/images/logo.svg" alt="Marcos Díaz MD monogram logo" width="34" height="34">
       <span class="brand-text light">Marcos Diaz<small>Keller Williams Realty Sioux Falls</small></span>
     </a>
     <a class="lp-call" href="tel:+16058389140">{L('Call / Text', 'Llamar / Texto')}</a>

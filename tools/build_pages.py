@@ -61,7 +61,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
 <header class="site-header" id="header">
   <div class="nav">
     <a href="{home}" class="brand">
-      <img src="{p}images/logo.svg" alt="" width="34" height="34">
+      <img src="{p}images/logo.svg" alt="Marcos Díaz MD monogram logo" width="34" height="34">
       <span class="brand-text">Marcos Diaz<small>Keller Williams Realty</small></span>
     </a>
     <button class="menu-btn" aria-label="{'Abrir menú' if es else 'Open menu'}" aria-expanded="false"><span></span><span></span></button>
@@ -78,7 +78,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
 <footer class="site-footer">
   <div class="wrap footer-inner">
     <div class="footer-brand">
-      <img src="{p}images/logo.svg" alt="" width="40" height="40">
+      <img src="{p}images/logo.svg" alt="Marcos Díaz MD monogram logo" width="40" height="40">
       <span class="brand-text light">Marcos Diaz<small>Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls</small></span>
     </div>
     <div class="footer-links">

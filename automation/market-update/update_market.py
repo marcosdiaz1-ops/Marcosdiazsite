@@ -62,6 +62,26 @@ def apply(path, L, es):
 
 apply(ROOT / 'market/index.html', cfg['en'], False)
 apply(ROOT / 'es/mercado/index.html', cfg['es'], True)
+# Homepage "Market Update" band (EN + ES) — keeps the homepage in step with the full report
+EN_FULL = 'January February March April May June July August September October November December'.split()
+ES_FULL = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split()
+B = cfg['band']  # {"median_chg": "-4.6%", "sold": "203", "sold_chg": "-26%", "supply": "4.0"}
+yr, mo = cfg['month_key'][:4], int(cfg['month_key'][5:7]) - 1
+med = f"${cfg['median']/1000:.1f}K".replace('.0K', 'K')
+fix = lambda s: s.replace('-', '−')
+for path, es in ((ROOT / 'index.html', False), (ROOT / 'es/index.html', True)):
+    t = path.read_text()
+    eyebrow = f'Reporte del mercado · {ES_FULL[mo]} {yr}' if es else f'Market Update · {EN_FULL[mo]} {yr}'
+    rows = (f'<div><dt>{med}</dt><dd>Precio mediano · {fix(B["median_chg"])}</dd></div>\n'
+            f'        <div><dt>{B["sold"]}</dt><dd>Casas vendidas · {fix(B["sold_chg"])}</dd></div>\n'
+            f'        <div><dt>{B["supply"]}</dt><dd>Meses de inventario</dd></div>') if es else (
+            f'<div><dt>{med}</dt><dd>Median price · {fix(B["median_chg"])}</dd></div>\n'
+            f'        <div><dt>{B["sold"]}</dt><dd>Homes sold · {fix(B["sold_chg"])}</dd></div>\n'
+            f'        <div><dt>{B["supply"]}</dt><dd>Months of supply</dd></div>')
+    t, k1 = re.subn(r'(<section class="market-band">.*?<p class="eyebrow light">)[^<]*', lambda m: m.group(1) + eyebrow, t, count=1, flags=re.S)
+    t, k2 = re.subn(r'(<section class="market-band">.*?<dl class="mini">\s*).*?(\s*</dl>)', lambda m: m.group(1) + rows + m.group(2), t, count=1, flags=re.S)
+    assert k1 == k2 == 1, f'{path}: market band not found'
+    path.write_text(t)
 sm = ROOT / 'sitemap.xml'; s = sm.read_text()
 for u in ('https://605homesearch.com/market/', 'https://605homesearch.com/es/mercado/'):
     s, k = re.subn(r'(<loc>' + re.escape(u) + r'</loc>\s*<lastmod>)[^<]*', r'\g<1>' + cfg['updated_iso'], s)

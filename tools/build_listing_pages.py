@@ -373,7 +373,7 @@ def home_page(h, same_town, updated, es, links):
     facts_html = ''.join(f'<li>{k}: <b>{e(v)}</b></li>' for k, v in facts if yes(v))
     schools = [(T(es, 'School district', 'Distrito escolar'), s.get('district')), (T(es, 'Elementary', 'Primaria'), s.get('elementarySchool')),
                (T(es, 'Middle', 'Secundaria'), s.get('middleSchool')), (T(es, 'High', 'Preparatoria'), s.get('highSchool'))]
-    schools_html = ''.join(f'<li>{k}: <b>{e(v)}</b></li>' for k, v in schools if v)
+    schools_html = ''.join(f'<li>{k}: <b>{e(fix_typos(v))}</b></li>' for k, v in schools if v)
     pick = lambda k: (links[k][2] if es else links[k][1]) if links.get(k) else None
     tlink = pick('town') or T(es, '/homes-for-sale/', '/es/casas-en-venta/')
     more = sorted((x for x in same_town if x['mlsId'] != h['mlsId']), key=lambda x: abs((x.get('listPrice') or 0) - lp))
@@ -547,7 +547,11 @@ def nice_sub(s):
     s = re.sub(r'\b(ADDN?|ADDITION|ADD\.?|SUBD?|SUBDIVISION|PLAT|PH(ASE)?\s*\w+)\b\.?', '', str(s or ''), flags=re.I)
     s = re.sub(r'\s+', ' ', s).strip(' -,')
     return s.title() if s.isupper() or s.islower() else s
+def fix_typos(s):  # spelling mistakes that come in from the MLS feed
+    return re.sub(r'\bComminty\b', 'Community', str(s or ''))
+
 def nice_district(s):
+    s = fix_typos(s)
     s = re.sub(r'\bschool district\b|\bsd\b|\bdist(rict)?\b', '', str(s or ''), flags=re.I)
     s = re.sub(r'\s+', ' ', s).strip(' -,')
     return s.title() if s.isupper() or s.islower() else s
