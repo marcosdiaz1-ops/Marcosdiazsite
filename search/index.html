@@ -897,6 +897,20 @@
   };
 
   // ---- Every home in the area as a pin (crowded pins grouped into a numbered bubble) ----
+  // Listings service sometimes answers "too many requests" (429) for a moment: wait and try again before giving up
+  function lfetch(url, opts, tries) {
+    tries = tries == null ? 3 : tries;
+    return fetch(url, opts).then(function (r) {
+      if ((r.status === 429 || r.status >= 500) && tries > 0) {
+        var wait = (parseFloat(r.headers.get('Retry-After')) * 1000) || (1200 * (4 - tries));
+        return new Promise(function (res) { setTimeout(res, Math.min(wait, 5000)); }).then(function () { return lfetch(url, opts, tries - 1); });
+      }
+      return r;
+    }, function (err) {
+      if (tries > 0) return new Promise(function (res) { setTimeout(res, 1200); }).then(function () { return lfetch(url, opts, tries - 1); });
+      throw err;
+    });
+  }
   var allPins = null, pinReq = 0;
   // "New" = listed in the last 7 days (by list date; the MLS days-on-market field is 0 on many older listings)
   function isNewH(h) {
@@ -907,7 +921,7 @@
   function loadPins() {
     var my = ++pinReq;
     var u = query(false).replace(/([?&])limit=\d+/, '$1limit=' + PAGE) + '&pins=1';
-    fetch(u, { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (data) {
+    lfetch(u, { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (data) {
       if (my !== pinReq) return;
       // the pin list is small (location + price); an older listings service sends full listings instead, so keep the old pins then
       allPins = (Array.isArray(data) && (!data.length || data[0].lat != null)) ? data : null;
@@ -995,7 +1009,7 @@
     if (!more && savedMode) { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); }
     if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); if (LIVE) loadPins(); syncUrl(); }
     busy(true);
-    fetch(query(more), { headers: HEADERS })
+    lfetch(query(more), { headers: HEADERS })
       .then(function (r) { if (!r.ok) throw new Error(r.status); if (!more) { var tc = parseInt(r.headers.get('X-Total-Count'), 10); totalCount = isFinite(tc) ? tc : null; } return r.json(); })
       .then(function (data) {
         if (!more) results = LIVE ? [] : [sampleListing()];
@@ -1299,7 +1313,7 @@
     if (savedMode || !ids.length) { box.hidden = true; return; }
     Promise.all(ids.slice(0, 10).map(function (id) {
       if (seen[id]) return seen[id];
-      return fetch(API + '/' + encodeURIComponent(id) + '?include=compliance', { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+      return lfetch(API + '/' + encodeURIComponent(id) + '?include=compliance', { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
     })).then(function (list) {
       list = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false && !/closed|sold|withdrawn|expired|cancel/i.test(String((h.mls || {}).status || '')); });
       list.forEach(function (h) { seen[h.mlsId] = h; });
@@ -1340,7 +1354,7 @@
     return '<div class="hd-oh"><b>' + t('Open house: ', 'Casa abierta: ') + '</b>' + l.slice(0, 3).map(function (o) { return esc(ohWhen(o)); }).join(' · ') +
       '<br><a href="sms:+16058389140?&body=' + encodeURIComponent(msg) + '">' + t('Want me to meet you there? Text me', '¿Quiere que le acompañe? Mándeme un texto') + '</a></div>';
   }
-  if (LIVE) fetch(LIVE_API.replace(/\/$/, '') + '/openhouses').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (list) {
+  if (LIVE) lfetch(LIVE_API.replace(/\/$/, '') + '/openhouses').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (list) {
     if (!Array.isArray(list) || !list.length) return;
     list.forEach(function (o) { (OH[o.mlsId] = OH[o.mlsId] || []).push(o); });
     if (results.length && !$('sp-modal').classList.contains('open')) render(false);
@@ -1623,7 +1637,7 @@
   function getHome(id) {
     id = String(id);
     if (seen[id]) return Promise.resolve(seen[id]);
-    if (!homeReq[id]) homeReq[id] = fetch(API + '/' + encodeURIComponent(id) + '?include=compliance', { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    if (!homeReq[id]) homeReq[id] = lfetch(API + '/' + encodeURIComponent(id) + '?include=compliance', { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (h) { if (h && h.mlsId) seen[id] = h; return h; }).catch(function (e) { delete homeReq[id]; throw e; });
     return homeReq[id];
   }
@@ -1746,7 +1760,7 @@
     $('sp-cmpbar').classList.toggle('on', ids.length > 1); updCmp();
     if (!ids.length) { results = []; render(false); $('sp-count').textContent = t('No saved homes yet. Tap the ♥ on any home to save it.', 'Aún no hay casas guardadas. Toque el ♥ en cualquier casa para guardarla.'); return; }
     $('sp-count').textContent = t('Loading your saved homes…', 'Cargando sus casas guardadas…');
-    Promise.all(ids.map(function (id) { return fetch(API + '/' + encodeURIComponent(id) + '?include=compliance').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }))
+    Promise.all(ids.map(function (id) { return lfetch(API + '/' + encodeURIComponent(id) + '?include=compliance').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }))
       .then(function (list) {
         results = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false; });
         render(true);

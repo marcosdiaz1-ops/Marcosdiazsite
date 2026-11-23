@@ -15,7 +15,7 @@ and points the "See homes for sale" buttons on the area pages at the new town pa
 
 Test without the feed:  LISTINGS_FILE=sample.json python3 tools/build_listing_pages.py
 """
-import os, re, sys, json, html, datetime, urllib.request, urllib.parse, io, contextlib
+import os, re, sys, json, html, datetime, urllib.request, urllib.error, urllib.parse, io, contextlib
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -100,7 +100,12 @@ def fetch_listings():
     while True:
         url = API + '/properties?' + urllib.parse.urlencode({'limit': 500, 'offset': offset, 'include': 'compliance'})
         req = urllib.request.Request(url, headers={'User-Agent': '605homesearch-builder', 'Accept': 'application/json'})
-        batch = json.load(urllib.request.urlopen(req, timeout=60))
+        for attempt in range(4):  # the listings service can answer 429 "too many requests" for a moment
+            try:
+                batch = json.load(urllib.request.urlopen(req, timeout=60)); break
+            except urllib.error.HTTPError as err:
+                if err.code not in (429, 500, 502, 503) or attempt == 3: raise
+                import time; time.sleep(5 * (attempt + 1))
         out += batch
         if len(batch) < 500 or offset > 20000: break
         offset += 500
