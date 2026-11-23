@@ -207,7 +207,7 @@ CSS = '''<style>
 .lp-gal img:first-child{grid-column:1/-1;height:clamp(220px,52vw,560px)}
 .lp-btns{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
 .lp-btn{display:inline-block;padding:12px 18px;border-radius:10px;font-weight:500;text-decoration:none;border:1.5px solid var(--navy);color:var(--navy)}
-.lp-btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}
+.lp-btn.gold{background:var(--gold-btn,#9a6b3c);border-color:var(--gold-btn,#9a6b3c);color:#fff}
 .lp-sec{margin:30px 0}.lp-sec h2{font-size:1.5rem;margin-bottom:10px}
 .lp-facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 24px;list-style:none;padding:0}
 .lp-facts li{border-bottom:1px solid var(--line);padding:7px 0}
@@ -216,7 +216,7 @@ CSS = '''<style>
 .lp-card:hover{box-shadow:0 8px 24px rgba(19,32,59,.12)}
 .lp-img{display:block;position:relative;aspect-ratio:3/2;background:#e9e3d8}
 .lp-img{overflow:hidden}.lp-img img{width:100%;height:100%;object-fit:cover;display:block}
-.lp-new{position:absolute;left:10px;top:10px;background:var(--gold);color:#fff;font-size:12px;padding:3px 8px;border-radius:6px}
+.lp-new{position:absolute;left:10px;top:10px;background:var(--gold-btn,#9a6b3c);color:#fff;font-size:12px;padding:3px 8px;border-radius:6px}
 .lp-hl{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.25);font-weight:600}
 .lp-hls{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}.lp-hls span{background:#f1ebe2;color:var(--navy);border-radius:20px;padding:6px 12px;font-size:.92rem;font-weight:500}
 .lp-cut{position:absolute;right:10px;top:10px;background:#1f6b45;color:#fff;font-size:12px;padding:3px 8px;border-radius:6px}
@@ -237,7 +237,7 @@ CSS = '''<style>
 .lp-alert form{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:14px}
 .lp-alert input[type=text],.lp-alert input[type=email],.lp-alert input[type=tel]{font:inherit;font-size:16px;padding:11px 12px;border-radius:10px;border:0;width:100%}
 .lp-alert .ok{grid-column:1/-1;display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.45}.lp-alert .ok input{margin-top:3px;flex:none;accent-color:var(--gold)}
-.lp-alert button{grid-column:1/-1;font:inherit;font-weight:500;background:var(--gold);color:#fff;border:0;border-radius:10px;padding:13px;cursor:pointer}
+.lp-alert button{grid-column:1/-1;font:inherit;font-weight:500;background:var(--gold-btn,#9a6b3c);color:#fff;border:0;border-radius:10px;padding:13px;cursor:pointer}
 .lp-alert .msg{grid-column:1/-1;margin:0;min-height:1em}
 .lp-foot{font-size:.8rem;color:#666}
 </style>

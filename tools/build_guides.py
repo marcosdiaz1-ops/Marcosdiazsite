@@ -47,7 +47,7 @@ body {{ font-family: "Jost", Arial, sans-serif; font-weight: 300; color: #3d4356
 .content ul.check li {{ padding-left: 24px; position: relative; break-inside: avoid; }}
 .content ul.check li::before {{ content: ""; position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border: 1px solid #b98b5c; }}
 .tip {{ background: #f8f5f0; border-left: 2px solid #b98b5c; padding: 10px 14px; font-size: 10pt; }}
-.sources {{ margin-top: 22px; font-size: 8pt; color: #8a8579; border-top: 1px solid #e2d8ca; padding-top: 10px; }}
+.sources {{ margin-top: 22px; font-size: 8pt; color: #6b665b; border-top: 1px solid #e2d8ca; padding-top: 10px; }}
 .back {{ width: 8.5in; height: 11in; background: #f8f5f0; page-break-before: always; padding: 1in .9in; position: relative; }}
 .back .card {{ display: grid; grid-template-columns: 2.3in 1fr; gap: .45in; align-items: center; margin-top: 1.4in; }}
 .back img.photo {{ width: 2.3in; height: 3in; object-fit: cover; object-position: top; }}
@@ -56,7 +56,7 @@ body {{ font-family: "Jost", Arial, sans-serif; font-weight: 300; color: #3d4356
 .back p {{ margin: 0 0 8px; }}
 .back .contact {{ margin-top: 18px; font-size: 11.5pt; color: #13203b; line-height: 1.9; }}
 .back .contact b {{ font-weight: 500; }}
-.back .legal {{ position: absolute; left: .9in; right: .9in; bottom: .7in; font-size: 7.5pt; color: #8a8579; line-height: 1.5; }}
+.back .legal {{ position: absolute; left: .9in; right: .9in; bottom: .7in; font-size: 7.5pt; color: #6b665b; line-height: 1.5; }}
 '''
 
 def build(key, lang):

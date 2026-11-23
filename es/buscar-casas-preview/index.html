@@ -33,7 +33,7 @@
   .pill-b:hover { border-color: var(--navy); }
   .pill-b.on { background: #eef1f7; border-color: var(--navy); }
   .pill-b .n { background: var(--navy); color: #fff; font-size: 12px; border-radius: 10px; padding: 0 6px; line-height: 18px; }
-  .sp-savebtn { font: inherit; font-size: 15px; font-weight: 500; color: #fff; background: var(--gold); border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; white-space: nowrap; }
+  .sp-savebtn { font: inherit; font-size: 15px; font-weight: 500; color: #fff; background: var(--gold-btn); border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; white-space: nowrap; }
   .sp-savebtn:hover { background: var(--gold-ink); }
   .pop { display: none; position: absolute; left: 0; top: calc(100% + 8px); z-index: 950; width: 340px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 14px 36px rgba(19,32,59,.2); padding: 16px; }
   .pop.open { display: block; }
@@ -295,7 +295,7 @@
   .hd-b1 { background: var(--navy); color: #fff; }
   .hd-b1:hover { background: var(--navy-deep); }
   .hd-b2 { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
-  .hd-b3 { background: var(--gold); color: #fff; }
+  .hd-b3 { background: var(--gold-btn); color: #fff; }
   .hd-note { font-size: 13px; color: var(--text); margin-top: 12px; line-height: 1.45; }
   .hd-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 24px; line-height: 1.5; }
   /* Photo viewer */
@@ -340,7 +340,7 @@
   .sp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
   .sp-head .sp-count { margin: 0; }
   .al-open { font: inherit; font-size: 14px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid var(--gold); border-radius: 30px; padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-  .al-open:hover { background: var(--gold); color: #fff; }
+  .al-open:hover { background: var(--gold-btn); color: #fff; }
   .al-open svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .al { position: fixed; inset: 0; background: rgba(13,23,48,.6); z-index: 3200; display: none; align-items: center; justify-content: center; padding: 16px; }
   .al.open { display: flex; }
@@ -355,7 +355,7 @@
   .al-freq label:has(input:checked) { border-color: var(--gold); background: #fbf5ee; font-weight: 500; }
   .al-ok { display: flex; gap: 8px; align-items: flex-start; font-size: 13px !important; font-weight: 300 !important; line-height: 1.45; margin-top: 14px !important; }
   .al-ok input { margin-top: 3px; accent-color: var(--gold); }
-  .al-send { width: 100%; font: inherit; font-size: 16px; font-weight: 500; background: var(--gold); color: #fff; border: 0; border-radius: 10px; padding: 13px; margin-top: 14px; cursor: pointer; }
+  .al-send { width: 100%; font: inherit; font-size: 16px; font-weight: 500; background: var(--gold-btn); color: #fff; border: 0; border-radius: 10px; padding: 13px; margin-top: 14px; cursor: pointer; }
   .al-send:disabled { opacity: .6; }
   .al-x { position: absolute; right: 10px; top: 8px; background: none; border: 0; font-size: 28px; cursor: pointer; color: var(--ink); }
   .al-msg { font-size: 14px; margin-top: 10px; color: #b3261e; }
@@ -376,7 +376,7 @@
   .sp-headr { display: flex; gap: 8px; flex-wrap: wrap; }
   .sp-cmpbar { display: none; align-items: center; justify-content: space-between; gap: 10px; background: var(--navy); color: #fff; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 14px; }
   .sp-cmpbar.on { display: flex; }
-  .sp-cmpbar button { font: inherit; font-weight: 500; background: var(--gold); color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+  .sp-cmpbar button { font: inherit; font-weight: 500; background: var(--gold-btn); color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; cursor: pointer; }
   .sp-cmpbar button:disabled { opacity: .5; }
   .sp-card .cmp { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink); margin-top: 8px; }
   .sp-card .cmp input { accent-color: var(--gold); width: 16px; height: 16px; }
@@ -542,7 +542,7 @@
       </form>
       </div>
 
-      <div class="sp-toggle"><button type="button" id="v-toggle"></button><span class="sep"></span><button type="button" id="sort-btn"><svg viewBox="0 0 24 24"><path d="M7 4v16M3 16l4 4 4-4M14 6h7M14 11h5M14 16h3"/></svg><span id="sort-btn-t">Sort</span></button></div>
+      <div class="sp-toggle"><button type="button" id="v-toggle" aria-label="Map or list"></button><span class="sep"></span><button type="button" id="sort-btn"><svg viewBox="0 0 24 24"><path d="M7 4v16M3 16l4 4 4-4M14 6h7M14 11h5M14 16h3"/></svg><span id="sort-btn-t">Sort</span></button></div>
 
       <div class="sp-body show-map" id="sp-body">
         <div id="sp-map"></div>
@@ -1065,7 +1065,7 @@
     var ph = (h.photos || []).slice(0, 6), alt = esc(t('Photo of ', 'Foto de ') + (showAddr(h) ? cleanAddr((h.address || {}).full) : (h.address || {}).city || ''));
     var slides = ph.length ? ph.map(function (u, k) { return '<div class="sl"><img src="' + esc(u) + '" alt="' + alt + '"' + (k ? ' loading="lazy"' : '') + '></div>'; }).join('') : '<div class="sl"></div>';
     var st = statusTxt(h), hl = /^(Active|Activa)$/.test(st) ? highlights(h)[0] : '';
-    return '<div class="phw"><div class="ph">' + slides + '</div><span class="st' + (hl ? ' hl' : '') + '">' + esc(hl || st) + '</span>' + favBtn(h) +
+    return '<div class="phw"><div class="ph" tabindex="0" role="group" aria-label="' + alt + '">' + slides + '</div><span class="st' + (hl ? ' hl' : '') + '">' + esc(hl || st) + '</span>' + favBtn(h) +
       (ph.length > 1 ? '<button type="button" class="nav p" aria-label="' + t('Previous photo', 'Foto anterior') + '">‹</button><button type="button" class="nav n" aria-label="' + t('Next photo', 'Foto siguiente') + '">›</button><div class="dots">' + ph.map(function (u, k) { return '<i' + (k ? '' : ' class="on"') + '></i>'; }).join('') + '</div>' : '') + '</div>';
   }
   function render(fit) {
@@ -1183,7 +1183,7 @@
 
     $('sp-detail').innerHTML =
       '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>' + t('Back to search', 'Volver a la búsqueda') + '</button>' +
-      '<span>' + favBtn(h, true) + '<a class="hd-txt" id="hd-txt" href="' + textHref(h) + '"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></svg><span class="lbl">' + t('Text', 'Texto') + '</span></a><button type="button" id="hd-share"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg><span class="lbl">' + t('Share', 'Compartir') + '</span></button></span></div>' +
+      '<span>' + favBtn(h, true) + '<a class="hd-txt" id="hd-txt" href="' + textHref(h) + '" aria-label="' + t('Text this home to someone', 'Mandar esta casa por texto') + '"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></svg><span class="lbl">' + t('Text', 'Texto') + '</span></a><button type="button" id="hd-share" aria-label="' + t('Share', 'Compartir') + '"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg><span class="lbl">' + t('Share', 'Compartir') + '</span></button></span></div>' +
       '<div class="hd-galwrap">' +
         '<div class="hd-gal n' + Math.min(n, 5) + '" id="hd-gal">' + (window.innerWidth <= 900 ? mobileTiles : tiles) + '</div>' +
         '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? t('New listing', 'Nueva en el mercado') : esc(statusTxt(h))) + '</span>' +

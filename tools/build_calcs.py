@@ -46,20 +46,20 @@ AFFORD_CSS = '''<style>
   .af-f input:focus, .af-f select:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
   .af-row { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .af-f input[type=range] { width: 100%; accent-color: var(--gold); height: 30px; cursor: pointer; }
-  .af-hint { font-size: .85rem; color: #8a8579; margin-top: 4px; }
+  .af-hint { font-size: .85rem; color: #6b665b; margin-top: 4px; }
   .af-tune { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 8px; }
   .af-tune summary { cursor: pointer; font-weight: 500; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 8px; }
   .af-tune summary::-webkit-details-marker { display: none; }
   .af-tune .af-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 18px; }
   .af-tune .af-f input { font-size: 1.1rem; }
   .af-rate { font-size: .85rem; color: var(--text); margin-top: 6px; }
-  .af-note { font-size: .82rem; color: #8a8579; margin-top: 18px; }
+  .af-note { font-size: .82rem; color: #6b665b; margin-top: 18px; }
   .af-out { background: var(--navy); color: #d9d2c6; padding: 34px 32px; border-radius: 18px; position: sticky; top: 100px; }
   .af-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: rgba(255,255,255,.07); border-radius: 12px; padding: 5px; margin-bottom: 22px; }
   .af-tabs button { font: inherit; color: #d9d2c6; background: none; border: 0; border-radius: 9px; padding: 8px 4px; cursor: pointer; line-height: 1.25; }
   .af-tabs button b { display: block; color: #fff; font-weight: 500; font-size: 1.05rem; }
   .af-tabs button span { font-size: .78rem; }
-  .af-tabs button.on { background: var(--gold); color: #fff; }
+  .af-tabs button.on { background: var(--gold-btn); color: #fff; }
   .af-tabs button.on span { color: #fff; }
   .af-label { font-size: .72rem; letter-spacing: .24em; text-transform: uppercase; color: var(--gold-soft); }
   .af-price { font-family: var(--serif); font-size: clamp(3rem, 6vw, 4.2rem); color: #fff; line-height: 1.05; margin: 4px 0 6px; }
@@ -69,7 +69,7 @@ AFFORD_CSS = '''<style>
   .af-lines dd { color: #fff; margin: 0; }
   .af-lines .big dd, .af-lines .big dt { color: #fff; font-weight: 500; }
   .af-btn { display: block; text-align: center; text-decoration: none; border-radius: 10px; padding: 14px; font-weight: 500; font-size: 1rem; margin-top: 10px; }
-  .af-b1 { background: var(--gold); color: #fff !important; }
+  .af-b1 { background: var(--gold-btn); color: #fff !important; }
   .af-b1:hover { background: var(--gold-ink); }
   .af-b2 { background: #fff; color: var(--navy) !important; }
   .af-b3 { border: 1px solid rgba(255,255,255,.4); color: #fff !important; }
