@@ -60,8 +60,9 @@ export default {
               .map(o => ({ mlsId: o.listing.mlsId, start: o.startTime, end: o.endTime || null })));
           } catch (e) { body = '[]'; }
         }
-        res = new Response(body, { status: r.ok ? 200 : r.status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=900' } });
-        if (r.ok) ctx.waitUntil(cache.put(key, res.clone()));
+        // if the feed doesn't include open houses yet, answer "none" and check again in an hour instead of on every visit
+        res = new Response(body, { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (r.ok ? 900 : 3600) } });
+        ctx.waitUntil(cache.put(key, res.clone()));
       }
       const out = new Response(res.body, res);
       Object.entries(headers).forEach(([k, v]) => out.headers.set(k, v));

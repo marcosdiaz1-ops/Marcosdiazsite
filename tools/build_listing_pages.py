@@ -179,6 +179,10 @@ def highlights(h, es=False):
     if (p.get('fireplaces') or 0) > 0: out.append(T2('Fireplace', 'Chimenea'))
     return out
 
+def px(u, w):
+    """Smaller copy of an MLS photo (they come at ~3000px / 1 MB). The two numbers after the photo number are max width/height."""
+    return re.sub(r'(/ParagonImages/Property/[^/]+/[^/]+/\d+/\d+/)\d+/\d+/', lambda m: f'{m.group(1)}{w}/{round(w * 3 / 4)}/', str(u or ''))
+
 def card(h, href, es=False):
     p, ph = h.get('property') or {}, (h.get('photos') or [None])[0]
     dom = (h.get('mls') or {}).get('daysOnMarket')
@@ -189,7 +193,7 @@ def card(h, href, es=False):
     where = (street(h) + ', ' if street(h) else '') + town_of(h)
     alt = ('Casa en venta: ' if es else 'Home for sale: ') + where
     return (f'<a class="lp-card" href="{href}">'
-            + (f'<span class="lp-img"><img src="{e(ph)}" alt="{e(alt)}" loading="lazy" width="400" height="267">{tag}</span>' if ph else f'<span class="lp-img lp-noimg">{tag}</span>')
+            + (f'<span class="lp-img"><img src="{e(px(ph, 640))}" alt="{e(alt)}" loading="lazy" width="400" height="267">{tag}</span>' if ph else f'<span class="lp-img lp-noimg">{tag}</span>')
             + f'<span class="lp-body"><b>{money(h.get("listPrice"))}</b>' + (f'<em class="lp-mo">{"Aprox." if es else "Est."} {money(payment(h))}{"/mes" if es else "/mo"}*</em>' if payment(h) else '') + f'<span>{e(bd)}</span><span>{e(where)}</span>'
             + f'<small>{e(("Cortesía de " if es else "Listing courtesy of ") + attribution(h))}</small></span></a>')
 
@@ -329,7 +333,7 @@ def home_page(h, same_town, updated, es, links):
         desc = (f"{price} · {bd} bed, {ba} bath" + (f", {sq:,} sq ft" if sq else '') + f" {kind.lower()} for sale in {town}, SD"
                 + (f" (MLS #{mls_no})" if mls_no else '') + '. See photos, details and schedule a showing with Marcos Diaz, Keller Williams Realty Sioux Falls.')
     photos = h.get('photos') or []
-    gal = ''.join(f'<img src="{e(u)}" alt="{e(T(es, "Photo %d of ", "Foto %d de ") % (i + 1) + full)}" width="1200" height="800"' + (' loading="lazy"' if i else ' fetchpriority="high"') + '>'
+    gal = ''.join(f'<img src="{e(px(u, 1600 if i == 0 else 1200))}" alt="{e(T(es, "Photo %d of ", "Foto %d de ") % (i + 1) + full)}" width="1200" height="800"' + (' loading="lazy"' if i else ' fetchpriority="high"') + '>'
                   for i, u in enumerate(photos[:7]))
     live = T(es, '/search/', '/es/buscar-casas/') + f"#home={h['mlsId']}"
     which = st or 'MLS #' + str(mls_no)
@@ -423,7 +427,7 @@ def home_page(h, same_town, updated, es, links):
 {ALERT_JS}
 '''
     _page(path, title, desc, body, lang='es' if es else 'en', canonical=SITE + url, alt_es=es_url, alt_en=en_url, head_extra=head, news=False)
-    if photos: set_og_image(path, photos[0], full)
+    if photos: set_og_image(path, px(photos[0], 1200), full)
     return url
 
 # ---------- Collection pages (towns, prices, bedrooms, neighborhoods, districts...) ----------
@@ -480,7 +484,7 @@ def coll_page(c, updated, es):
     _page(url.strip('/') + '/index.html', f'{title} | Marcos Diaz', desc, body, lang='es' if es else 'en', canonical=SITE + url,
           alt_es=c.es_url, alt_en=c.en_url, head_extra=CSS + alts(c.en_url, c.es_url))
     photo = next((x['photos'][0] for x in homes if x.get('photos')), None)
-    if photo: set_og_image(url.strip('/') + '/index.html', photo, h1)
+    if photo: set_og_image(url.strip('/') + '/index.html', px(photo, 1200), h1)
     return url
 
 # ---------- What goes in each set ----------

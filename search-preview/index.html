@@ -1043,10 +1043,15 @@
     });
     return (h._hl = out);
   }
+  // MLS photos come at full camera size (about 3000px, 1 MB each). The MLS photo server can send a smaller copy:
+  // the two numbers after the photo number are the largest width and height. 800px is about 1/14th the download.
+  function px(u, w) {
+    return String(u || '').replace(/(\/ParagonImages\/Property\/[^\/]+\/[^\/]+\/\d+\/\d+\/)\d+\/\d+\//, '$1' + w + '/' + Math.round(w * 3 / 4) + '/');
+  }
   // up to 6 photos per card: swipe on a phone, arrows on a computer
   function cardPhotos(h) {
     var ph = (h.photos || []).slice(0, 6), alt = esc(t('Photo of ', 'Foto de ') + (showAddr(h) ? cleanAddr((h.address || {}).full) : (h.address || {}).city || ''));
-    var slides = ph.length ? ph.map(function (u, k) { return '<div class="sl"><img src="' + esc(u) + '" alt="' + alt + '"' + (k ? ' loading="lazy"' : '') + '></div>'; }).join('') : '<div class="sl"></div>';
+    var slides = ph.length ? ph.map(function (u, k) { return '<div class="sl"><img src="' + esc(px(u, 800)) + '" alt="' + alt + '"' + (k ? ' loading="lazy"' : '') + '></div>'; }).join('') : '<div class="sl"></div>';
     var st = statusTxt(h), hl = /^(Active|Activa)$/.test(st) ? highlights(h)[0] : '';
     return '<div class="phw"><div class="ph" tabindex="0" role="group" aria-label="' + alt + '">' + slides + '</div><span class="st' + (hl ? ' hl' : '') + '">' + esc(hl || st) + '</span>' + favBtn(h) +
       (ph.length > 1 ? '<button type="button" class="nav p" aria-label="' + t('Previous photo', 'Foto anterior') + '">‹</button><button type="button" class="nav n" aria-label="' + t('Next photo', 'Foto siguiente') + '">›</button><div class="dots">' + ph.map(function (u, k) { return '<i' + (k ? '' : ' class="on"') + '></i>'; }).join('') + '</div>' : '') + '</div>';
@@ -1158,8 +1163,8 @@
     var msg = t("Hi Marcos, I'd like to see ", 'Hola Marcos, quiero ver ') + street + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
     var sms = 'sms:+16058389140?&body=' + encodeURIComponent(msg);
     var book = BOOK_URL + '?a1=' + encodeURIComponent(t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : ''));
-    var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="' + t('Open photo ', 'Abrir foto ') + (k + 1) + '"></button>'; }).join('');
-    var mobileTiles = photos.map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(u) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
+    var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(px(u, k ? 800 : 1600)) + '\')" aria-label="' + t('Open photo ', 'Abrir foto ') + (k + 1) + '"></button>'; }).join('');
+    var mobileTiles = photos.map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(px(u, 1024)) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
     var isNew = dom != null && dom <= 7;
     var remarks = h.remarks || '';
     var hasMap = !!(showAddr(h) && h.geo && h.geo.lat);
@@ -1262,7 +1267,7 @@
       box.innerHTML = '<div class="sp-recent-h"><b>' + t('Pick up where you left off', 'Casas que vio') + '</b><button type="button" id="sp-recent-x">' + t('Clear', 'Borrar') + '</button></div>' +
         '<div class="hd-simrow">' + list.map(function (o) {
           var p = o.property || {}, a = o.address || {}, ph = (o.photos || [])[0];
-          return '<button type="button" class="hd-sim" data-rec="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(ph) + '\')"' : '') + '>' + (cut(o) ? '<span>↓ ' + t('Price cut', 'Bajó de precio') + '</span>' : '') + '</div>' +
+          return '<button type="button" class="hd-sim" data-rec="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(px(ph, 640)) + '\')"' : '') + '>' + (cut(o) ? '<span>↓ ' + t('Price cut', 'Bajó de precio') + '</span>' : '') + '</div>' +
             '<div class="tx"><b>' + money(o.listPrice) + '</b>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(o) + t(' ba', ' baños') + '<br>' + (showAddr(o) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city || '') + '<small>' + attrHtml(o, false) + '</small></div></button>';
         }).join('') + '</div>';
       box.hidden = false;
@@ -1414,7 +1419,7 @@
       row.innerHTML = list.map(function (o) {
         simHomes[o.mlsId] = o;
         var p = o.property || {}, a = o.address || {}, mi = Math.sqrt(dist(o)), ph = (o.photos || [])[0];
-        return '<button type="button" class="hd-sim" data-sim="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(ph) + '\')"' : '') + '><span>' + (mi < 0.1 ? t('Next door', 'Al lado') : mi.toFixed(1) + t(' mi away', ' millas')) + '</span></div>' +
+        return '<button type="button" class="hd-sim" data-sim="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(px(ph, 640)) + '\')"' : '') + '><span>' + (mi < 0.1 ? t('Next door', 'Al lado') : mi.toFixed(1) + t(' mi away', ' millas')) + '</span></div>' +
           '<div class="tx"><b>' + money(o.listPrice) + '</b>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(o) + t(' ba', ' baños') + (p.area ? ' · ' + p.area.toLocaleString() + t(' sq ft', ' pies²') : '') +
           '<br>' + (showAddr(o) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city || '') + '<small>' + attrHtml(o, false) + '</small></div></button>';
       }).join('');
@@ -1591,7 +1596,7 @@
   // Photo viewer
   function openLb(k) {
     var ph = (cur && cur.photos) || []; if (!ph.length) return;
-    $('hd-lb-track').innerHTML = ph.map(function (u) { return '<img src="' + esc(u) + '" alt="" loading="lazy">'; }).join('');
+    $('hd-lb-track').innerHTML = ph.map(function (u) { return '<img src="' + esc(px(u, 2048)) + '" alt="" loading="lazy">'; }).join('');
     $('hd-lb').classList.add('open');
     var tr = $('hd-lb-track');
     requestAnimationFrame(function () { tr.scrollLeft = k * tr.clientWidth; lbCount(); });
@@ -1705,7 +1710,7 @@
     var num = function (f) { return hs.map(function (h) { var v = f(h); return typeof v === 'number' && isFinite(v) ? v : null; }); };
     var best = function (vals, low) { var ok = vals.filter(function (v) { return v != null; }); if (ok.length < 2) return -1; var b = low ? Math.min.apply(null, ok) : Math.max.apply(null, ok); return ok.filter(function (v) { return v === b; }).length === 1 ? vals.indexOf(b) : -1; };
     var rows = [
-      ['', hs.map(function (h) { return (h.photos && h.photos[0] ? '<img src="' + esc(h.photos[0]) + '" alt="">' : ''); })],
+      ['', hs.map(function (h) { return (h.photos && h.photos[0] ? '<img src="' + esc(px(h.photos[0], 400)) + '" alt="">' : ''); })],
       [t('Price', 'Precio'), num(function (h) { return h.listPrice; }), money, true],
       ['$/sq ft', num(function (h) { return h.listPrice && (h.property || {}).area ? h.listPrice / h.property.area : null; }), money, true],
       [t('Beds', 'Recámaras'), num(function (h) { return (h.property || {}).bedrooms; }), String, false],
@@ -1780,7 +1785,7 @@
     var p = h.property || {}, a = h.address || {};
     var street = showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible');
     var photo = (h.photos && h.photos[0]) || '';
-    $('tr-head').innerHTML = (photo ? '<img src="' + esc(photo) + '" alt="">' : '') +
+    $('tr-head').innerHTML = (photo ? '<img src="' + esc(px(photo, 400)) + '" alt="">' : '') +
       '<div><h2 id="tr-h">' + t('Request a showing', 'Solicitar una visita') + '</h2>' +
       '<p><b>' + esc(street) + '</b>, ' + esc(a.city || '') + '<br>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba', ' baños') + (p.area ? ' · ' + p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + ' · ' + money(h.listPrice) + '</p></div>';
     $('tr-note').textContent = t('Pick a time that works for you. I’ll confirm it with the seller’s agent and get back to you. Questions? Call or text 605-838-9140.', 'Escoja la hora que le convenga. La confirmaré con el agente del vendedor y le avisaré. ¿Preguntas? Llame o envíe un texto al 605-838-9140.');
@@ -1892,7 +1897,7 @@
     if (!hs.length) return '';
     return '<div class="ac-h">' + t('Homes for sale', 'Casas en venta') + '</div>' + hs.map(function (x) {
       var h = x.h, a = h.address || {}, p = h.property || {};
-      return '<div class="ac-i" role="option" data-k="' + acItems.indexOf(x) + '"><img src="' + esc((h.photos || [])[0] || '') + '" alt=""><div><b>' + esc(showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible')) + '</b><small>' +
+      return '<div class="ac-i" role="option" data-k="' + acItems.indexOf(x) + '"><img src="' + esc(px((h.photos || [])[0] || '', 200)) + '" alt=""><div><b>' + esc(showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible')) + '</b><small>' +
         esc((a.city || '') + ' · ' + money(h.listPrice) + ' · ' + (p.bedrooms || 0) + t(' bd', ' rec') + (h.listingId ? ' · MLS #' + h.listingId : '')) + '</small></div></div>';
     }).join('');
   }
