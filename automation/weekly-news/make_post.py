@@ -1,8 +1,16 @@
 import re, sys, json, pathlib
-def build(template, out, slug_url, alt_en, alt_es, title, desc, date_iso, date_human, tag, crumbs_blog, other_link_html, article_html, lang):
+def short_title(title, seo_title=None):
+    # Google shows about 60 characters: use seo_title if given, add the name only when it fits
+    s = seo_title or title
+    if len(s + ' | Marcos Diaz') <= 60: s += ' | Marcos Diaz'
+    assert len(s) <= 60, f'page title over 60 characters, add a shorter "seo_title": {s}'
+    return s
+
+def build(template, out, slug_url, alt_en, alt_es, title, desc, date_iso, date_human, tag, crumbs_blog, other_link_html, article_html, lang, seo_title=None):
     t = pathlib.Path(template).read_text()
+    page_title = short_title(title, seo_title)
     # head
-    t = re.sub(r"<title>.*?</title>", f"<title>{title} | Marcos Diaz</title>", t, flags=re.S)
+    t = re.sub(r"<title>.*?</title>", f"<title>{page_title}</title>", t, flags=re.S)
     t = re.sub(r'(<meta name="description" content=")[^"]*', lambda m: m.group(1)+desc, t)
     t = re.sub(r'(<meta property="og:title" content=")[^"]*', lambda m: m.group(1)+title+" | Marcos Diaz", t)
     t = re.sub(r'(<meta property="og:description" content=")[^"]*', lambda m: m.group(1)+desc, t)

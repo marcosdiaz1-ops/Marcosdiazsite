@@ -246,7 +246,7 @@ AREA_CONTENT = {
    title='Tea, SD Homes for Sale & Real Estate',
    lead='A growing community just southwest of Sioux Falls with a small-town feel.',
    about=["Tea is a growing community in Lincoln County, just southwest of Sioux Falls. Many buyers choose Tea for its small-town feel while staying only minutes from Sioux Falls shopping, dining, and jobs.",
-          "With plenty of newer homes and ongoing development, Tea can be a great fit for first-time buyers, growing families, and anyone looking for a little more space."],
+          "With plenty of newer homes and ongoing development, Tea can be a good option for anyone looking for a little more space."],
    why=["Small-town community feel close to Sioux Falls",
         "Many newer homes and neighborhoods",
         "Easy access to I-29",

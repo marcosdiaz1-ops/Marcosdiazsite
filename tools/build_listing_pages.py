@@ -498,7 +498,7 @@ def coll_page(c, updated, es):
   </div></section>
 {ALERT_JS if alert else ''}
 '''
-    _page(url.strip('/') + '/index.html', f'{title} | Marcos Diaz', desc, body, lang='es' if es else 'en', canonical=SITE + url,
+    _page(url.strip('/') + '/index.html', title if len(title) > 46 else f'{title} | Marcos Diaz', desc, body, lang='es' if es else 'en', canonical=SITE + url,
           alt_es=c.es_url, alt_en=c.en_url, head_extra=CSS + alts(c.en_url, c.es_url))
     photo = next((x['photos'][0] for x in homes if x.get('photos')), None)
     if photo: set_og_image(url.strip('/') + '/index.html', px(photo, 1200), h1)
