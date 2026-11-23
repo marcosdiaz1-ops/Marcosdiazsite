@@ -8,6 +8,8 @@
 <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/fonts.css?v=BUILD">
 <link rel="stylesheet" href="/styles.css?v=BUILD">
+<link rel="preconnect" href="https://listings.605homesearch.com" crossorigin>
+<link rel="preconnect" href="https://zimg.paragon.ice.com">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
   .demo-banner { background: #b3261e; color: #fff; text-align: center; font-size: 14px; padding: 8px 12px; font-weight: 500; letter-spacing: .02em; }
@@ -215,7 +217,16 @@
   .sp-legend { background: rgba(255,255,255,.92); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--ink); display: flex; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
   .sp-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; border: 1px solid #fff; }
   .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
-  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; transition: opacity .15s; }
+  .sp-cards.loading { opacity: .45; pointer-events: none; }
+  .sp-loadbar { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--gold); z-index: 4000; opacity: 0; transition: width 6s cubic-bezier(.1,.7,.2,1), opacity .3s; }
+  .sp-loadbar.on { width: 85%; opacity: 1; }
+  .sp-loadbar.done { width: 100%; opacity: 0; transition: width .2s, opacity .4s .2s; }
+  .hd-skel { padding: 30px 20px; }
+  .hd-skel .ph { height: 320px; border-radius: 14px; background: linear-gradient(90deg, #ece6dc 25%, #f5f0e8 50%, #ece6dc 75%); background-size: 200% 100%; animation: sk 1.1s infinite linear; }
+  .hd-skel .t { margin-top: 18px; font-size: 32px; font-weight: 600; color: var(--ink); }
+  .hd-skel p { color: var(--text); }
+  @keyframes sk { to { background-position: -200% 0; } }
   .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; transition: box-shadow .2s, transform .2s; }
   .sp-card:hover, .sp-card.hi { box-shadow: 0 10px 28px rgba(19,32,59,.16); transform: translateY(-2px); }
   .sp-card .ph { aspect-ratio: 3/2; background: var(--sand) center/cover no-repeat; position: relative; }
@@ -918,7 +929,9 @@
       if (g.length < 2) {
         g.forEach(function (h) {
           L.marker([h.lat, h.lng], { icon: L.divIcon({ className: '', html: '<span class="pin' + pinCls(h.dom, h.originalListPrice, h.listPrice) + '" data-m="' + esc(h.mlsId) + '">' + short(h.listPrice) + '</span>' }) })
-            .on('click', function () { openById(h.mlsId); }).addTo(pinLayer);
+            .on('click', function () { openById(h.mlsId); })
+            .on('mouseover mousedown', function () { getHome(h.mlsId).catch(function () {}); })
+            .addTo(pinLayer);
         });
       } else {
         var lat = 0, lng = 0; g.forEach(function (h) { lat += h.lat; lng += h.lng; });
@@ -971,9 +984,17 @@
     return API + '?' + p.toString();
   }
 
+  // thin progress bar + dimmed list while homes load, so a tap always shows something right away
+  var loadbar = document.createElement('div'); loadbar.className = 'sp-loadbar'; document.body.appendChild(loadbar);
+  function busy(on) {
+    $('sp-cards').classList.toggle('loading', on);
+    if (on) { loadbar.className = 'sp-loadbar'; void loadbar.offsetWidth; loadbar.className = 'sp-loadbar on'; }
+    else loadbar.className = 'sp-loadbar done';
+  }
   function load(more) {
     if (!more && savedMode) { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); }
     if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); if (LIVE) loadPins(); syncUrl(); }
+    busy(true);
     fetch(query(more), { headers: HEADERS })
       .then(function (r) { if (!r.ok) throw new Error(r.status); if (!more) { var tc = parseInt(r.headers.get('X-Total-Count'), 10); totalCount = isFinite(tc) ? tc : null; } return r.json(); })
       .then(function (data) {
@@ -982,8 +1003,10 @@
         offset = results.length - (LIVE ? 0 : 1);
         render(!more && $('f-q').value.trim());
         $('sp-more').hidden = data.length < PAGE;
+        busy(false);
       })
       .catch(function () {
+        busy(false);
         $('sp-count').textContent = '';
         $('sp-cards').innerHTML = '<div class="sp-msg">' + t('Couldn’t load listings right now. Please try again in a minute.', 'No se pudieron cargar las casas. Intente de nuevo en un minuto.') + '</div>';
       });
@@ -1595,12 +1618,31 @@
     if (id && cur && String(cur.mlsId) === id) return;
     if (id) openById(id); else closeDetail(true);
   });
+  // Homes on the map that aren't in the list yet: start loading the moment a finger or mouse touches the pin
+  var homeReq = {};
+  function getHome(id) {
+    id = String(id);
+    if (seen[id]) return Promise.resolve(seen[id]);
+    if (!homeReq[id]) homeReq[id] = fetch(API + '/' + encodeURIComponent(id), { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (h) { if (h && h.mlsId) seen[id] = h; return h; }).catch(function (e) { delete homeReq[id]; throw e; });
+    return homeReq[id];
+  }
   function openById(id) {
-    var hit = results.filter(function (h) { return String(h.mlsId) === String(id); })[0];
+    var hit = results.filter(function (h) { return String(h.mlsId) === String(id); })[0] || seen[String(id)];
     if (hit) return show(hit);
     if (!LIVE) return;
-    fetch(API + '/' + encodeURIComponent(id)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function (h) { if (h && h.internetEntireListingDisplay !== false) show(h); }).catch(function () {});
+    var pin = (allPins || []).filter(function (x) { return String(x.mlsId) === String(id); })[0];
+    cur = { mlsId: id };
+    $('sp-detail').innerHTML = '<div class="hd-top"><button type="button" id="hd-back"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>' + t('Back to search', 'Volver a la búsqueda') + '</button><span></span></div>' +
+      '<div class="hd-skel"><div class="ph"></div><div class="t">' + (pin ? money(pin.listPrice) : '') + '</div><p>' + t('Loading this home…', 'Cargando esta casa…') + '</p></div>';
+    $('hd-back').onclick = closeDetail;
+    $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
+    getHome(id).then(function (h) {
+      if (!$('sp-modal').classList.contains('open') || String((cur || {}).mlsId) !== String(id)) return;
+      if (h && h.internetEntireListingDisplay !== false) show(h); else closeDetail();
+    }).catch(function () {
+      if (String((cur || {}).mlsId) === String(id)) { closeDetail(); toast(t('Couldn’t open that home. Please try again.', 'No se pudo abrir esa casa. Intente de nuevo.')); }
+    });
   }
   function toast(t) { var el = $('hd-toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(el._t); el._t = setTimeout(function () { el.style.display = 'none'; }, 2200); }
   function share() {
@@ -1967,7 +2009,7 @@
     if (savedMode) return;
     if ($('f-q').value.trim()) return;
     if (drawPts) return;  // a drawn area stays put when the map moves
-    clearTimeout(moveTimer); moveTimer = setTimeout(function () { load(false); }, 350);
+    clearTimeout(moveTimer); moveTimer = setTimeout(function () { load(false); }, 250);
   });
 
   // Phones open on the list (like Zillow); the pill switches to the map and back
