@@ -113,6 +113,11 @@ function alertOwner_(lead) {
   }
 }
 
+// Run once from the editor to send a test alert to your phone
+function testPhoneAlert() {
+  pushLead_({ name: 'Test Lead', phone: '605-838-9140', email: 'marcosdiaz1@kw.com', looking: 'Buy a home', timeline: 'Test alert from your website', language: 'English', message: '' });
+}
+
 function autoReply_(lead) {
   const first = lead.name.split(' ')[0];
   const es = lead.language === 'Español';
