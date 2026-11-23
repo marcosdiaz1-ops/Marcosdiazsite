@@ -980,6 +980,7 @@
     if (sortVal) p.set('sort', sortVal);
     if (!more) p.set('count', 'true');
     p.set('offset', more ? offset : 0);
+    p.set('include', 'compliance');
     return API + '?' + p.toString();
   }
 
@@ -1015,8 +1016,8 @@
   function attr(h) {
     var ag = h.agent || {}, of = h.office || {}, oc = of.contact || {}, ac = ag.contact || {};
     var name = [ag.firstName, ag.lastName].filter(Boolean).join(' ');
-    var ac2 = h.attributionContact || h.AttributionContact || (h.mls && (h.mls.attributionContact || h.mls.AttributionContact)) || of.attributionContact || ag.attributionContact || (h.attribution && (h.attribution.contact || h.attribution.attributionContact));
-    // SimplyRETS has no AttributionContact field: the listing firm's contact is office.contact (office phone, then email).
+    var ac2 = (h.compliance && h.compliance.attributionContact) || h.attributionContact || h.AttributionContact || (h.mls && (h.mls.attributionContact || h.mls.AttributionContact)) || of.attributionContact || ag.attributionContact || (h.attribution && (h.attribution.contact || h.attribution.attributionContact));
+    // AttributionContact comes from SimplyRETS ?include=compliance (compliance.attributionContact); if a listing has none, use the listing office phone, then email.
     var contact = ac2 || oc.office || oc.email || ac.office || ac.email || '';
     return { office: of.name || of.servingName || (h.mls && h.mls.originatingSystemName) || (LIVE ? '' : '(office name not in sample data)'), agent: name, contact: contact };
   }
@@ -1298,7 +1299,7 @@
     if (savedMode || !ids.length) { box.hidden = true; return; }
     Promise.all(ids.slice(0, 10).map(function (id) {
       if (seen[id]) return seen[id];
-      return fetch(API + '/' + encodeURIComponent(id), { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+      return fetch(API + '/' + encodeURIComponent(id) + '?include=compliance', { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
     })).then(function (list) {
       list = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false && !/closed|sold|withdrawn|expired|cancel/i.test(String((h.mls || {}).status || '')); });
       list.forEach(function (h) { seen[h.mlsId] = h; });
@@ -1622,7 +1623,7 @@
   function getHome(id) {
     id = String(id);
     if (seen[id]) return Promise.resolve(seen[id]);
-    if (!homeReq[id]) homeReq[id] = fetch(API + '/' + encodeURIComponent(id), { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    if (!homeReq[id]) homeReq[id] = fetch(API + '/' + encodeURIComponent(id) + '?include=compliance', { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (h) { if (h && h.mlsId) seen[id] = h; return h; }).catch(function (e) { delete homeReq[id]; throw e; });
     return homeReq[id];
   }
@@ -1745,7 +1746,7 @@
     $('sp-cmpbar').classList.toggle('on', ids.length > 1); updCmp();
     if (!ids.length) { results = []; render(false); $('sp-count').textContent = t('No saved homes yet. Tap the ♥ on any home to save it.', 'Aún no hay casas guardadas. Toque el ♥ en cualquier casa para guardarla.'); return; }
     $('sp-count').textContent = t('Loading your saved homes…', 'Cargando sus casas guardadas…');
-    Promise.all(ids.map(function (id) { return fetch(API + '/' + encodeURIComponent(id)).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }))
+    Promise.all(ids.map(function (id) { return fetch(API + '/' + encodeURIComponent(id) + '?include=compliance').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }))
       .then(function (list) {
         results = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false; });
         render(true);

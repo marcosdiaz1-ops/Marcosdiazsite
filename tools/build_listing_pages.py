@@ -98,7 +98,7 @@ def fetch_listings():
         return json.load(open(os.environ['LISTINGS_FILE']))
     out, offset = [], 0
     while True:
-        url = API + '/properties?' + urllib.parse.urlencode({'limit': 500, 'offset': offset})
+        url = API + '/properties?' + urllib.parse.urlencode({'limit': 500, 'offset': offset, 'include': 'compliance'})
         req = urllib.request.Request(url, headers={'User-Agent': '605homesearch-builder', 'Accept': 'application/json'})
         batch = json.load(urllib.request.urlopen(req, timeout=60))
         out += batch
@@ -154,7 +154,8 @@ def attribution(h):  # RASE IDX Policy 18.2.12: listing firm + listing agent + c
     ag, of = h.get('agent') or {}, h.get('office') or {}
     name = ' '.join(x for x in [ag.get('firstName'), ag.get('lastName')] if x)
     c = (of.get('contact') or {}); ac = (ag.get('contact') or {})
-    contact = c.get('office') or c.get('email') or ac.get('office') or ac.get('email') or ''
+    # AttributionContact (SimplyRETS ?include=compliance) first; otherwise the listing office phone, then email
+    contact = (h.get('compliance') or {}).get('attributionContact') or c.get('office') or c.get('email') or ac.get('office') or ac.get('email') or ''
     return ' · '.join(x for x in [of.get('name') or of.get('servingName') or '', name, contact] if x)
 
 def lot(p):

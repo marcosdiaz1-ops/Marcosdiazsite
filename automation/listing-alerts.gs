@@ -233,7 +233,7 @@ function handleView_(p) {
     if (String(r[C.Status]).trim() !== 'Active') return;
 
     // look the home up on the MLS (don't trust details sent by the browser)
-    const res = UrlFetchApp.fetch(LISTINGS_API + '/' + mlsId, { muteHttpExceptions: true });
+    const res = UrlFetchApp.fetch(LISTINGS_API + '/' + mlsId + '?include=compliance', { muteHttpExceptions: true });
     if (res.getResponseCode() !== 200) return;
     const h = JSON.parse(res.getContentText()), hp = h.property || {}, ad = h.address || {};
     const baths = (hp.bathsFull || 0) + (hp.bathsHalf ? 0.5 * hp.bathsHalf : 0) || hp.bathrooms || '';
@@ -366,7 +366,7 @@ function search_(a, since, limit) {
   add('minbeds', a.minbeds); add('minbaths', a.minbaths); add('type', a.type);
   if (a.type === 'residential') add('subtype', 'SingleFamilyResidence');  // "House" = single-family only (RASE files townhomes as residential too)
   if (!a.q && a.points) a.points.split('|').forEach(function (pt) { add('points', pt); });
-  add('status', 'Active'); add('sort', '-listdate'); add('limit', limit || 50);
+  add('status', 'Active'); add('sort', '-listdate'); add('limit', limit || 50); add('include', 'compliance');
   const res = UrlFetchApp.fetch(LISTINGS_API + '?' + q.join('&'), { muteHttpExceptions: true });
   if (res.getResponseCode() !== 200) throw new Error('listings ' + res.getResponseCode());
   return JSON.parse(res.getContentText()).filter(function (h) {
@@ -572,7 +572,7 @@ function card_(h, es, id) {
   const link = homeLink_(h, es, id);
   const k = h._kind || 'new';
   const off = k === 'pending' || k === 'sold';
-  const contact = (of.contact && (of.contact.office || of.contact.email)) || '';
+  const contact = (h.compliance && h.compliance.attributionContact) || (of.contact && (of.contact.office || of.contact.email)) || '';
   const agent = [ag.firstName, ag.lastName].filter(Boolean).join(' ');
   const courtesy = (of.name ? esc_(of.name) : '') + (agent ? ' · ' + esc_(agent) : '') + (contact ? ' · ' + esc_(contact) : '');
 
@@ -716,7 +716,7 @@ function savedChanges_(id, oh) {
   const rows = sh.getRange(2, 1, last - 1, SAVED_HEADERS.length).getValues();
   const mine = []; rows.forEach(function (r, i) { if (String(r[0]) === id) mine.push({ row: i + 2, r: r }); });
   if (!mine.length) return [];
-  const res = UrlFetchApp.fetchAll(mine.map(function (m) { return { url: LISTINGS_API + '/' + encodeURIComponent(m.r[1]), muteHttpExceptions: true }; }));
+  const res = UrlFetchApp.fetchAll(mine.map(function (m) { return { url: LISTINGS_API + '/' + encodeURIComponent(m.r[1]) + '?include=compliance', muteHttpExceptions: true }; }));
   const out = [], weekOut = Date.now() + 7 * 864e5;
   mine.forEach(function (m, i) {
     const code = res[i].getResponseCode();
