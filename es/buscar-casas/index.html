@@ -19,8 +19,454 @@
 <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/fonts/fonts.css?v=BUILD">
 <link rel="stylesheet" href="/styles.css?v=BUILD">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<style>
+  .demo-banner { background: #b3261e; color: #fff; text-align: center; font-size: 14px; padding: 8px 12px; font-weight: 500; letter-spacing: .02em; }
+  /* Top band: sits below the fixed menu so the heading is never hidden */
+  .sp-hero { background: var(--navy); color: #d9d2c6; padding: 118px 0 30px; }
+  .sp-hero h1 { color: #fff; font-size: clamp(2rem, 4.2vw, 3rem); font-weight: 400; margin-bottom: 6px; }
+  .sp-hero p { font-size: 1.02rem; margin: 0; }
+  .sp-hero a { color: var(--gold-soft); }
+  .sp { padding: 0 0 40px; }
+  /* Filter bar */
+  .sp-bar { position: sticky; top: 64px; z-index: 1100; margin: -22px 0 16px; }
+  .sp-filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(19,32,59,.10); }
+  .sp-q { position: relative; flex: 1 1 280px; min-width: 200px; }
+  .sp-q input { width: 100%; font: inherit; font-size: 15px; padding: 10px 44px 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
+  .sp-q input:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+  .sp-qgo { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 0; border-radius: 8px; background: none; color: var(--navy); cursor: pointer; display: grid; place-items: center; }
+  .sp-qgo svg, .pl-ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .fpills { display: flex; gap: 8px; align-items: center; flex: 0 1 auto; }
+  .fpill { position: relative; }
+  .pill-b { font: inherit; font-size: 15px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid #c9c2b5; border-radius: 10px; padding: 9px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .pill-b i { width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
+  .pill-b[aria-expanded="true"] i { transform: rotate(-135deg) translateY(-1px); }
+  .pill-b:hover { border-color: var(--navy); }
+  .pill-b.on { background: #eef1f7; border-color: var(--navy); }
+  .pill-b .n { background: var(--navy); color: #fff; font-size: 12px; border-radius: 10px; padding: 0 6px; line-height: 18px; }
+  .sp-savebtn { font: inherit; font-size: 15px; font-weight: 500; color: #fff; background: var(--gold-btn); border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; white-space: nowrap; }
+  .sp-savebtn:hover { background: var(--gold-ink); }
+  .pop { display: none; position: absolute; left: 0; top: calc(100% + 8px); z-index: 950; width: 340px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 14px 36px rgba(19,32,59,.2); padding: 16px; }
+  .pop.open { display: block; }
+  .pop-r { left: auto; right: 0; }
+  .pop-h { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); margin: 4px 0 8px; }
+  .pop-2 { display: flex; align-items: flex-end; gap: 8px; }
+  .pop-2 label { flex: 1; font-size: 13px; color: var(--text); }
+  .pop-2 input, .pop select { display: block; width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid #c9c2b5; border-radius: 10px; background: #fff; color: var(--ink); margin-top: 4px; }
+  .pop select { margin: 0 0 12px; }
+  .pm-chk { display: flex; align-items: center; gap: 8px; font-size: 15px; margin: 2px 0 14px; cursor: pointer; }
+  .pm-chk input { width: 18px; height: 18px; accent-color: var(--navy); }
+  .pop-2 span { padding-bottom: 12px; color: var(--text); }
+  .pop-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px; }
+  .pop-chips button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--ivory); color: var(--ink); border-radius: 20px; padding: 4px 10px; cursor: pointer; }
+  .pop-chips button:hover { border-color: var(--gold); }
+  .seg { display: flex; border: 1.5px solid #c9c2b5; border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+  .seg button { flex: 1; font: inherit; font-size: 15px; background: #fff; color: var(--ink); border: 0; border-left: 1px solid #ddd6ca; padding: 9px 0; cursor: pointer; }
+  .seg button:first-child { border-left: 0; }
+  .seg button.on { background: var(--navy); color: #fff; font-weight: 500; }
+  .radios label { display: flex; align-items: center; gap: 10px; padding: 8px 4px; font-size: 15px; color: var(--ink); cursor: pointer; border-radius: 8px; }
+  .radios label:hover { background: var(--ivory); }
+  .radios input { accent-color: var(--navy); width: 18px; height: 18px; }
+  .pop-f { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 10px; }
+  .pop-apply { flex: 1; font: inherit; font-size: 16px; font-weight: 500; color: #fff; background: var(--navy); border: 0; border-radius: 10px; padding: 11px; cursor: pointer; }
+  .pop-apply:hover { background: var(--navy-deep); }
+  .pop-reset { font: inherit; font-size: 14px; color: var(--gold-ink); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 6px; }
+  .pop-shade { display: none; }
+  /* Map + list */
+  .sp-body { display: grid; grid-template-columns: 1fr 1.15fr; gap: 16px; height: 76vh; min-height: 560px; }
+  #sp-map { border-radius: 14px; border: 1px solid var(--line); height: 100%; }
+  .sp-list { overflow-y: auto; padding-right: 4px; }
+  /* Draw an area on the map */
+  .sp-draw { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .sp-draw button { font: inherit; font-size: 14px; font-weight: 500; border: 0; border-radius: 10px; padding: 9px 14px; cursor: pointer; box-shadow: 0 3px 12px rgba(19,32,59,.25); display: inline-flex; align-items: center; gap: 6px; }
+  .sp-draw .d-go { background: var(--navy); color: #fff; }
+  .sp-draw .d-go.on { background: var(--gold); }
+  .sp-draw .d-clear { background: #fff; color: var(--navy); }
+  .sp-draw svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-draw [hidden] { display: none !important; }
+  .sp-draw-tip { background: rgba(19,32,59,.88); color: #fff; font-size: 13px; padding: 6px 10px; border-radius: 8px; max-width: 220px; text-align: right; }
+  #sp-map.drawing, #sp-map.drawing .leaflet-interactive { cursor: crosshair; touch-action: none; }
+  .pin.p-new { background: var(--gold); }
+  .pin.p-cut { background: #1f6b45; }
+  .pin.p-c { background: #fff; color: var(--navy); border: 2px solid var(--navy); font-size: 13px; padding: 5px 10px; cursor: pointer; }
+  .pin.p-c:hover { background: var(--navy); color: #fff; }
+  .sp-tools { display: flex; flex-direction: column; background: #fff; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,.35); }
+  .sp-tools > button:first-child { border-radius: 6px 6px 0 0; } .sp-tools > button:nth-child(3) { border-radius: 0 0 6px 6px; }
+  .sp-tools button { width: 34px; height: 34px; border: 0; border-top: 1px solid #ddd; background: #fff; color: var(--navy); cursor: pointer; display: grid; place-items: center; padding: 0; }
+  .sp-tools button:first-child { border-top: 0; }
+  .sp-tools button.on { background: var(--navy); color: #fff; }
+  .sp-tools svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-layers { position: absolute; left: 44px; top: 0; width: 250px; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(19,32,59,.25); padding: 12px 14px; font-size: 14px; color: var(--ink); z-index: 1000; }
+  .sp-layers h4 { font: 600 12px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); margin: 10px 0 6px; }
+  .sp-layers h4:first-child { margin-top: 0; }
+  .sp-layers label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; font: 400 14px var(--sans) !important; color: var(--ink); margin: 0; }
+  .sp-layers .sub label { font-size: 13px !important; }
+  .sp-layers .sub i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .sp-layers input { accent-color: var(--navy); width: 17px; height: 17px; }
+  .sp-layers .sub { display: grid; grid-template-columns: 1fr 1fr; padding-left: 24px; }
+  .sp-layers small { display: block; color: #666; font-size: 12px; line-height: 1.4; margin-top: 6px; }
+  .sch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; color: #fff; font: 700 11px var(--sans); display: grid; place-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.35); transform: translate(-50%,-50%); }
+  .sch.E { background: #2a6fdb; } .sch.M { background: #7b4bc4; } .sch.H { background: #c0392b; } .sch.P { background: #4a5063; }
+  .hd-env { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .hd-env a { font-size: 15px; color: var(--navy); border: 1.5px solid var(--navy); border-radius: 10px; padding: 8px 14px; text-decoration: none; }
+  .hd-flood { margin-top: 12px; background: #f3f6fb; border-left: 4px solid #2a6fdb; border-radius: 8px; padding: 10px 14px; font-size: 15px; }
+  .hd-flood.hi { background: #fdf3f2; border-color: #c0392b; }
+  /* Listing page sections (like Zillow): tabs, payment, neighborhood */
+  .hd-tabs { position: sticky; top: var(--hdtop, 58px); z-index: 1050; background: var(--ivory); display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--line); margin: 18px 0 4px; }
+  .hd-tabs::-webkit-scrollbar { display: none; }
+  .hd-tabs button { font: inherit; font-size: 15px; font-weight: 500; color: var(--text); background: none; border: 0; border-bottom: 3px solid transparent; padding: 12px 12px 10px; cursor: pointer; white-space: nowrap; }
+  .hd-tabs button.on { color: var(--navy); border-color: var(--gold); }
+  .hd-pay { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  .hd-pay-total { font-size: 34px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+  .hd-pay-total small { font-size: 16px; font-weight: 400; color: var(--text); }
+  .hd-pay-bar { display: flex; height: 12px; border-radius: 8px; overflow: hidden; margin: 14px 0; background: var(--line); }
+  .hd-pay-bar i { display: block; height: 100%; }
+  .hd-pay ul { list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .hd-pay li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); color: var(--text); }
+  .hd-pay li b { color: var(--ink); font-weight: 500; }
+  .hd-pay li span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; background: var(--c); }
+  .hd-pay label { display: block; font-size: 14px; color: var(--text); margin-bottom: 10px; }
+  .hd-pay input, .hd-pay select { display: block; width: 100%; margin-top: 4px; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+  .hd-pay-note { font-size: 12px; color: #666; margin-top: 10px; line-height: 1.45; }
+  .hd-mapwrap { position: relative; }
+  #hd-map { height: 380px; }
+  .hd-mt { position: absolute; top: 10px; right: 10px; z-index: 500; display: flex; background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.18); overflow: hidden; }
+  .hd-mt button { font: inherit; font-size: 14px; font-weight: 500; border: 0; background: #fff; color: var(--ink); padding: 8px 12px; cursor: pointer; border-right: 1px solid var(--line); }
+  .hd-mt button:last-child { border-right: 0; }
+  .hd-mt button.on { background: var(--navy); color: #fff; }
+  .hd-mapnote { font-size: 13px; color: var(--text); margin-top: 8px; }
+  .pin.p-near { background: #fff; color: var(--ink); border: 1.5px solid var(--navy); font-weight: 500; }
+  .hd-sv { display: flex; align-items: center; gap: 14px; margin-top: 14px; padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; }
+  .hd-sv svg { width: 34px; height: 34px; flex: none; fill: none; stroke: var(--gold-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-sv b { display: block; font-weight: 500; }
+  .hd-sv small { color: var(--text); font-size: 13px; }
+  .hd-simrow { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 12px; scrollbar-width: thin; }
+  .hd-sim { flex: 0 0 250px; scroll-snap-align: start; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; text-align: left; font: inherit; padding: 0; color: var(--ink); }
+  .hd-sim:hover { box-shadow: 0 6px 18px rgba(19,32,59,.12); }
+  .hd-sim .im { aspect-ratio: 3/2; background: var(--sand) center/cover no-repeat; position: relative; }
+  .hd-sim .im span { position: absolute; left: 8px; top: 8px; background: rgba(255,255,255,.95); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 500; color: var(--navy); }
+  .hd-sim .tx { padding: 10px 12px 12px; font-size: 14px; color: var(--text); line-height: 1.35; }
+  .hd-sim .tx b { display: block; font-size: 19px; font-weight: 600; color: var(--ink); }
+  .hd-sim .tx small { display: block; font-size: 11px; color: #666; margin-top: 6px; }
+  .hd-vt { position: absolute; left: 14px; bottom: 14px; z-index: 3; background: var(--navy); color: #fff; font: 500 14px var(--sans); border-radius: 10px; padding: 9px 14px; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+  .hd-oh { margin-top: 14px; background: #fff7ea; border: 1px solid #ecd3ac; border-radius: 12px; padding: 12px 14px; font-size: 15px; color: var(--ink); }
+  .hd-oh b { color: #8a4f12; }
+  .hd-oh a { color: var(--navy); font-weight: 500; }
+  .tag-oh { background: #fff1db; color: #8a4f12; }
+  .hd-ppsf { font-size: 15px; color: var(--ink); margin-top: 8px; }
+  .hd-ppsf b { font-weight: 600; }
+  .hd-sch { list-style: none; padding: 0; margin: 14px 0 0; }
+  .hd-sch li { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--text); }
+  .hd-sch li i { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #e8eefb; color: #2a4d9b; font-style: normal; font-weight: 700; display: grid; place-items: center; font-size: 14px; }
+  .hd-sch li b { display: block; color: var(--ink); font-weight: 500; }
+  .pin.p-sch { background: #2a4d9b; color: #fff; border-color: #2a4d9b; }
+  .hd-ask { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .hd-ask h3 { font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .hd-ask textarea, .hd-ask input { display: block; width: 100%; font: inherit; font-size: 15px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; margin-bottom: 8px; background: #fff; color: var(--ink); }
+  .hd-ask textarea { min-height: 72px; resize: vertical; }
+  .hd-ask .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .hd-ask button { width: 100%; font: inherit; font-weight: 500; font-size: 16px; background: var(--navy); color: #fff; border: 0; border-radius: 10px; padding: 12px; cursor: pointer; }
+  .hd-ask .fine { font-size: 11px; color: #666; line-height: 1.4; margin-top: 8px; }
+  .hd-ask .msg { font-size: 14px; color: #9a2a1c; margin: 4px 0; }
+  .hd-ask.done .msg { color: #1f6b35; font-size: 16px; font-weight: 500; }
+  .hd-ask .hp { position: absolute; left: -9999px; }
+  .sp-recent { margin: 0 0 14px; }
+  .sp-recent-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .sp-recent-h b { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .sp-recent-h button { font: inherit; font-size: 13px; color: var(--text); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 4px; }
+  .sp-recent .hd-simrow { padding-bottom: 6px; }
+  .sp-recent .hd-sim { flex-basis: 190px; }
+  .sp-recent .hd-sim .tx { padding: 8px 10px 10px; font-size: 13px; }
+  .sp-recent .hd-sim .tx b { font-size: 16px; }
+  .hd-txt { font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; }
+  .hd-txt:hover { background: var(--sand); }
+  .hd-txt svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 440px) { .hd-txt .lbl { display: none; } .hd-txt { padding: 8px 10px; } .hd-txt svg { width: 22px; height: 22px; } }
+  .hd-ask .more { display: none; }
+  .hd-ask.open .more { display: block; }
+  .hd-ask textarea { min-height: 52px; }
+  .hd-ask.open textarea { min-height: 80px; }
+  @media (max-width: 640px) { .hd-pay { grid-template-columns: 1fr; } #hd-map { height: 320px; } }
+  /* Search suggestions as you type */
+  body.ac-on .sp-toggle { display: none !important; }
+  .sp-ac { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 36px rgba(19,32,59,.2); z-index: 1200; overflow: hidden; max-height: 70vh; overflow-y: auto; }
+  .sp-ac .ac-h { font: 600 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); padding: 10px 14px 4px; }
+  .sp-ac .ac-i { display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .sp-ac .ac-i.on, .sp-ac .ac-i:hover { background: #eef1f7; }
+  .sp-ac .ac-i svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--navy); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-ac .ac-i img { width: 46px; height: 34px; object-fit: cover; border-radius: 6px; flex: none; background: var(--sand); }
+  .sp-ac .ac-i small { display: block; color: #666; font-size: 13px; }
+  .sp-ac .ac-i b { font-weight: 600; }
+  .sp-ac .ac-load { padding: 9px 14px; color: #666; font-size: 14px; }
+  /* Sort + Map/List pill (phones), sort menu (computers) */
+  .sp-toggle { align-items: center; }
+  .sp-toggle button { display: inline-flex; align-items: center; gap: 7px; }
+  .sp-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-toggle .sep { width: 1px; height: 22px; background: rgba(255,255,255,.35); }
+  .sp-sortd { font: inherit; font-size: 14px; color: var(--navy); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; background: #fff; }
+  .sp-sheet { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-radius: 18px 18px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); z-index: 2700; box-shadow: 0 -10px 30px rgba(0,0,0,.2); }
+  .sp-sheet h3 { font-size: 20px; margin: 0 0 8px; }
+  .sp-sheet label { display: flex; align-items: center; gap: 10px; padding: 12px 2px; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .sp-sheet input { accent-color: var(--navy); width: 20px; height: 20px; }
+  .sp-sheet-shade { position: fixed; inset: 0; background: rgba(13,23,48,.45); z-index: 2650; }
+  /* Swipe through photos on each card */
+  .sp-card .ph { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: var(--sand); }
+  .sp-card .ph::-webkit-scrollbar { display: none; }
+  .sp-card .ph .sl { flex: 0 0 100%; scroll-snap-align: start; position: relative; }
+  .sp-card .ph .sl img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sp-card .phw { position: relative; }
+  .sp-card .phw > span.st { position: absolute; left: 10px; top: 10px; z-index: 2; background: var(--navy); color: #fff; font-size: 12px; font-weight: 500; letter-spacing: .04em; padding: 3px 10px; border-radius: 20px; }
+  .sp-card .phw .fav { z-index: 2; }
+  .sp-card .dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 5px; background: rgba(0,0,0,.35); padding: 4px 7px; border-radius: 10px; z-index: 2; pointer-events: none; }
+  .sp-card .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); }
+  .sp-card .dots i.on { background: #fff; }
+  .sp-card .nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); color: var(--navy); font-size: 20px; line-height: 1; cursor: pointer; display: none; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  .sp-card .nav.p { left: 8px; } .sp-card .nav.n { right: 8px; }
+  @media (hover: hover) { .sp-card:hover .nav { display: grid; place-items: center; } }
+  .sp-legend { background: rgba(255,255,255,.92); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--ink); display: flex; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+  .sp-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; border: 1px solid #fff; }
+  .sp-count { font-size: 15px; margin-bottom: 10px; color: var(--ink); font-weight: 400; }
+  .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .sp-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; transition: box-shadow .2s, transform .2s; }
+  .sp-card:hover, .sp-card.hi { box-shadow: 0 10px 28px rgba(19,32,59,.16); transform: translateY(-2px); }
+  .sp-card .ph { aspect-ratio: 3/2; background: var(--sand) center/cover no-repeat; position: relative; }
+  .sp-card .ph span { position: absolute; left: 10px; top: 10px; background: var(--navy); color: #fff; font-size: 12px; font-weight: 500; letter-spacing: .04em; padding: 3px 10px; border-radius: 20px; }
+  .sp-card .in { padding: 12px 14px 14px; font-size: 15px; line-height: 1.45; }
+  .sp-card .pr { font-size: 24px; font-weight: 600; color: var(--ink); }
+  .sp-card .st { color: var(--ink); font-weight: 400; }
+  .sp-card .ad { color: var(--text); }
+  .sp-card .co { font-size: 14px; color: var(--ink); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--sand); line-height: 1.4; }
+  /* Price pins */
+  .pin { background: var(--navy); color: #fff; font: 600 12px var(--sans); padding: 4px 9px; border-radius: 14px; border: 2px solid #fff; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,.3); transform: translate(-50%,-50%); display: inline-block; transition: background .15s, transform .15s; }
+  .pin.hi, .pin:hover { background: var(--gold); transform: translate(-50%,-50%) scale(1.12); z-index: 999; position: relative; }
+  .leaflet-div-icon { background: none; border: 0; }
+  .sp-more { display: block; margin: 16px auto; font: inherit; font-weight: 500; padding: 10px 22px; border: 1px solid var(--navy); background: #fff; color: var(--navy); border-radius: 10px; cursor: pointer; }
+  .sp-more:hover { background: var(--navy); color: #fff; }
+  .sp-msg { padding: 20px; text-align: center; color: var(--text); }
+  /* Floating Map / List switch (phones) */
+  .sp-toggle { display: none; position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 1500; background: var(--navy); border-radius: 30px; padding: 4px; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+  .sp-toggle button { font: inherit; font-size: 15px; font-weight: 500; padding: 9px 22px; border: 0; background: transparent; color: #fff; border-radius: 26px; cursor: pointer; }
+  .sp-toggle button.on { background: var(--gold); }
+  /* ===== Home details (full page, Zillow-style) ===== */
+  .sp-modal { position: fixed; inset: 0; background: var(--ivory); display: none; z-index: 2000; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .sp-modal.open { display: block; }
+  body.sp-lock { overflow: hidden; }
+  .sp-box { max-width: 1180px; margin: 0 auto; padding: 0 24px 60px; }
+  .hd-top { position: sticky; top: 0; z-index: 1100; background: rgba(248,245,240,.96); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+  .hd-top button { font: inherit; font-size: 15px; font-weight: 500; color: var(--ink); background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; }
+  .hd-top button:hover { background: var(--sand); }
+  .hd-top > span { display: flex; align-items: center; gap: 2px; }
+  .hd-top button { white-space: nowrap; }
+  .hd-top svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-gal { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; height: 470px; border-radius: 16px; overflow: hidden; position: relative; }
+  .hd-gal button { border: 0; padding: 0; cursor: zoom-in; background: var(--sand) center/cover no-repeat; }
+  .hd-gal button:first-child { grid-row: span 2; }
+  .hd-gal.n1 { grid-template-columns: 1fr; } .hd-gal.n1 button:first-child { grid-row: span 2; }
+  .hd-all { position: absolute; right: 14px; bottom: 14px; background: #fff; color: var(--ink); font: 500 14px var(--sans); border: 0; border-radius: 10px; padding: 9px 14px; box-shadow: 0 2px 10px rgba(0,0,0,.25); cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+  .hd-status { position: absolute; left: 14px; top: 14px; background: #fff; color: var(--ink); font: 500 13px var(--sans); border-radius: 20px; padding: 4px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.2); }
+  .hd-status i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #2e8b57; margin-right: 6px; }
+  .hd-status.new i { background: var(--gold); }
+  .hd-grid { display: grid; grid-template-columns: 1fr 340px; gap: 36px; margin-top: 26px; align-items: start; }
+  .hd-grid > * { min-width: 0; }
+  .hd-galwrap { position: relative; }
+  @media (max-width: 900px) {
+    .hd-grid { grid-template-columns: 1fr; padding: 0 18px; }
+    .hd-side { position: static; margin-top: 8px; }
+    .hd-count { position: absolute; right: 12px; bottom: 12px; background: rgba(0,0,0,.65); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 20px; pointer-events: none; }
+  }
+  .hd-head { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
+  .hd-price { font-family: var(--sans); font-size: 40px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+  .hd-addr { font-size: 19px; color: var(--ink); font-weight: 400; margin-top: 4px; }
+  .hd-stats { display: flex; gap: 30px; }
+  .hd-stats div { font-size: 15px; color: var(--text); line-height: 1.2; }
+  .hd-stats b { display: block; font-size: 32px; font-weight: 600; color: var(--ink); }
+  .hd-attr { font-size: 15px; color: var(--ink); margin: 14px 0 0; padding: 10px 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; line-height: 1.5; }
+  .hd-attr a { color: var(--ink); }
+  .hd-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0; }
+  .hd-chip { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 15px; color: var(--ink); font-weight: 400; display: flex; gap: 10px; align-items: center; }
+  .hd-chip svg { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--gold-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-sec { border-top: 1px solid var(--line); padding: 24px 0 6px; }
+  .hd-sec h2 { font-size: 28px; margin-bottom: 12px; }
+  .hd-sec p { color: var(--ink); font-weight: 300; }
+  .hd-more { font: inherit; font-weight: 500; color: var(--gold-ink); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+  .hd-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 30px; }
+  .hd-facts h3 { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--ink); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .hd-facts ul { list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .hd-facts li { padding: 3px 0; color: var(--text); }
+  .hd-facts li b { color: var(--ink); font-weight: 500; }
+  #hd-map { border-radius: 14px; border: 1px solid var(--line); }
+  .hd-side { position: sticky; top: 80px; }
+  .hd-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 8px 26px rgba(19,32,59,.08); }
+  .hd-agent { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+  .hd-agent img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; }
+  .hd-agent b { display: block; color: var(--ink); font-weight: 500; font-size: 17px; }
+  .hd-agent span { font-size: 13px; color: var(--text); line-height: 1.3; display: block; }
+  .hd-btn { display: block; text-align: center; text-decoration: none; border-radius: 10px; padding: 13px 14px; font-weight: 500; font-size: 16px; margin-top: 10px; line-height: 1.3; }
+  .hd-btn small { display: block; font-weight: 300; font-size: 13px; opacity: .9; }
+  .hd-b1 { background: var(--navy); color: #fff; }
+  .hd-b1:hover { background: var(--navy-deep); }
+  .hd-b2 { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
+  .hd-b3 { background: var(--gold-btn); color: #fff; }
+  .hd-note { font-size: 13px; color: var(--text); margin-top: 12px; line-height: 1.45; }
+  .hd-courtesy { font-size: 12px; color: #666; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 24px; line-height: 1.5; }
+  /* Photo viewer */
+  .hd-lb { position: fixed; inset: 0; background: #050a16; z-index: 3000; display: none; flex-direction: column; }
+  .hd-lb.open { display: flex; }
+  .hd-lb-top { display: flex; justify-content: space-between; align-items: center; color: #fff; padding: 12px 16px; font-size: 15px; }
+  .hd-lb-top button { background: none; border: 0; color: #fff; font-size: 30px; cursor: pointer; line-height: 1; }
+  .hd-lb-track { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .hd-lb-track::-webkit-scrollbar { display: none; }
+  .hd-lb-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; scroll-snap-align: center; }
+  .hd-lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.9); border: 0; width: 46px; height: 46px; border-radius: 50%; font-size: 24px; cursor: pointer; }
+  .hd-lb-prev { left: 16px; } .hd-lb-next { right: 16px; }
+  .hd-toast { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 30px; font-size: 14px; z-index: 3500; display: none; }
+  @media (max-width: 900px) {
+    .sp-box { padding: 0 0 120px; }
+    .hd-top { padding: 8px 10px; margin: 0; }
+    .hd-top button { font-size: 14px; padding: 6px 7px; gap: 4px; }
+  }
+  @media (max-width: 440px) {
+    .hd-top .lbl { display: none; }
+    .hd-top .fav, #hd-share { padding: 8px 10px; }
+    .hd-top svg { width: 22px !important; height: 22px !important; }
+    .hd-gal { display: flex; height: 300px; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; gap: 0; scrollbar-width: none; }
+    .hd-gal::-webkit-scrollbar { display: none; }
+    .hd-gal button { flex: 0 0 100%; scroll-snap-align: start; }
+    .hd-all { position: fixed; display: none; }
+    .hd-count { position: absolute; right: 12px; bottom: 12px; background: rgba(0,0,0,.65); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 20px; pointer-events: none; }
+    .hd-galwrap { position: relative; }
+    .hd-grid { display: block; padding: 0 18px; margin-top: 18px; }
+    .hd-price { font-size: 32px; }
+    .hd-stats { gap: 22px; } .hd-stats b { font-size: 24px; }
+    .hd-chips { grid-template-columns: 1fr 1fr; }
+    .hd-chip { font-size: 14px; padding: 10px; }
+    .hd-facts { grid-template-columns: 1fr; }
+    .hd-side { position: static; margin-top: 24px; }
+    .hd-lb-nav { display: none; }
+    .hd-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -4px 16px rgba(0,0,0,.12); }
+    .hd-dock a { margin: 0; padding: 12px 8px; font-size: 15px; }
+  }
+  @media (min-width: 901px) { .hd-dock, .hd-count { display: none; } .hd-galwrap { position: relative; } }
+  /* ===== New listing alerts ===== */
+  .sp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sp-head .sp-count { margin: 0; }
+  .al-open { font: inherit; font-size: 14px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid var(--gold); border-radius: 30px; padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .al-open:hover { background: var(--gold-btn); color: #fff; }
+  .al-open svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .al { position: fixed; inset: 0; background: rgba(13,23,48,.6); z-index: 3200; display: none; align-items: center; justify-content: center; padding: 16px; }
+  .al.open { display: flex; }
+  .al-box { background: #fff; border-radius: 16px; max-width: 440px; width: 100%; padding: 24px 22px 20px; position: relative; max-height: 94vh; overflow-y: auto; }
+  .al-box h2 { font-size: 28px; margin-bottom: 4px; }
+  .al-what { font-size: 14px; color: var(--ink); background: var(--ivory); border-radius: 10px; padding: 9px 12px; margin: 10px 0 14px; }
+  .al-box label { display: block; font-size: 13px; font-weight: 500; color: var(--ink); margin: 10px 0 4px; }
+  .al-box input[type=text], .al-box input[type=email], .al-box input[type=tel] { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--ivory); color: var(--ink); }
+  .al-freq { display: flex; gap: 8px; }
+  .al-freq label { flex: 1; margin: 0; border: 1px solid var(--line); border-radius: 10px; padding: 9px; text-align: center; cursor: pointer; font-weight: 400; }
+  .al-freq input { position: absolute; opacity: 0; }
+  .al-freq label:has(input:checked) { border-color: var(--gold); background: #fbf5ee; font-weight: 500; }
+  .al-ok { display: flex; gap: 8px; align-items: flex-start; font-size: 13px !important; font-weight: 300 !important; line-height: 1.45; margin-top: 14px !important; }
+  .al-ok input { margin-top: 3px; accent-color: var(--gold); }
+  .al-send { width: 100%; font: inherit; font-size: 16px; font-weight: 500; background: var(--gold-btn); color: #fff; border: 0; border-radius: 10px; padding: 13px; margin-top: 14px; cursor: pointer; }
+  .al-send:disabled { opacity: .6; }
+  .al-x { position: absolute; right: 10px; top: 8px; background: none; border: 0; font-size: 28px; cursor: pointer; color: var(--ink); }
+  .al-msg { font-size: 14px; margin-top: 10px; color: #b3261e; }
+  .al-done { text-align: center; padding: 10px 0; }
+  .al-done b { display: block; font-size: 22px; color: var(--ink); margin-bottom: 6px; }
+  .hd-alert { display: block; width: 100%; text-align: center; font: inherit; font-size: 15px; font-weight: 500; color: var(--gold-ink); background: none; border: 0; text-decoration: underline; margin-top: 12px; cursor: pointer; }
+  /* ===== Favorites, compare, tags, drive time ===== */
+  .sp-card .phw .fav { position: absolute; left: auto; right: 8px; top: 8px; background: rgba(255,255,255,.92); color: var(--navy); width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; border: 0; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .fav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+  .fav.on svg { fill: #c0392b; stroke: #c0392b; }
+  .sp-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .tag { font-size: 12px; font-weight: 500; border-radius: 20px; padding: 2px 9px; line-height: 1.5; }
+  .tag-cut { background: #fbeee6; color: #9a4a1c; }
+  .tag-dpa { background: #e9f1ea; color: #2f6b3a; }
+  .sp-saved { font: inherit; font-size: 14px; font-weight: 500; color: var(--navy); background: #fff; border: 1.5px solid var(--line); border-radius: 30px; padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .sp-saved svg { width: 16px; height: 16px; fill: #c0392b; stroke: #c0392b; stroke-width: 2; }
+  .sp-saved.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .sp-headr { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sp-cmpbar { display: none; align-items: center; justify-content: space-between; gap: 10px; background: var(--navy); color: #fff; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 14px; }
+  .sp-cmpbar.on { display: flex; }
+  .sp-cmpbar button { font: inherit; font-weight: 500; background: var(--gold-btn); color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+  .sp-cmpbar button:disabled { opacity: .5; }
+  .sp-card .cmp { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink); margin-top: 8px; }
+  .sp-card .cmp input { accent-color: var(--gold); width: 16px; height: 16px; }
+  .cmp-wrap { overflow-x: auto; }
+  .cmp-t { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+  .cmp-t th, .cmp-t td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
+  .cmp-t th { color: var(--text); font-weight: 400; width: 130px; background: var(--ivory); }
+  .cmp-t td { color: var(--ink); }
+  .cmp-t img { width: 100%; max-width: 220px; aspect-ratio: 3/2; object-fit: cover; border-radius: 8px; display: block; }
+  .cmp-t .best { color: #2f6b3a; font-weight: 600; }
+  .cmp-t .co { font-size: 12px; color: var(--ink); }
+  .hd-hist { font-size: 15px; color: var(--ink); margin-top: 12px; }
+  .sp-card .phw > span.st.hl { background: #fff; color: var(--navy); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .hd-hls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .hd-hls span { background: #f1ebe2; color: var(--navy); border-radius: 20px; padding: 6px 12px; font-size: 14px; font-weight: 500; }
+  .hd-hist b { color: #9a4a1c; font-weight: 600; }
+  .hd-dpa { margin-top: 14px; background: #e9f1ea; border: 1px solid #c7dccb; border-radius: 12px; padding: 12px 14px; font-size: 15px; color: #1f4a28; }
+  .hd-dpa a { color: #1f4a28; font-weight: 500; }
+  .hd-drive form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hd-drive input { flex: 1 1 220px; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  .hd-drive button { font: inherit; font-weight: 500; background: var(--navy); color: #fff; border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; }
+  .hd-drive .res { font-size: 18px; color: var(--ink); margin: 6px 0; }
+  .hd-drive .res b { font-size: 26px; }
+  .hd-drive .chg { font: inherit; font-size: 14px; background: none; color: var(--gold-ink); text-decoration: underline; padding: 0; }
+  .hd-drive .note { font-size: 12px; color: #777; }
+  .hd-top .fav { background: none; box-shadow: none; width: auto; height: auto; border-radius: 8px; padding: 8px 10px; display: inline-flex; gap: 6px; }
+  .hd-top .fav svg { width: 18px; height: 18px; }
+  .hd-link { display: block; text-align: center; font-size: 14px; color: var(--gold-ink); margin-top: 10px; }
+  /* ===== Tour booking window (Calendly inside the page) ===== */
+  .tr { position: fixed; inset: 0; background: rgba(13,23,48,.6); z-index: 3300; display: none; align-items: center; justify-content: center; padding: 16px; }
+  .tr.open { display: flex; }
+  .tr-box { background: #fff; border-radius: 16px; width: 100%; max-width: 720px; max-height: 94vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .tr-head { display: flex; gap: 14px; align-items: center; padding: 16px 52px 14px 18px; border-bottom: 1px solid var(--line); }
+  .tr-head img { width: 96px; height: 68px; object-fit: cover; border-radius: 8px; flex: none; }
+  .tr-head h2 { font-size: 24px; margin: 0 0 2px; }
+  .tr-head p { margin: 0; font-size: 14px; color: var(--ink); line-height: 1.4; }
+  .tr-body { flex: 1; min-height: 520px; overflow: auto; position: relative; }
+  .tr-body .calendly-inline-widget, .tr-body iframe { width: 100%; min-height: 640px; border: 0; }
+  .tr-load { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text); font-size: 15px; }
+  .tr-done { padding: 40px 24px; text-align: center; }
+  .tr-done b { display: block; font-size: 24px; color: var(--ink); margin-bottom: 8px; }
+  .tr-note { font-size: 12px; color: #777; padding: 8px 18px 12px; border-top: 1px solid var(--line); }
+  @media (max-width: 600px) {
+    .tr { padding: 0; align-items: stretch; }
+    .tr-box { max-height: none; height: 100%; border-radius: 0; }
+    .tr-head img { width: 72px; height: 54px; }
+    .tr-head h2 { font-size: 20px; }
+  }
+  .sp-disc { font-size: 12px; color: #666; margin-top: 18px; line-height: 1.5; }
+  @media (max-width: 860px) {
+    .sp-hero { padding: 96px 0 30px; }
+    .sp-bar { top: 58px; }
+    .sp-filters { flex-wrap: wrap; padding: 8px; }
+    .sp-q { flex: 1 1 100%; }
+    .fpills { flex: 1 1 100%; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .fpills::-webkit-scrollbar { display: none; }
+    .pill-b, .sp-savebtn { font-size: 14px; padding: 8px 11px; }
+    .fpill { position: static; }
+    .pop { position: fixed; left: 0 !important; right: 0 !important; top: auto; bottom: 0; width: auto; border-radius: 18px 18px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); z-index: 2600; max-height: 80vh; overflow-y: auto; }
+    body.pop-on .sp-bar { z-index: 2600; }
+    body.pop-on .sp-toggle { display: none; }
+    .pop-shade.on { display: block; position: fixed; inset: 0; background: rgba(13,23,48,.45); z-index: 2550; }
+    .sp-toggle { display: flex; bottom: calc(74px + env(safe-area-inset-bottom)); }
+    .sp-hero { padding: 84px 0 34px; }
+    .sp-hero h1 { font-size: 1.7rem; margin: 0; }
+    .sp-hero p { display: none; }
+    .sp-sortd { display: none !important; }
+    .sp-filters > button { flex: 1; }
+    .sp-body { display: block; height: auto; min-height: 0; }
+    #sp-map { height: 68vh; }
+    .sp-list { overflow: visible; padding: 0 0 140px; }
+    .sp-cards { grid-template-columns: 1fr; }
+    .sp-body.show-list #sp-map { display: none; }
+    .sp-body.show-map .sp-list { display: none; }
+  }
+</style>
 </head>
 <body class="subpage">
+
 
 <header class="site-header" id="header">
   <div class="nav">
@@ -45,31 +491,132 @@
 </header>
 
 <main>
-  <section class="page-hero">
+  <section class="sp-hero">
     <div class="wrap">
-      <p class="crumbs"><a href="/es/">Inicio</a> &nbsp;/&nbsp; Buscar casas</p>
       <h1>Buscar casas en venta</h1>
-      <p class="lead">Listados del MLS en vivo para Sioux Falls y sus alrededores. ¿Le gusta alguna? Llámeme o envíeme un mensaje al <a href="tel:+16058389140">605-838-9140</a> para verla. (La búsqueda aparece en inglés.)</p>
+      <p>Casas del MLS en vivo en Sioux Falls y sus alrededores. ¿Le gusta una? Llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>.</p>
     </div>
   </section>
-  <section class="idx-search">
+  <section class="sp">
     <div class="wrap">
-      <a class="map-cta map-cta-phone" href="https://marcos.kw.com/search/sale?viewport=43.7200%2C-96.5500%2C43.4000%2C-96.9800" target="_blank" rel="noopener">
-        <span class="map-cta-text"><strong>Busque casas en el mapa</strong><span>Todas las casas en venta del área de Sioux Falls. Toque <b>List</b> abajo del mapa para ver las casas con fotos grandes.</span></span>
-        <span class="btn btn-gold">Abrir búsqueda con mapa</span>
-      </a>
-      <div class="kw-embed-bar"><a class="kw-full" href="https://marcos.kw.com/search/sale?viewport=43.7200%2C-96.5500%2C43.4000%2C-96.9800" target="_blank" rel="noopener">Abrir en pantalla completa &nearr;</a></div>
-      <iframe class="kw-embed" data-src="https://marcos.kw.com/search/sale?viewport=43.7200%2C-96.5500%2C43.4000%2C-96.9800" title="Mapa de búsqueda de casas" loading="eager" allow="geolocation"></iframe>
-      <p class="map-cta-or" style="margin-top:32px">Otras formas de buscar en el MLS:</p>
-      <div class="search-cards" role="list" aria-label="Otras formas de buscar">
-        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="sc-text"><strong>Buscar todas las casas</strong><span>Todos los listados activos del MLS</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
-        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=2" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg></span><span class="sc-text"><strong>Mis listados</strong><span>Casas que tengo a la venta ahora</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
-        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;Featured=3" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 10h4a1 1 0 0 1 1 1v10M2 21h20M8 8h3M8 12h3M8 16h3"/></svg></span><span class="sc-text"><strong>Listados de Keller Williams</strong><span>Casas listadas por mi oficina</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
-        <a class="search-card" role="listitem" href="https://rase.paragonrels.com/idx/idx.aspx?Mls=RASE&amp;Subscriber=f696dc33-98c8-48df-aae8-30bc14952f07&amp;MLSSearch=1" target="_blank" rel="noopener"><span class="sc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg></span><span class="sc-text"><strong>Buscar por MLS # o dirección</strong><span>¿Ya tiene una casa en mente?</span></span><span class="sc-arrow" aria-hidden="true">&rarr;</span></a>
+      <div class="sp-bar">
+      <form class="sp-filters" id="sp-form" autocomplete="off">
+        <div class="sp-q"><input type="search" id="f-q" placeholder="Ciudad, código postal, dirección o MLS #" aria-label="Ciudad, código postal, dirección o MLS #"><button type="submit" class="sp-qgo" aria-label="Buscar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div>
+        <input type="hidden" id="f-min"><input type="hidden" id="f-max"><input type="hidden" id="f-beds"><input type="hidden" id="f-baths"><input type="hidden" id="f-type">
+        <input type="hidden" id="f-area"><input type="hidden" id="f-year"><input type="hidden" id="f-dom"><input type="hidden" id="f-acres"><input type="hidden" id="f-pend">
+        <div class="fpills" id="pills">
+          <div class="fpill"><button type="button" class="pill-b" data-pop="price" aria-expanded="false"><span id="pl-price">Precio</span><i></i></button>
+            <div class="pop" id="pop-price" role="dialog" aria-label="Precio">
+              <div class="pop-h">Rango de precio</div>
+              <div class="pop-2"><label>Mínimo<input type="text" inputmode="numeric" id="pp-min" placeholder="Sin mínimo"></label><span>–</span><label>Máximo<input type="text" inputmode="numeric" id="pp-max" placeholder="Sin máximo"></label></div>
+              <div class="pop-chips" id="pp-chips"></div>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="price">Borrar</button><button type="button" class="pop-apply" data-apply="price">Aplicar</button></div>
+            </div>
+          </div>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="beds" aria-expanded="false"><span id="pl-beds">Recámaras y baños</span><i></i></button>
+            <div class="pop" id="pop-beds" role="dialog" aria-label="Recámaras y baños">
+              <div class="pop-h">Recámaras</div>
+              <div class="seg" id="pb-beds"><button type="button" data-v="">Todas</button><button type="button" data-v="1">1+</button><button type="button" data-v="2">2+</button><button type="button" data-v="3">3+</button><button type="button" data-v="4">4+</button><button type="button" data-v="5">5+</button></div>
+              <div class="pop-h">Baños</div>
+              <div class="seg" id="pb-baths"><button type="button" data-v="">Todos</button><button type="button" data-v="1">1+</button><button type="button" data-v="2">2+</button><button type="button" data-v="3">3+</button><button type="button" data-v="4">4+</button></div>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="beds">Borrar</button><button type="button" class="pop-apply" data-apply="beds">Aplicar</button></div>
+            </div>
+          </div>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="type" aria-expanded="false"><span id="pl-type">Tipo de casa</span><i></i></button>
+            <div class="pop" id="pop-type" role="dialog" aria-label="Tipo de casa">
+              <div class="pop-h">Tipo de casa</div>
+              <div class="radios" id="pt-type">
+                <label><input type="radio" name="pt" value="" checked><span>Cualquier tipo</span></label>
+                <label><input type="radio" name="pt" value="residential"><span>Casa</span></label>
+                <label><input type="radio" name="pt" value="condominium"><span>Condominio / townhome</span></label>
+              </div>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="type">Borrar</button><button type="button" class="pop-apply" data-apply="type">Aplicar</button></div>
+            </div>
+          </div>
+          <div class="fpill"><button type="button" class="pill-b" data-pop="more" aria-expanded="false"><svg viewBox="0 0 24 24" class="pl-ic"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span id="pl-more">Más</span><i></i></button>
+            <div class="pop pop-r" id="pop-more" role="dialog" aria-label="Más filtros">
+              <div class="pop-h">Pies cuadrados</div>
+              <select id="pm-area"><option value="">Cualquier tamaño</option><option value="1000">1,000+ pies²</option><option value="1500">1,500+ pies²</option><option value="2000">2,000+ pies²</option><option value="2500">2,500+ pies²</option><option value="3000">3,000+ pies²</option><option value="4000">4,000+ pies²</option></select>
+              <div class="pop-h">Tamaño del terreno</div>
+              <select id="pm-acres"><option value="">Cualquier terreno</option><option value="0.5">½ acre o más</option><option value="1">1 acre o más</option><option value="2">2 acres o más</option><option value="5">5 acres o más</option><option value="10">10 acres o más</option></select>
+              <div class="pop-h">Año de construcción</div>
+              <select id="pm-year"><option value="">Cualquier año</option><option value="1980">1980 o más nueva</option><option value="2000">2000 o más nueva</option><option value="2010">2010 o más nueva</option><option value="2020">2020 o más nueva</option></select>
+              <div class="pop-h">Días en el mercado</div>
+              <select id="pm-dom"><option value="">Cualquiera</option><option value="1">Nuevas en el último día</option><option value="7">Nuevas en los últimos 7 días</option><option value="14">Nuevas en los últimos 14 días</option><option value="30">Nuevas en los últimos 30 días</option></select>
+              <label class="pm-chk"><input type="checkbox" id="pm-pend"> Mostrar también casas pendientes</label>
+              <div class="pop-f"><button type="button" class="pop-reset" data-reset="more">Borrar</button><button type="button" class="pop-apply" data-apply="more">Aplicar</button></div>
+            </div>
+          </div>
+          <button type="button" class="sp-savebtn" data-alert hidden>Guardar búsqueda</button>
+        </div>
+      </form>
       </div>
+
+      <div class="sp-toggle"><button type="button" id="v-toggle" aria-label="Map or list"></button><span class="sep"></span><button type="button" id="sort-btn"><svg viewBox="0 0 24 24"><path d="M7 4v16M3 16l4 4 4-4M14 6h7M14 11h5M14 16h3"/></svg><span id="sort-btn-t">Sort</span></button></div>
+
+      <div class="sp-body show-map" id="sp-body">
+        <div id="sp-map"></div>
+        <div class="sp-list">
+          <div class="sp-head"><div class="sp-count" id="sp-count">Cargando casas…</div><span class="sp-headr"><select class="sp-sortd" id="sort-d" aria-label="Sort"></select><button type="button" class="sp-saved" id="sp-saved"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg><span id="sp-savedn">Guardadas (0)</span></button></span></div>
+          <div class="sp-cmpbar" id="sp-cmpbar"><span id="sp-cmptxt">Marque 2 o 3 casas para comparar</span><button type="button" id="sp-cmpgo" disabled>Comparar</button></div>
+          <div class="sp-recent" id="sp-recent" hidden></div>
+          <div class="sp-cards" id="sp-cards"></div>
+          <button class="sp-more" id="sp-more" hidden>Ver más casas</button>
+        </div>
+      </div>
+
+      <p class="sp-disc">La información de las casas se considera confiable pero no está garantizada y debe verificarse. <span id="sp-updated"></span> Las casas son cortesía de la correduría indicada en cada una. Información proporcionada por el MLS de la REALTOR® Association of the Sioux Empire.</p>
     </div>
   </section>
 </main>
+
+<div class="sp-modal" id="sp-modal" role="dialog" aria-modal="true" aria-label="Detalles de la casa">
+  <div class="sp-box"><div id="sp-detail"></div></div>
+</div>
+<div class="hd-lb" id="hd-lb" role="dialog" aria-modal="true" aria-label="Fotos">
+  <div class="hd-lb-top"><span id="hd-lb-n"></span><button type="button" id="hd-lb-x" aria-label="Cerrar fotos">&times;</button></div>
+  <div class="hd-lb-track" id="hd-lb-track"></div>
+  <button type="button" class="hd-lb-nav hd-lb-prev" id="hd-lb-prev" aria-label="Foto anterior">&#8249;</button>
+  <button type="button" class="hd-lb-nav hd-lb-next" id="hd-lb-next" aria-label="Foto siguiente">&#8250;</button>
+</div>
+<div class="hd-toast" id="hd-toast" role="status"></div>
+<div class="pop-shade" id="pop-shade"></div>
+<div class="tr" id="tr" role="dialog" aria-modal="true" aria-labelledby="tr-h">
+  <div class="tr-box">
+    <button type="button" class="al-x" id="tr-x" aria-label="Cerrar">&times;</button>
+    <div class="tr-head" id="tr-head"></div>
+    <div class="tr-body" id="tr-body"></div>
+    <p class="tr-note" id="tr-note"></p>
+  </div>
+</div>
+<div class="al" id="cmp" role="dialog" aria-modal="true" aria-labelledby="cmp-h">
+  <div class="al-box" style="max-width:900px">
+    <button type="button" class="al-x" id="cmp-x" aria-label="Cerrar">&times;</button>
+    <h2 id="cmp-h">Comparar casas</h2>
+    <div class="cmp-wrap" id="cmp-body"></div>
+    <p class="sp-disc">La información se considera confiable pero no está garantizada y debe verificarse. Información proporcionada por el MLS de la REALTOR® Association of the Sioux Empire.</p>
+  </div>
+</div>
+<div class="al" id="al" role="dialog" aria-modal="true" aria-labelledby="al-h">
+  <div class="al-box">
+    <button type="button" class="al-x" id="al-x" aria-label="Cerrar">&times;</button>
+    <form id="al-form" novalidate>
+      <h2 id="al-h">Vea las casas nuevas primero</h2>
+      <p style="font-size:15px;margin:0">Le enviaré por correo las casas nuevas que coincidan con su búsqueda apenas salgan al mercado.</p>
+      <div class="al-what" id="al-what"></div>
+      <label for="al-name">Nombre</label><input type="text" id="al-name" name="name" autocomplete="name" required maxlength="100">
+      <label for="al-email">Correo electrónico</label><input type="email" id="al-email" name="email" autocomplete="email" required maxlength="120">
+      <label for="al-phone">Teléfono <span style="font-weight:300">(opcional)</span></label><input type="tel" id="al-phone" name="phone" autocomplete="tel" maxlength="40">
+      <label>¿Cada cuánto?</label>
+      <div class="al-freq"><label><input type="radio" name="freq" value="Daily" checked>Diario</label><label><input type="radio" name="freq" value="Weekly">Semanal</label></div>
+      <input type="text" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+      <label class="al-ok"><input type="checkbox" name="consent" value="yes" required>Sí, envíenme casas nuevas de Marcos Diaz y usen las casas que abro en este sitio para ajustar mis alertas. Si agrego mi teléfono, Marcos me puede llamar o enviar textos sobre casas. Puedo cancelar cuando quiera. <a href="/es/privacidad.html" target="_blank">Privacidad</a></label>
+      <button type="submit" class="al-send">Empezar mis alertas</button>
+      <p class="al-msg" id="al-msg" role="alert"></p>
+    </form>
+    <div class="al-done" id="al-done" hidden><b>¡Listo!</b>Revise su correo. Le envié las casas que coinciden ahora mismo. Las nuevas le llegarán apenas salgan al mercado.</div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
@@ -94,7 +641,1485 @@
     <p>&copy; <span class="year">2026</span> Marcos Diaz · <a href="/es/privacidad.html">Privacidad</a></p>
   </div>
 </footer>
+
 <script src="/site.js?v=BUILD" defer></script>
-<script>(function(){var f=document.querySelector('.kw-embed');if(f&&window.matchMedia('(min-width: 701px)').matches)f.src=f.dataset.src;})();</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function () {
+  // LIVE_API: the Cloudflare Worker URL that holds the real SimplyRETS keys (see tools/simplyrets-worker.js),
+  // e.g. 'https://listings.605homesearch.com'. Leave empty to keep using SimplyRETS's public DEMO data.
+  // Real keys never go in this file.
+  var LIVE_API = 'https://listings.605homesearch.com';
+  var LIVE = !!LIVE_API;
+  var ES = document.documentElement.lang === 'es';
+  function t(en, es) { return ES ? es : en; }
+  // ALERTS_URL: the Listing Alert Leads Google Apps Script web app URL (automation/listing-alerts.gs). Empty = alerts button hidden.
+  // Who this visitor is, if they signed up for alerts (set at sign-up, or from ?a= in an alert email link).
+  // Only a random ID is kept in the browser; it lets the alerts learn from the homes they open.
+  var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function getAid() { try { var v = localStorage.getItem('mdAlertId'); return UUID_RE.test(v || '') ? v : ''; } catch (e) { return ''; } }
+  function setAid(v) { try { localStorage.setItem('mdAlertId', v); } catch (e) {} }
+  (function () {
+    var u = new URLSearchParams(location.search), a = u.get('a');
+    if (a && UUID_RE.test(a)) {
+      setAid(a.toLowerCase()); u.delete('a');
+      var qs = u.toString();
+      history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+    }
+  })();
+  function newId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+  }
+  var viewed = {};
+  function trackView(h) {
+    var aid = getAid();
+    if (!ALERTS_URL || !aid || !h || !h.mlsId || viewed[h.mlsId]) return;
+    viewed[h.mlsId] = 1;
+    var d = new URLSearchParams(); d.set('action', 'view'); d.set('id', aid); d.set('mlsId', String(h.mlsId));
+    fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d, keepalive: true }).catch(function () {});
+  }
+  var ALERTS_URL = 'https://script.google.com/macros/s/AKfycbxklqP-b5JNN1e2hsuwLXQvC0P6_4ZmJBORJLDojLWMwqWiUx5JFn0oiKDVXvu4c-6-/exec';
+  // RASE sends addresses like "508 E Plum Creek Rd Road" - drop the repeated spelled-out street type
+  var SUFFIX = { rd:'road', dr:'drive', st:'street', ave:'avenue', av:'avenue', ln:'lane', ct:'court', cir:'circle', pl:'place', blvd:'boulevard', trl:'trail', pkwy:'parkway', ter:'terrace', hwy:'highway', cv:'cove', way:'way', pt:'point', sq:'square', xing:'crossing', loop:'loop' };
+  function cleanAddr(full) {
+    var w = String(full || '').split(/\s+/), out = [];
+    for (var i = 0; i < w.length; i++) {
+      var prev = out.length ? out[out.length - 1].replace(/\.$/, '').toLowerCase() : '';
+      if (prev && SUFFIX[prev] && SUFFIX[prev] === w[i].toLowerCase() && SUFFIX[prev] !== prev) continue;
+      out.push(w[i]);
+    }
+    return out.join(' ');
+  }
+
+
+  var API = LIVE ? LIVE_API.replace(/\/$/, '') + '/properties' : 'https://api.simplyrets.com/properties';
+  var AUTH = LIVE ? null : 'Basic ' + btoa('simplyrets:simplyrets');
+  var HEADERS = AUTH ? { Authorization: AUTH } : {};
+  if (LIVE) { var db = document.querySelector('.demo-banner'); if (db) db.remove(); }
+  var PAGE = 24, totalCount = null;
+  var SORTS = [['-listdate', t('Newest', 'Más nuevas')], ['listprice', t('Price (low to high)', 'Precio (de menor a mayor)')], ['-listprice', t('Price (high to low)', 'Precio (de mayor a menor)')],
+               ['-beds', t('Most bedrooms', 'Más recámaras')], ['-baths', t('Most bathrooms', 'Más baños')]];
+  var sortVal = '-listdate';
+  var offset = 0, results = [], markers = {}, moveTimer = null, skipMove = false;
+
+  var map = L.map('sp-map', { scrollWheelZoom: true });
+  var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  // Satellite photos from the USGS National Map (free, public domain)
+  var satellite = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19, maxNativeZoom: 16, attribution: 'Imagery: USGS The National Map'
+  });
+  var layer = L.layerGroup().addTo(map);
+  var pinLayer = L.layerGroup().addTo(map);
+  if (LIVE) map.setView([43.5446, -96.7311], 11); // Sioux Falls
+  else map.setView([29.76, -95.37], 10); // demo data is in Houston
+
+  // ---- Draw an area: trace a shape with a finger or mouse; only homes inside it show ----
+  var drawPts = null, drawShape = null, drawing = false, trail = null, rawPts = [];
+  var drawCtl = L.control({ position: 'topright' });
+  drawCtl.onAdd = function () {
+    var d = L.DomUtil.create('div', 'sp-draw');
+    d.innerHTML = '<button type="button" class="d-go" id="d-go"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span id="d-go-t"></span></button>' +
+      '<button type="button" class="d-clear" id="d-clear" hidden>' + t('Clear drawing', 'Borrar el dibujo') + '</button>' +
+      '<div class="sp-draw-tip" id="d-tip" hidden>' + t('Trace around the area you want with your finger or mouse.', 'Dibuje con el dedo o el mouse alrededor del área que quiere.') + '</div>';
+    L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
+    return d;
+  };
+  drawCtl.addTo(map);
+  function drawLabel() { document.getElementById('d-go-t').textContent = drawing ? t('Cancel', 'Cancelar') : (drawPts ? t('Draw again', 'Dibujar otra vez') : t('Draw', 'Dibujar')); }
+  drawLabel();
+  var mapEl = map.getContainer();
+  function setDrawing(on) {
+    drawing = on;
+    mapEl.classList.toggle('drawing', on);
+    document.getElementById('d-go').classList.toggle('on', on);
+    document.getElementById('d-tip').hidden = !on;
+    if (on) { map.dragging.disable(); map.touchZoom.disable(); map.doubleClickZoom.disable(); }
+    else { map.dragging.enable(); map.touchZoom.enable(); map.doubleClickZoom.enable(); }
+    drawLabel();
+  }
+  function simplify(pts, max) {  // keep the shape, at most `max` corners (the MLS search takes a list of points)
+    if (pts.length <= max) return pts;
+    var out = [], step = pts.length / max;
+    for (var i = 0; i < max; i++) out.push(pts[Math.floor(i * step)]);
+    return out;
+  }
+  function clearDrawing(reload) {
+    drawPts = null; if (drawShape) { map.removeLayer(drawShape); drawShape = null; }
+    document.getElementById('d-clear').hidden = true; drawLabel();
+    if (reload) load(false);
+  }
+  function startTrace(e) {
+    if (!drawing) return;
+    e.preventDefault(); rawPts = [map.mouseEventToLatLng(e)];
+    trail = L.polyline(rawPts, { color: '#b98b5c', weight: 3 }).addTo(map);
+    try { mapEl.setPointerCapture(e.pointerId); } catch (x) {}
+  }
+  function moveTrace(e) {
+    if (!drawing || !trail) return;
+    e.preventDefault(); rawPts.push(map.mouseEventToLatLng(e)); trail.setLatLngs(rawPts);
+  }
+  function endTrace() {
+    if (!drawing || !trail) return;
+    map.removeLayer(trail); trail = null;
+    setDrawing(false);
+    if (rawPts.length < 5) { drawLabel(); return; }
+    applyDrawing(simplify(rawPts, 30), true);
+  }
+  function applyDrawing(pts, fit) {
+    if (drawShape) map.removeLayer(drawShape);
+    drawShape = L.polygon(pts, { color: '#b98b5c', weight: 3, fillColor: '#b98b5c', fillOpacity: 0.08, interactive: false }).addTo(map);
+    drawPts = pts.map(function (ll) { return (+ll.lat).toFixed(5) + ',' + (+ll.lng).toFixed(5); });
+    $('f-q').value = '';
+    document.getElementById('d-clear').hidden = false; drawLabel();
+    if (fit) { skipMove = true; map.fitBounds(drawShape.getBounds(), { padding: [20, 20] }); load(false); }
+  }
+  mapEl.addEventListener('pointerdown', startTrace);
+  mapEl.addEventListener('pointermove', moveTrace);
+  mapEl.addEventListener('pointerup', endTrace);
+  mapEl.addEventListener('pointercancel', endTrace);
+  document.getElementById('d-go').onclick = function () { setDrawing(!drawing); };
+  document.getElementById('d-clear').onclick = function () { clearDrawing(true); };
+  // ---- Map tools: satellite view, near me, share this search ----
+  var ICON = {
+    sat: '<svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg>',
+    me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>',
+    share: '<svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg>'
+  };
+  var toolCtl = L.control({ position: 'topleft' });
+  toolCtl.onAdd = function () {
+    var d = L.DomUtil.create('div', 'sp-tools');
+    d.style.position = 'relative';
+    d.innerHTML = '<button type="button" id="t-sat" title="' + t('Map options', 'Opciones del mapa') + '" aria-label="' + t('Map options', 'Opciones del mapa') + '" aria-expanded="false">' + ICON.sat + '</button>' +
+      '<button type="button" id="t-me" title="' + t('Homes near me', 'Casas cerca de mí') + '" aria-label="' + t('Homes near me', 'Casas cerca de mí') + '">' + ICON.me + '</button>' +
+      '<button type="button" id="t-share" title="' + t('Share this search', 'Compartir esta búsqueda') + '" aria-label="' + t('Share this search', 'Compartir esta búsqueda') + '">' + ICON.share + '</button>';
+    var pnl = document.createElement('div'); pnl.className = 'sp-layers'; pnl.id = 't-panel'; pnl.hidden = true;
+    pnl.innerHTML = '<h4>' + t('Map style', 'Tipo de mapa') + '</h4>' +
+      '<label><input type="radio" name="t-base" value="map" checked>' + t('Map', 'Mapa') + '</label>' +
+      '<label><input type="radio" name="t-base" value="sat">' + t('Satellite', 'Satélite') + '</label>' +
+      '<h4>' + t('Show on map', 'Mostrar en el mapa') + '</h4>' +
+      '<label><input type="checkbox" id="t-flood">' + t('Flood zones (FEMA)', 'Zonas de inundación (FEMA)') + '</label>' +
+      '<label><input type="checkbox" id="t-sch">' + t('Schools', 'Escuelas') + '</label>' +
+      '<div class="sub" id="t-sch-f" hidden>' +
+        '<label><input type="checkbox" data-sl="E" checked><i style="background:#2a6fdb"></i>' + t('Elementary', 'Primaria') + '</label>' +
+        '<label><input type="checkbox" data-sl="M" checked><i style="background:#7b4bc4"></i>' + t('Middle', 'Secundaria') + '</label>' +
+        '<label><input type="checkbox" data-sl="H" checked><i style="background:#c0392b"></i>' + t('High', 'Preparatoria') + '</label>' +
+        '<label><input type="checkbox" data-sl="P" checked><i style="background:#4a5063"></i>' + t('Private', 'Privada') + '</label>' +
+      '</div>' +
+      '<small id="t-note">' + t('School locations from the U.S. Dept. of Education. Always confirm which school a home is assigned to with the district.', 'Ubicaciones de escuelas del Departamento de Educación de EE. UU. Siempre confirme con el distrito qué escuela le toca a cada casa.') + '</small>';
+    d.appendChild(pnl);
+    L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
+    return d;
+  };
+  toolCtl.addTo(map);
+  var legend = L.control({ position: 'bottomleft' });
+  legend.onAdd = function () {
+    var d = L.DomUtil.create('div', 'sp-legend');
+    d.innerHTML = '<span><i style="background:var(--gold)"></i>' + t('New this week', 'Nueva esta semana') + '</span><span><i style="background:#1f6b45"></i>' + t('Price cut', 'Bajó de precio') + '</span>';
+    return d;
+  };
+  legend.addTo(map);
+  // ---- Map options: map / satellite, flood zones, schools ----
+  document.getElementById('t-sat').onclick = function () {
+    var p = document.getElementById('t-panel'); p.hidden = !p.hidden;
+    this.classList.toggle('on', !p.hidden); this.setAttribute('aria-expanded', String(!p.hidden));
+  };
+  map.on('click', function () { var p = document.getElementById('t-panel'); if (!p.hidden) { p.hidden = true; document.getElementById('t-sat').classList.remove('on'); } });
+  document.querySelectorAll('input[name="t-base"]').forEach(function (r) {
+    r.onchange = function () {
+      if (this.value === 'sat') { map.removeLayer(streets); satellite.addTo(map); } else { map.removeLayer(satellite); streets.addTo(map); }
+      satellite.bringToBack(); streets.bringToBack();
+    };
+  });
+  // FEMA National Flood Hazard Layer (free public data), drawn as see-through tiles
+  var FEMA = 'https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer';
+  var FloodTiles = L.TileLayer.extend({
+    getTileUrl: function (c) {
+      var sz = this.getTileSize(), nw = c.scaleBy(sz), se = nw.add(sz);
+      var a = map.options.crs.project(map.unproject(nw, c.z)), b = map.options.crs.project(map.unproject(se, c.z));
+      return FEMA + '/export?bbox=' + [a.x, b.y, b.x, a.y].join(',') + '&bboxSR=3857&imageSR=3857&size=' + sz.x + ',' + sz.y + '&format=png32&transparent=true&layers=show:28&f=image';
+    }
+  });
+  var flood = new FloodTiles('', { opacity: 0.55, minZoom: 11, maxZoom: 19, attribution: 'Flood zones: FEMA NFHL' });
+  document.getElementById('t-flood').onchange = function () {
+    if (this.checked) { flood.addTo(map); if (map.getZoom() < 11) toast(t('Zoom in to see flood zones.', 'Acérquese para ver las zonas de inundación.')); }
+    else map.removeLayer(flood);
+  };
+  var schoolLayer = L.layerGroup(), schools = null;
+  function drawSchools() {
+    schoolLayer.clearLayers(); if (!schools) return;
+    var on = {}; document.querySelectorAll('[data-sl]').forEach(function (c) { on[c.dataset.sl] = c.checked; });
+    var lv = { E: t('Elementary', 'Primaria'), M: t('Middle school', 'Secundaria'), H: t('High school', 'Preparatoria') };
+    schools.pub.forEach(function (x) {
+      if (!on[x[1]]) return;
+      L.marker([x[4], x[5]], { zIndexOffset: -500, icon: L.divIcon({ className: '', html: '<span class="sch ' + x[1] + '">' + ({ E: 'E', M: 'M', H: 'H' })[x[1]] + '</span>' }) })
+        .bindPopup('<b>' + esc(x[0]) + '</b><br>' + lv[x[1]] + ' · ' + t('Public', 'Pública') + ' · ' + t('Grades ', 'Grados ') + esc(x[2]) + '<br>' + esc(x[3]) + t(' School District', ' (distrito escolar)'))
+        .addTo(schoolLayer);
+    });
+    if (on.P) schools.prv.forEach(function (x) {
+      L.marker([x[1], x[2]], { zIndexOffset: -500, icon: L.divIcon({ className: '', html: '<span class="sch P">P</span>' }) })
+        .bindPopup('<b>' + esc(x[0]) + '</b><br>' + t('Private school', 'Escuela privada')).addTo(schoolLayer);
+    });
+  }
+  document.getElementById('t-sch').onchange = function () {
+    document.getElementById('t-sch-f').hidden = !this.checked;
+    if (!this.checked) { map.removeLayer(schoolLayer); return; }
+    schoolLayer.addTo(map);
+    if (schools) return drawSchools();
+    fetch('/data/schools.json').then(function (r) { return r.json(); }).then(function (d) { schools = d; drawSchools(); }).catch(function () {});
+  };
+  document.querySelectorAll('[data-sl]').forEach(function (c) { c.onchange = drawSchools; });
+  var meDot = null;
+  document.getElementById('t-me').onclick = function () {
+    if (!navigator.geolocation) return toast(t('Your device can’t share its location.', 'Su aparato no puede compartir su ubicación.'));
+    $('f-q').value = ''; if (drawPts) clearDrawing(false);
+    map.locate({ setView: true, maxZoom: 14 });
+  };
+  map.on('locationfound', function (e) {
+    if (meDot) map.removeLayer(meDot);
+    meDot = L.circleMarker(e.latlng, { radius: 8, color: '#fff', weight: 3, fillColor: '#2a6fdb', fillOpacity: 1 }).addTo(map);
+  });
+  map.on('locationerror', function () { toast(t('Couldn’t get your location. Check that location is allowed for this site.', 'No se pudo obtener su ubicación. Revise que el sitio tenga permiso.')); });
+  function searchUrl() {
+    var u = new URLSearchParams();
+    var q = $('f-q').value.trim(); if (q) u.set('q', q);
+    [['f-min', 'minprice'], ['f-max', 'maxprice'], ['f-beds', 'minbeds'], ['f-baths', 'minbaths'], ['f-type', 'type'], ['f-area', 'minarea'], ['f-acres', 'minacres'], ['f-year', 'minyear'], ['f-dom', 'maxdom'], ['f-pend', 'pending']]
+      .forEach(function (x) { if ($(x[0]).value) u.set(x[1], $(x[0]).value); });
+    if (drawPts) u.set('d', drawPts.join('|'));
+    else if (!q) { var c = map.getCenter(); u.set('c', c.lat.toFixed(4) + ',' + c.lng.toFixed(4) + ',' + map.getZoom()); }
+    var qs = u.toString();
+    return location.pathname + (qs ? '?' + qs : '');
+  }
+  function syncUrl() { try { history.replaceState(history.state, '', searchUrl() + location.hash); } catch (e) {} }
+  document.getElementById('t-share').onclick = function () {
+    var url = location.origin + searchUrl();
+    var title = t('Homes for sale I found on 605homesearch.com', 'Casas en venta que encontré en 605homesearch.com');
+    if (navigator.share) navigator.share({ title: title, url: url }).catch(function () {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast(t('Link copied. Paste it in a text or email.', 'Enlace copiado. Péguelo en un texto o correo.')); });
+    else prompt(t('Copy this link:', 'Copie este enlace:'), url);
+  };
+
+  // ---- Every home in the area as a pin (crowded pins grouped into a numbered bubble) ----
+  var allPins = null, pinReq = 0;
+  function pinCls(dom, orig, price) { return (orig && price && orig > price) ? ' p-cut' : (dom != null && dom <= 7 ? ' p-new' : ''); }
+  function loadPins() {
+    var my = ++pinReq;
+    var u = query(false).replace(/([?&])limit=\d+/, '$1limit=' + PAGE) + '&pins=1';
+    fetch(u, { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (data) {
+      if (my !== pinReq) return;
+      // the pin list is small (location + price); an older listings service sends full listings instead, so keep the old pins then
+      allPins = (Array.isArray(data) && (!data.length || data[0].lat != null)) ? data : null;
+      drawPins(); render(false);
+    }).catch(function () { if (my === pinReq) { allPins = null; drawPins(); } });
+  }
+  function drawPins() {
+    pinLayer.clearLayers();
+    if (!allPins || savedMode) return;
+    var z = map.getZoom(), cell = z >= 15 ? 0 : 58, groups = {};
+    allPins.forEach(function (h) {
+      var pt = map.project([h.lat, h.lng], z);
+      var key = cell ? Math.floor(pt.x / cell) + ':' + Math.floor(pt.y / cell) : h.mlsId;
+      (groups[key] = groups[key] || []).push(h);
+    });
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k];
+      if (g.length < 2) {
+        g.forEach(function (h) {
+          L.marker([h.lat, h.lng], { icon: L.divIcon({ className: '', html: '<span class="pin' + pinCls(h.dom, h.originalListPrice, h.listPrice) + '" data-m="' + esc(h.mlsId) + '">' + short(h.listPrice) + '</span>' }) })
+            .on('click', function () { openById(h.mlsId); }).addTo(pinLayer);
+        });
+      } else {
+        var lat = 0, lng = 0; g.forEach(function (h) { lat += h.lat; lng += h.lng; });
+        var b = L.latLngBounds(g.map(function (h) { return [h.lat, h.lng]; }));
+        L.marker([lat / g.length, lng / g.length], { zIndexOffset: 1000, icon: L.divIcon({ className: '', html: '<span class="pin p-c">' + g.length + '</span>' }) })
+          .on('click', function () { skipMove = false; map.fitBounds(b, { padding: [40, 40], maxZoom: Math.min(z + 3, 17) }); }).addTo(pinLayer);
+      }
+    });
+  }
+  map.on('zoomend', drawPins);
+
+  // While the list is showing on a phone the map is hidden and has no size, so use the last area it showed
+  var lastBounds = null;
+  function mapShown() { var el = map.getContainer(); return el.offsetWidth > 0 && el.offsetHeight > 0; }
+  function areaPoints() {
+    if (drawPts) return drawPts;
+    var b = mapShown() || !lastBounds ? map.getBounds() : lastBounds;
+    if (mapShown()) lastBounds = b;
+    return [[b.getNorth(), b.getWest()], [b.getNorth(), b.getEast()], [b.getSouth(), b.getEast()], [b.getSouth(), b.getWest()]]
+      .map(function (pt) { return pt[0].toFixed(5) + ',' + pt[1].toFixed(5); });
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (n) { return n ? '$' + Math.round(n).toLocaleString() : ''; };
+  var short = function (n) { return n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : '$' + Math.round(n / 1000) + 'K'; };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+
+  function query(more) {
+    var p = new URLSearchParams();
+    var q = $('f-q').value.trim();
+    if (q) p.set('q', q);
+    // Only homes buyers can still make an offer on, unless "Show pending homes too" is checked (or they typed an MLS #)
+    if (!/^\d{5,}$/.test(q || '')) { p.append('status', 'Active'); if ($('f-pend').value) p.append('status', 'Pending'); }
+    if ($('f-min').value) p.set('minprice', $('f-min').value);
+    if ($('f-max').value) p.set('maxprice', $('f-max').value);
+    if ($('f-beds').value) p.set('minbeds', $('f-beds').value);
+    if ($('f-baths').value) p.set('minbaths', $('f-baths').value);
+    if ($('f-type').value) p.set('type', $('f-type').value);
+    // RASE files townhomes and condos as "residential" too, so "House" also asks for single-family homes only
+    if ($('f-type').value === 'residential') p.set('subtype', 'SingleFamilyResidence');
+    if ($('f-area').value) p.set('minarea', $('f-area').value);
+    if ($('f-acres').value) p.set('minacres', $('f-acres').value);
+    if ($('f-year').value) p.set('minyear', $('f-year').value);
+    if ($('f-dom').value) p.set('maxdom', $('f-dom').value);
+    if (!q) areaPoints().forEach(function (pt) { p.append('points', pt); });
+    p.set('limit', PAGE);
+    if (sortVal) p.set('sort', sortVal);
+    if (!more) p.set('count', 'true');
+    p.set('offset', more ? offset : 0);
+    return API + '?' + p.toString();
+  }
+
+  function load(more) {
+    if (!more && savedMode) { savedMode = false; cmpSel = []; $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); }
+    if (!more) { offset = 0; results = []; $('sp-count').textContent = t('Loading homes…', 'Cargando casas…'); if (LIVE) loadPins(); syncUrl(); }
+    fetch(query(more), { headers: HEADERS })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); if (!more) { var tc = parseInt(r.headers.get('X-Total-Count'), 10); totalCount = isFinite(tc) ? tc : null; } return r.json(); })
+      .then(function (data) {
+        if (!more) results = LIVE ? [] : [sampleListing()];
+        results = results.concat(data.filter(function (h) { return h.internetEntireListingDisplay !== false; }));
+        offset = results.length - (LIVE ? 0 : 1);
+        render(!more && $('f-q').value.trim());
+        $('sp-more').hidden = data.length < PAGE;
+      })
+      .catch(function () {
+        $('sp-count').textContent = '';
+        $('sp-cards').innerHTML = '<div class="sp-msg">' + t('Couldn’t load listings right now. Please try again in a minute.', 'No se pudieron cargar las casas. Intente de nuevo en un minuto.') + '</div>';
+      });
+  }
+
+  // RASE IDX Policy 18.2.12: listing firm + listing agent + contact (AttributionContact), prominent, not below median type size.
+  function attr(h) {
+    var ag = h.agent || {}, of = h.office || {}, oc = of.contact || {}, ac = ag.contact || {};
+    var name = [ag.firstName, ag.lastName].filter(Boolean).join(' ');
+    var ac2 = h.attributionContact || h.AttributionContact || (h.mls && (h.mls.attributionContact || h.mls.AttributionContact)) || of.attributionContact || ag.attributionContact || (h.attribution && (h.attribution.contact || h.attribution.attributionContact));
+    // SimplyRETS has no AttributionContact field: the listing firm's contact is office.contact (office phone, then email).
+    var contact = ac2 || oc.office || oc.email || ac.office || ac.email || '';
+    return { office: of.name || of.servingName || (h.mls && h.mls.originatingSystemName) || (LIVE ? '' : '(office name not in sample data)'), agent: name, contact: contact };
+  }
+
+  // One made-up listing so the "Listing courtesy of" line can be checked before the RASE feed is on. Not a real home.
+  function sampleListing() {
+    var c = map.getCenter();
+    return {
+      _sample: true, listingId: 'SAMPLE-0001', listPrice: 349900,
+      address: { full: '123 Sample St (test listing)', city: 'Sample City', state: 'SD', postalCode: '00000' },
+      geo: { lat: c.lat, lng: c.lng },
+      photos: ['/images/kitchen.jpg'],
+      property: { bedrooms: 3, bathsFull: 2, area: 1850, yearBuilt: 2015, type: 'RES' },
+      mls: { status: 'Sample', daysOnMarket: 0 },
+      agent: { firstName: 'Jane', lastName: 'Example' },
+      office: { name: 'Sample Realty Co.', contact: { office: '605-555-0100', email: 'office@example.com' } },
+      remarks: 'This is a made-up test listing so you can see how listing attribution looks. It will be removed when real MLS listings are turned on.',
+      disclaimer: 'Test listing only. Not a real property.'
+    };
+  }
+  function attrHtml(h, links) {
+    var x = attr(h), c = x.contact;
+    if (c && links) c = /@/.test(c) ? '<a href="mailto:' + esc(c) + '">' + esc(c) + '</a>' : '<a href="tel:' + esc(c.replace(/[^0-9+]/g, '')) + '">' + esc(c) + '</a>';
+    else c = esc(c);
+    return t('Listing courtesy of ', 'Cortesía de ') + esc(x.office) + (x.agent ? ' · ' + esc(x.agent) : '') + (c ? ' · ' + c : '');
+  }
+
+  function statusTxt(h) { var st = String((h.mls && (h.mls.statusText || h.mls.status)) || 'Active'); return ES ? ({ Active: 'Activa', Pending: 'Pendiente', ActiveUnderContract: 'Bajo contrato', 'Active Under Contract': 'Bajo contrato' }[st] || st) : st; }
+  function baths(p) { var f = p.property || {}; return (f.bathsFull || 0) + (f.bathsHalf ? 0.5 * f.bathsHalf : 0) || f.bathrooms || ''; }
+
+  // What's special about a home (like Zillow's "Fenced yard" tag), read from the listing's own MLS features and description
+  var HL = [
+    ['walkout', t('Walkout basement', 'Sótano con salida'), function (p, x, r) { return /walk-?out/.test(x + ' ' + r); }],
+    ['shop', t('Shop / outbuilding', 'Taller o bodega'), function (p, x, r) { return /\bshop\b|pole barn|outbuilding|quonset/.test(x + ' ' + r); }],
+    ['pool', t('Pool', 'Alberca'), function (p, x, r) { return !!p.pool || /\bpool\b/.test(x) || /(in-?ground|above-?ground|heated) pool/.test(r); }],
+    ['acre', '', function (p) { return (+p.acres || 0) >= 1; }],
+    ['new', t('New construction', 'Construcción nueva'), function (p) { return (p.yearBuilt || 0) >= new Date().getFullYear() - 1; }],
+    ['garage', '', function (p) { return (p.garageSpaces || 0) >= 3; }],
+    ['kitchen', t('Updated kitchen', 'Cocina renovada'), function (p, x, r) { return /(updated|new|remodel(l)?ed|renovated|brand-new) kitchen/.test(r); }],
+    ['cul', t('Cul-de-sac', 'Calle cerrada'), function (p, x, r) { return /cul-de-sac/.test(x + ' ' + r); }],
+    ['fence', t('Fenced yard', 'Patio cercado'), function (p, x, r) { return /privacy fence|fence – other|fence - other|wood fence|chain link|fenced/.test(x) || /fenced[- ]in|fenced (back ?)?yard|privacy fenc/.test(r); }],
+    ['pfence', t('Partly fenced yard', 'Patio cercado en parte'), function (p, x) { return /partial fence/.test(x); }],
+    ['bsmt', t('Finished basement', 'Sótano terminado'), function (p, x, r) { return /finished lower level/.test(r) || /finished basement/.test(r.replace(/unfinished basement/g, '')); }],
+    ['primary', t('Main-floor primary suite', 'Recámara principal en planta baja'), function (p, x) { return /master bed main level|primary bed(room)? main/.test(x); }],
+    ['laundry', t('Main-floor laundry', 'Lavandería en planta baja'), function (p, x, r) { return /main floor laundry|main-floor laundry|main level laundry/.test(x + ' ' + r); }],
+    ['wood', t('Hardwood floors', 'Pisos de madera'), function (p, x) { return /hardwood/.test(String(p.flooring || '').toLowerCase()); }],
+    ['vault', t('Vaulted ceilings', 'Techos altos'), function (p, x) { return /vaulted/.test(x); }],
+    ['sprink', t('Sprinkler system', 'Riego automático'), function (p, x) { return /sprinkler/.test(x); }],
+    ['fire', t('Fireplace', 'Chimenea'), function (p) { return (p.fireplaces || 0) > 0; }]
+  ];
+  function highlights(h) {
+    if (h._hl) return h._hl;
+    var p = h.property || {}, lc = function (v) { return (Array.isArray(v) ? v.join(',') : String(v || '')).toLowerCase(); };
+    var x = [p.exteriorFeatures, p.interiorFeatures, p.lotDescription, p.fencing, p.parking && p.parking.description].map(lc).join(' | ');
+    var r = String(h.remarks || '').toLowerCase();
+    var out = [];
+    HL.forEach(function (d) {
+      try { if (!d[2](p, x, r)) return; } catch (e) { return; }
+      if (d[0] === 'pfence' && out.indexOf(t('Fenced yard', 'Patio cercado')) > -1) return;
+      if (d[0] === 'garage') out.push(Math.round(p.garageSpaces) + t('-car garage', ' autos de garaje'));
+      else if (d[0] === 'acre') { var ac = +p.acres >= 10 ? Math.round(+p.acres) : +(+p.acres).toFixed(1); out.push(ac + (ac === 1 ? t(' acre', ' acre') : t(' acres', ' acres'))); }
+      else out.push(d[1]);
+    });
+    return (h._hl = out);
+  }
+  // MLS photos come at full camera size (about 3000px, 1 MB each). The MLS photo server can send a smaller copy:
+  // the two numbers after the photo number are the largest width and height. 800px is about 1/14th the download.
+  function px(u, w) {
+    return String(u || '').replace(/(\/ParagonImages\/Property\/[^\/]+\/[^\/]+\/\d+\/\d+\/)\d+\/\d+\//, '$1' + w + '/' + Math.round(w * 3 / 4) + '/');
+  }
+  // up to 6 photos per card: swipe on a phone, arrows on a computer
+  function cardPhotos(h) {
+    var ph = (h.photos || []).slice(0, 6), alt = esc(t('Photo of ', 'Foto de ') + (showAddr(h) ? cleanAddr((h.address || {}).full) : (h.address || {}).city || ''));
+    var slides = ph.length ? ph.map(function (u, k) { return '<div class="sl"><img src="' + esc(px(u, 800)) + '" alt="' + alt + '"' + (k ? ' loading="lazy"' : '') + '></div>'; }).join('') : '<div class="sl"></div>';
+    var st = statusTxt(h), hl = /^(Active|Activa)$/.test(st) ? highlights(h)[0] : '';
+    return '<div class="phw"><div class="ph" tabindex="0" role="group" aria-label="' + alt + '">' + slides + '</div><span class="st' + (hl ? ' hl' : '') + '">' + esc(hl || st) + '</span>' + favBtn(h) +
+      (ph.length > 1 ? '<button type="button" class="nav p" aria-label="' + t('Previous photo', 'Foto anterior') + '">‹</button><button type="button" class="nav n" aria-label="' + t('Next photo', 'Foto siguiente') + '">›</button><div class="dots">' + ph.map(function (u, k) { return '<i' + (k ? '' : ' class="on"') + '></i>'; }).join('') + '</div>' : '') + '</div>';
+  }
+  function render(fit) {
+    var real = results.filter(function (h) { return !h._sample; }).length;
+    var pinMode = !!allPins && !savedMode;
+    var exact = !savedMode && totalCount != null && LIVE;
+    if (exact) real = totalCount; else if (pinMode && allPins.length) real = allPins.length;
+    $('sp-count').textContent = real ? real.toLocaleString() + ((exact || (pinMode ? allPins.length < 500 : $('sp-more').hidden)) ? '' : '+') + (drawPts ? t(' homes in the area you drew', ' casas en el área que dibujó') : t(' homes in this area', ' casas en esta área')) + (LIVE ? '' : ' (plus 1 test listing)') : (drawPts ? t('No homes match inside your drawing. Try a bigger area or fewer filters.', 'No hay casas dentro de su dibujo. Dibuje un área más grande o quite filtros.') : t('No homes match. Try zooming out or changing filters.', 'No hay casas que coincidan. Aleje el mapa o cambie los filtros.'));
+    layer.clearLayers(); markers = {};
+    var pts = [];
+    $('sp-cards').innerHTML = results.map(function (h, i) {
+      var p = h.property || {}, a = h.address || {}, g = h.geo || {};
+      if (g.lat && g.lng && pinMode) { if (!h._sample) pts.push([g.lat, g.lng]); }
+      else if (g.lat && g.lng) {
+        var m = L.marker([g.lat, g.lng], { icon: L.divIcon({ className: '', html: '<span class="pin' + pinCls((h.mls || {}).daysOnMarket, h.originalListPrice, h.listPrice) + '" data-i="' + i + '" data-m="' + esc(h.mlsId) + '">' + short(h.listPrice) + '</span>' }) })
+          .on('click', function () { openDetail(i); }).addTo(layer);
+        markers[i] = m; if (!h._sample) pts.push([g.lat, g.lng]);
+      }
+      var photo = (h.photos && h.photos[0]) || '';
+      return '<div class="sp-card" data-i="' + i + '">' +
+        cardPhotos(h) +
+        '<div class="in"><div class="pr">' + money(h.listPrice) + '</div>' +
+        '<div class="st">' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba · ', ' baños · ') + (p.area ? p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + '</div>' +
+        '<div class="ad">' + (showAddr(h) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city) + '</div>' +
+        cardTags(h) +
+        '<div class="co">' + attrHtml(h, false) + '</div>' +
+        (savedMode ? '<label class="cmp"><input type="checkbox" data-cmp="' + esc(h.mlsId) + '"' + (cmpSel.indexOf(String(h.mlsId)) > -1 ? ' checked' : '') + '>' + t('Compare', 'Comparar') + '</label>' : '') +
+        '</div></div>';
+    }).join('');
+    if (pinMode && fit && allPins.length) pts = allPins.map(function (h) { return [h.lat, h.lng]; });
+    if (fit && pts.length) { skipMove = true; map.fitBounds(pts, { padding: [30, 30], maxZoom: 15 }); }
+  }
+
+  function hi(i, on) {
+    var c = document.querySelector('.sp-card[data-i="' + i + '"]'); if (c) c.classList.toggle('hi', on);
+    var h = results[i], pin = h && document.querySelector('.pin[data-m="' + String(h.mlsId).replace(/"/g, '') + '"]'); if (pin) pin.classList.toggle('hi', on);
+  }
+
+  $('sp-cards').addEventListener('scroll', function (e) {
+    var ph = e.target; if (!ph.classList || !ph.classList.contains('ph')) return;
+    var k = Math.round(ph.scrollLeft / ph.clientWidth);
+    ph.parentNode.querySelectorAll('.dots i').forEach(function (d, j) { d.classList.toggle('on', j === k); });
+  }, true);
+  $('sp-cards').addEventListener('click', function (e) {
+    var nv = e.target.closest('.nav'); if (nv) { e.stopPropagation(); var ph = nv.parentNode.querySelector('.ph'); ph.scrollBy({ left: (nv.classList.contains('n') ? 1 : -1) * ph.clientWidth, behavior: 'smooth' }); return; }
+    var f = e.target.closest('.fav'); if (f) { e.stopPropagation(); toggleFav(f.dataset.fav, results[+f.closest('.sp-card').dataset.i]); return; }
+    if (e.target.closest('.cmp')) return;
+    var c = e.target.closest('.sp-card'); if (c) openDetail(+c.dataset.i);
+  });
+  $('sp-cards').addEventListener('change', function (e) { var x = e.target.closest('[data-cmp]'); if (x) pickCmp(x.dataset.cmp, x.checked, x); });
+  $('sp-cards').addEventListener('mouseover', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, true); });
+  $('sp-cards').addEventListener('mouseout', function (e) { var c = e.target.closest('.sp-card'); if (c) hi(c.dataset.i, false); });
+
+  // ===== Home details page (Zillow-style) =====
+  var ICON = {
+    home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    lot: '<path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M3 14h4M17 14h4"/>',
+    tag: '<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+    car: '<path d="M5 17h14M6 17v2M18 17v2M4 13l2-6h12l2 6v4H4z"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    hoa: '<path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-5h6v5M4 21h16"/>',
+    temp: '<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/>',
+    snow: '<path d="M12 2v20M4.9 6l14.2 12M4.9 18L19.1 6"/>'
+  };
+  function ic(n) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[n] + '</svg>'; }
+  function list(s) { return String(s || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean).join(', '); }
+  function lotText(p) {
+    if (p.lotSizeArea) return Number(p.lotSizeArea).toLocaleString() + ' ' + (p.lotSizeAreaUnits || (p.lotSizeArea > 200 ? t('sq ft', 'pies²') : t('acres', 'acres'))) + t(' lot', ' de terreno');
+    if (p.acres) return p.acres + t(' acre lot', ' acres de terreno');
+    return '';
+  }
+  function showAddr(h) { return h.internetAddressDisplay !== false; }
+  var cur = null, hdMap = null;
+
+  function openDetail(i) { show(results[i]); }
+  function show(h) {
+    cur = h;
+    var p = h.property || {}, a = h.address || {}, s = h.school || {}, tx = h.tax || {}, as = h.association || {}, m = h.mls || {};
+    var street = showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible');
+    var addr = street + ', ' + (a.city || '') + ', ' + (a.state || '') + ' ' + (a.postalCode || '');
+    var photos = h.photos || [];
+    var n = photos.length;
+    var ppsf = h.listPrice && p.area ? money(h.listPrice / p.area) + t('/sq ft', ' por pie²') : '';
+    var dom = m.daysOnMarket;
+    var chips = [
+      ['home', p.subTypeText || p.style || ''],
+      ['cal', p.yearBuilt && t('Built in ', 'Construida en ') + p.yearBuilt],
+      ['lot', lotText(p)],
+      ['tag', ppsf],
+      ['car', p.garageSpaces && t('', 'Garaje para ') + Math.round(p.garageSpaces) + t('-car garage', ' autos')],
+      ['clock', dom != null && (dom === 0 ? t('Listed today', 'Salió hoy') : dom + (dom === 1 ? t(' day', ' día') : t(' days', ' días')) + t(' on market', ' en el mercado'))],
+      ['hoa', as.fee ? money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '') + t(' HOA', ' cuota HOA') : t('No HOA listed', 'Sin cuota HOA')],
+      ['temp', p.heating],
+      ['snow', p.cooling]
+    ].filter(function (c) { return c[1]; });
+    var groups = [
+      [t('Interior', 'Interior'), [[t('Bedrooms', 'Recámaras'), p.bedrooms], [t('Full baths', 'Baños completos'), p.bathsFull], [t('3/4 baths', 'Baños 3/4'), p.bathsThreeQuarter], [t('Half baths', 'Medios baños'), p.bathsHalf], [t('Finished sq ft', 'Pies² terminados'), p.area && p.area.toLocaleString()], [t('Flooring', 'Pisos'), list(p.flooring)], [t('Fireplaces', 'Chimeneas'), p.fireplaces], [t('Features', 'Detalles'), list(p.interiorFeatures)], [t('Laundry', 'Lavandería'), list(p.laundryFeatures)]]],
+      [t('Heating &amp; cooling', 'Calefacción y aire'), [[t('Heating', 'Calefacción'), p.heating], [t('Cooling', 'Aire acondicionado'), p.cooling]]],
+      [t('Building', 'Construcción'), [[t('Style', 'Estilo'), p.style], [t('Type', 'Tipo'), p.subTypeText], [t('Year built', 'Año de construcción'), p.yearBuilt], [t('Siding', 'Exterior'), list(p.construction)], [t('Roof', 'Techo'), list(p.roof)], [t('Foundation', 'Cimientos'), p.foundation], [t('Stories', 'Pisos'), p.stories]]],
+      [t('Lot &amp; outside', 'Terreno y exterior'), [[t('Lot', 'Terreno'), lotText(p).replace(/ lot$| de terreno$/, '')], [t('Lot description', 'Tipo de terreno'), list(p.lotDescription)], [t('Outside', 'Afuera'), list(p.exteriorFeatures)], [t('Garage', 'Garaje'), p.garageSpaces && Math.round(p.garageSpaces) + t(' spaces', ' espacios')], [t('Parking', 'Estacionamiento'), p.parking && p.parking.description], [t('Water', 'Agua'), p.water]]],
+      [t('Schools', 'Escuelas'), [[t('District', 'Distrito'), s.district], [t('Elementary', 'Primaria'), s.elementarySchool], [t('Middle', 'Secundaria'), s.middleSchool], [t('High', 'Preparatoria'), s.highSchool]]],
+      [t('Taxes &amp; area', 'Impuestos y zona'), [[t('Yearly taxes', 'Impuestos al año'), tx.taxAnnualAmount && money(tx.taxAnnualAmount) + (tx.taxYear ? ' (' + tx.taxYear + ')' : '')], [t('HOA', 'Cuota HOA'), as.fee && money(as.fee) + (as.frequency ? ' / ' + String(as.frequency).toLowerCase() : '')], [t('Subdivision', 'Fraccionamiento'), p.subdivision], [t('County', 'Condado'), h.geo && h.geo.county], ['MLS #', h.listingId]]]
+    ].map(function (g) { return [g[0], g[1].filter(function (r) { return r[1] !== undefined && r[1] !== null && r[1] !== '' && r[1] !== 0; })]; })
+     .filter(function (g) { return g[1].length; });
+
+    var msg = t("Hi Marcos, I'd like to see ", 'Hola Marcos, quiero ver ') + street + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
+    var sms = 'sms:+16058389140?&body=' + encodeURIComponent(msg);
+    var book = BOOK_URL + '?a1=' + encodeURIComponent(t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : ''));
+    var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(px(u, k ? 800 : 1600)) + '\')" aria-label="' + t('Open photo ', 'Abrir foto ') + (k + 1) + '"></button>'; }).join('');
+    var mobileTiles = photos.map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(px(u, 1024)) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
+    var isNew = dom != null && dom <= 7;
+    var remarks = h.remarks || '';
+    var hasMap = !!(showAddr(h) && h.geo && h.geo.lat);
+
+    $('sp-detail').innerHTML =
+      '<div class="hd-top"><button type="button" id="hd-back">' + '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>' + t('Back to search', 'Volver a la búsqueda') + '</button>' +
+      '<span>' + favBtn(h, true) + '<a class="hd-txt" id="hd-txt" href="' + textHref(h) + '" aria-label="' + t('Text this home to someone', 'Mandar esta casa por texto') + '"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></svg><span class="lbl">' + t('Text', 'Texto') + '</span></a><button type="button" id="hd-share" aria-label="' + t('Share', 'Compartir') + '"><svg viewBox="0 0 24 24"><path d="M12 3v13M7 8l5-5 5 5M5 14v6h14v-6"/></svg><span class="lbl">' + t('Share', 'Compartir') + '</span></button></span></div>' +
+      '<div class="hd-galwrap">' +
+        '<div class="hd-gal n' + Math.min(n, 5) + '" id="hd-gal">' + (window.innerWidth <= 900 ? mobileTiles : tiles) + '</div>' +
+        '<span class="hd-status' + (isNew ? ' new' : '') + '"><i></i>' + (isNew ? t('New listing', 'Nueva en el mercado') : esc(statusTxt(h))) + '</span>' +
+        (n > 5 ? '<button type="button" class="hd-all" id="hd-all">▦ ' + t('See all ', 'Ver las ') + n + t(' photos', ' fotos') + '</button>' : '') +
+        (n > 1 ? '<span class="hd-count" id="hd-count">1 / ' + n + '</span>' : '') +
+        (tourUrl(h) ? '<a class="hd-vt" href="' + esc(tourUrl(h)) + '" target="_blank" rel="noopener">▶ ' + t('Video / 3D tour', 'Recorrido en video / 3D') + '</a>' : '') +
+      '</div>' +
+      '<div class="hd-grid"><div>' +
+        '<nav class="hd-tabs" id="hd-tabs">' + [['hd-s-over', t('Overview', 'Resumen')], ['hd-s-facts', t('Facts &amp; features', 'Detalles')], ['hd-s-pay', t('Payment', 'Pago')], hasMap ? ['hd-s-nb', t('Neighborhood', 'Vecindario')] : null].filter(Boolean).map(function (x, k) { return '<button type="button" data-go="' + x[0] + '"' + (k ? '' : ' class="on"') + '>' + x[1] + '</button>'; }).join('') + '</nav>' +
+        '<div id="hd-s-over"></div>' +
+        '<div class="hd-head"><div><div class="hd-price">' + money(h.listPrice) + '</div><div class="hd-addr">' + esc(addr) + '</div></div>' +
+        '<div class="hd-stats"><div><b>' + (p.bedrooms || 0) + '</b>' + t('beds', 'recámaras') + '</div><div><b>' + baths(h) + '</b>' + t('baths', 'baños') + '</div>' + (p.area ? '<div><b>' + p.area.toLocaleString() + '</b>' + t('sq ft', 'pies²') + '</div>' : '') + '</div></div>' +
+        '<p class="hd-attr">' + attrHtml(h, true) + '</p>' +
+        (highlights(h).length ? '<div class="hd-hls">' + highlights(h).slice(0, 8).map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' : '') +
+        histHtml(h) + '<p class="hd-ppsf" id="hd-ppsf" hidden></p>' + ohHtml(h) + dpaHtml(h) +
+        '<div class="hd-chips">' + chips.map(function (c) { return '<div class="hd-chip">' + ic(c[0]) + '<span>' + esc(c[1]) + '</span></div>'; }).join('') + '</div>' +
+        (remarks ? '<div class="hd-sec"><h2>' + t('About this home', 'Sobre esta casa') + '</h2><p id="hd-rem">' + esc(remarks.length > 420 ? remarks.slice(0, 420).replace(/\s+\S*$/, '') + '…' : remarks) + '</p>' + (remarks.length > 420 ? '<button type="button" class="hd-more" id="hd-remmore">' + t('Show more', 'Ver más') + '</button>' : '') + '</div>' : '') +
+        '<div class="hd-sec" id="hd-s-facts"><h2>' + t('Facts &amp; features', 'Detalles de la casa') + '</h2><div class="hd-facts">' + groups.map(function (g) {
+          return '<div><h3>' + g[0] + '</h3><ul>' + g[1].map(function (r) { return '<li>' + r[0] + ': <b>' + esc(r[1]) + '</b></li>'; }).join('') + '</ul></div>';
+        }).join('') + '</div></div>' +
+        payHtml(h) +
+        (hasMap ? '<div class="hd-sec" id="hd-s-nb"><h2>' + t('Neighborhood', 'Vecindario') + (p.subdivision ? ': ' + esc(p.subdivision) : a.city ? ': ' + esc(a.city) : '') + '</h2>' +
+          '<div class="hd-mapwrap"><div id="hd-map"></div><div class="hd-mt" id="hd-mt"><button type="button" data-b="road" class="on">' + t('Map', 'Mapa') + '</button><button type="button" data-b="sat">' + t('Satellite', 'Satélite') + '</button><button type="button" data-b="lots">' + t('Lot lines', 'Límites del terreno') + '</button></div></div>' +
+          '<ul class="hd-sch" id="hd-sch" hidden></ul>' +
+          '<p class="hd-mapnote" id="hd-mapnote">' + t('White price tags are other homes for sale nearby. Tap one to see it.', 'Las etiquetas blancas son otras casas en venta cerca. Tóquela para verla.') + '</p>' +
+          '<a class="hd-sv" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + h.geo.lat + ',' + h.geo.lng + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M9.5 21v-6H8v-4.5A2.5 2.5 0 0 1 10.5 8h3a2.5 2.5 0 0 1 2.5 2.5V15h-1.5v6M5 18c-1.8.6-3 1.3-3 2 0 1.7 4.5 3 10 3s10-1.3 10-3c0-.7-1.2-1.4-3-2"/></svg><span><b>' + t('Street View', 'Ver la calle') + ' ↗</b><small>' + t('Look at the house and the street from the road (Google)', 'Vea la casa y la calle desde la calle (Google)') + '</small></span></a></div>' +
+          '<div class="hd-sec" id="hd-simsec" hidden><h2>' + t('Similar homes nearby', 'Casas parecidas cerca') + '</h2><div class="hd-simrow" id="hd-simrow"></div></div>' +
+          '<div class="hd-sec"><h2>' + t('Flood zone', 'Zona de inundación') + '</h2><div class="hd-flood" id="hd-flood">' + t('Checking FEMA flood maps…', 'Revisando los mapas de FEMA…') + '</div>' +
+          '<div class="hd-env"><a href="https://riskfactor.com/search?query=' + encodeURIComponent(cleanAddr(a.full) + ', ' + (a.city || '') + ', ' + (a.state || 'SD') + ' ' + (a.postalCode || '')) + '" target="_blank" rel="noopener">' + t('Flood, fire, heat &amp; wind risk (Risk Factor)', 'Riesgo de inundación, fuego, calor y viento (Risk Factor)') + ' ↗</a></div></div>' +
+          '<div class="hd-sec hd-drive"><h2>' + t('Getting around', 'Cómo moverse') + '</h2><div id="hd-drive"></div></div>' : '') +
+        '<div class="hd-courtesy">' + attrHtml(h, false) + '. ' + esc(h.disclaimer || t('Information deemed reliable but not guaranteed.', 'Información considerada confiable pero no garantizada.')) + ' ' + t('Listing data provided by the REALTOR® Association of the Sioux Empire MLS. Information is deemed reliable but not guaranteed and should be independently verified.', 'Información de las casas proporcionada por el MLS de la REALTOR® Association of the Sioux Empire. La información se considera confiable pero no está garantizada y debe verificarse.') + '</div>' +
+      '</div>' +
+      '<aside class="hd-side"><div class="hd-card">' +
+        '<div class="hd-agent"><img src="/images/marcos-headshot.jpg" alt=""><div><b>Marcos Diaz</b><span>Broker Associate · Keller Williams Realty Sioux Falls</span></div></div>' +
+        '<a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Request a showing', 'Solicitar una visita') + '<small>' + t('Pick a time that works for you', 'Escoja la hora que le convenga') + '</small></a>' +
+        '<a class="hd-btn hd-b2" href="tel:+16058389140">' + t('Call', 'Llamar') + ' 605-838-9140</a>' +
+        '<a class="hd-btn hd-b3" href="#hd-s-pay" data-go="hd-s-pay">' + t('What would my payment be?', '¿Cuánto sería mi pago?') + '</a>' +
+        '<a class="hd-link" href="' + sms + '">' + t('Or text me about this home', 'O envíeme un texto sobre esta casa') + '</a>' +
+        '<a class="hd-link" href="' + textHref(h) + '">' + t('Text this home to someone', 'Mandar esta casa por texto') + '</a>' +
+        (ALERTS_URL ? '<button type="button" class="hd-alert" data-alert>' + t('Email me new homes like this', 'Envíenme casas nuevas como esta') + '</button>' : '') +
+        askHtml(h, street) +
+        '<p class="hd-note">' + t('Not sure about this one? I can tell you what’s around it, what similar homes sold for, and whether it’s priced right.', '¿No está seguro? Le puedo decir qué hay cerca, en cuánto se vendieron casas parecidas y si el precio es justo.') + '</p>' +
+      '</div></aside></div>' +
+      '<div class="hd-dock"><a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Request a showing', 'Solicitar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
+
+    $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
+    trackView(h);
+    if (h.mlsId && location.hash !== '#home=' + h.mlsId) history.pushState({ home: h.mlsId }, '', '#home=' + h.mlsId);
+
+    $('hd-back').onclick = closeDetail;
+    drive(h);
+    $('hd-share').onclick = share;
+    $('hd-gal').onclick = function (e) { var b = e.target.closest('button'); if (b) openLb(+b.dataset.k); };
+    if ($('hd-all')) $('hd-all').onclick = function () { openLb(0); };
+    if ($('hd-remmore')) $('hd-remmore').onclick = function () { $('hd-rem').textContent = remarks; this.remove(); };
+    var g = $('hd-gal');
+    if ($('hd-count')) g.addEventListener('scroll', function () { $('hd-count').textContent = (Math.round(g.scrollLeft / g.clientWidth) + 1) + ' / ' + n; }, { passive: true });
+    hdTabs();
+    payCalc(h);
+    if ($('hd-map')) hdMapSetup(h);
+    similar(h);
+    askWire(h, street);
+    remember(h);
+  }
+
+  // Text a home to someone (opens the phone's messages app with the link filled in)
+  function textHref(h) {
+    var a = h.address || {};
+    var msg = t('Check out this home: ', 'Mira esta casa: ') + money(h.listPrice) + ' · ' + ((h.property || {}).bedrooms || 0) + t(' bd, ', ' rec, ') + baths(h) + t(' ba · ', ' baños · ') + (showAddr(h) ? cleanAddr(a.full) + ', ' : '') + (a.city || '') + '\n' + location.origin + location.pathname + '#home=' + h.mlsId;
+    return 'sms:?&body=' + encodeURIComponent(msg);
+  }
+
+  // ===== Recently viewed homes (kept only in this browser) =====
+  var seen = {};
+  function recentIds() { try { var v = JSON.parse(localStorage.getItem('mdRecent') || '[]'); return Array.isArray(v) ? v.map(String) : []; } catch (e) { return []; } }
+  function remember(h) {
+    if (!h || !h.mlsId || h._sample) return;
+    seen[h.mlsId] = h;
+    var v = recentIds().filter(function (x) { return x !== String(h.mlsId); });
+    v.unshift(String(h.mlsId));
+    try { localStorage.setItem('mdRecent', JSON.stringify(v.slice(0, 12))); } catch (e) {}
+  }
+  function drawRecent() {
+    var box = $('sp-recent'), ids = recentIds();
+    if (savedMode || !ids.length) { box.hidden = true; return; }
+    Promise.all(ids.slice(0, 10).map(function (id) {
+      if (seen[id]) return seen[id];
+      return fetch(API + '/' + encodeURIComponent(id), { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    })).then(function (list) {
+      list = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false && !/closed|sold|withdrawn|expired|cancel/i.test(String((h.mls || {}).status || '')); });
+      list.forEach(function (h) { seen[h.mlsId] = h; });
+      if (!list.length || savedMode) { box.hidden = true; return; }
+      box.innerHTML = '<div class="sp-recent-h"><b>' + t('Pick up where you left off', 'Casas que vio') + '</b><button type="button" id="sp-recent-x">' + t('Clear', 'Borrar') + '</button></div>' +
+        '<div class="hd-simrow">' + list.map(function (o) {
+          var p = o.property || {}, a = o.address || {}, ph = (o.photos || [])[0];
+          return '<button type="button" class="hd-sim" data-rec="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(px(ph, 640)) + '\')"' : '') + '>' + (cut(o) ? '<span>↓ ' + t('Price cut', 'Bajó de precio') + '</span>' : '') + '</div>' +
+            '<div class="tx"><b>' + money(o.listPrice) + '</b>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(o) + t(' ba', ' baños') + '<br>' + (showAddr(o) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city || '') + '<small>' + attrHtml(o, false) + '</small></div></button>';
+        }).join('') + '</div>';
+      box.hidden = false;
+    });
+  }
+  $('sp-recent').addEventListener('click', function (e) {
+    if (e.target.id === 'sp-recent-x') { try { localStorage.removeItem('mdRecent'); } catch (x) {} $('sp-recent').hidden = true; return; }
+    var b = e.target.closest('[data-rec]'); if (b && seen[b.dataset.rec]) show(seen[b.dataset.rec]);
+  });
+
+  // ===== Virtual tours, open houses, questions, schools =====
+  function tourUrl(h) { var u = String(h.virtualTourUrl || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
+
+  var OH = {};
+  function ohList(h) {
+    var now = Date.now();
+    return (OH[h.mlsId] || []).filter(function (o) { return new Date(o.end || o.start).getTime() > now; })
+      .sort(function (a, b) { return new Date(a.start) - new Date(b.start); });
+  }
+  function ohWhen(o, shortForm) {
+    var tz = { timeZone: 'America/Chicago' }, loc = ES ? 'es-US' : 'en-US';
+    var s = new Date(o.start), e = o.end ? new Date(o.end) : null;
+    var day = s.toLocaleDateString(loc, Object.assign({ weekday: 'short', month: shortForm ? undefined : 'short', day: shortForm ? undefined : 'numeric' }, tz));
+    var tm = function (d) { return d.toLocaleTimeString(loc, Object.assign({ hour: 'numeric', minute: '2-digit' }, tz)).replace(':00', ''); };
+    return day + ' ' + tm(s) + (e ? '–' + tm(e) : '');
+  }
+  function ohHtml(h) {
+    var l = ohList(h); if (!l.length) return '';
+    var msg = t("Hi Marcos, I'd like to go to the open house at ", 'Hola Marcos, quiero ir a la casa abierta en ') + (showAddr(h) ? cleanAddr((h.address || {}).full) : '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
+    return '<div class="hd-oh"><b>' + t('Open house: ', 'Casa abierta: ') + '</b>' + l.slice(0, 3).map(function (o) { return esc(ohWhen(o)); }).join(' · ') +
+      '<br><a href="sms:+16058389140?&body=' + encodeURIComponent(msg) + '">' + t('Want me to meet you there? Text me', '¿Quiere que le acompañe? Mándeme un texto') + '</a></div>';
+  }
+  if (LIVE) fetch(LIVE_API.replace(/\/$/, '') + '/openhouses').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (list) {
+    if (!Array.isArray(list) || !list.length) return;
+    list.forEach(function (o) { (OH[o.mlsId] = OH[o.mlsId] || []).push(o); });
+    if (results.length && !$('sp-modal').classList.contains('open')) render(false);
+  }).catch(function () {});
+
+  // "Ask a question" goes to Marcos's email (Web3Forms) and his lead sheet, same as the home page form
+  var ASK_KEY = 'd0023d26-ed18-4970-8a35-c3de9e5f7e6c';
+  var ASK_SHEET = 'https://script.google.com/macros/s/AKfycbw5PdoEEaGDAquTmKqO_1SkhtTaJG3G0584Xy4VIqG74FsaaH-tnxYpeIdrqTcCjZ0w/exec';
+  function askHtml(h, street) {
+    return '<form class="hd-ask" id="hd-ask" novalidate><h3>' + t('Ask a question about this home', 'Haga una pregunta sobre esta casa') + '</h3>' +
+      '<textarea name="q" aria-label="' + t('Your question', 'Su pregunta') + '">' + esc(t('I have a question about ', 'Tengo una pregunta sobre ') + street + ': ') + '</textarea>' +
+      '<div class="more"><input name="Name" autocomplete="name" placeholder="' + t('Your name', 'Su nombre') + '" aria-label="' + t('Your name', 'Su nombre') + '">' +
+      '<div class="two"><input name="Phone" type="tel" autocomplete="tel" placeholder="' + t('Phone', 'Teléfono') + '" aria-label="' + t('Phone', 'Teléfono') + '"><input name="email" type="email" autocomplete="email" placeholder="' + t('Email', 'Correo') + '" aria-label="' + t('Email', 'Correo') + '"></div></div>' +
+      '<input class="hp" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<p class="msg" role="status"></p><button type="submit">' + t('Send to Marcos', 'Enviar a Marcos') + '</button>' +
+      '<p class="fine more">' + t('By sending, you agree that Marcos Diaz may contact you by call, text or email at the phone and email you gave, which may include automated messages. Consent is not required to buy or sell a home. Message and data rates may apply. Reply STOP to opt out of texts.', 'Al enviar, acepta que Marcos Diaz le contacte por llamada, mensaje de texto o correo al teléfono y correo que proporcionó, lo cual puede incluir mensajes automatizados. Su consentimiento no es requisito para comprar o vender una casa. Pueden aplicar tarifas de mensajes y datos. Responda STOP para dejar de recibir textos.') + '</p></form>';
+  }
+  function askWire(h, street) {
+    var f = $('hd-ask'); if (!f) return;
+    f.q.onfocus = function () { f.classList.add('open'); };
+    f.onsubmit = function (e) {
+      e.preventDefault();
+      if (!f.classList.contains('open')) { f.classList.add('open'); f.Name.focus(); return; }
+      var msg = f.querySelector('.msg'), name = f.Name.value.trim(), ph = f.Phone.value.trim(), em = f.email.value.trim(), q = f.q.value.trim();
+      if (f.botcheck.value) return;
+      if (!name || (!ph && !em)) { msg.textContent = t('Please add your name and a phone or email so I can answer you.', 'Escriba su nombre y un teléfono o correo para poder contestarle.'); return; }
+      if (em && !f.email.checkValidity()) { msg.textContent = t('That email doesn’t look right.', 'Ese correo no se ve bien.'); return; }
+      var link = location.origin + location.pathname + '#home=' + h.mlsId;
+      var fd = new FormData();
+      fd.set('access_key', ASK_KEY);
+      fd.set('subject', '❓ Question about ' + street + (h.listingId ? ' (MLS #' + h.listingId + ')' : '') + ' – ' + name);
+      fd.set('from_name', '605homesearch.com');
+      fd.set('Name', name); fd.set('Phone', ph); if (em) fd.set('email', em);
+      fd.set('Looking to', 'Buy – question about a listing');
+      fd.set('Timeline', 'Listing question');
+      fd.set('Language', ES ? 'Español' : 'English');
+      fd.set('message', q + '\n\nHome: ' + street + ', ' + ((h.address || {}).city || '') + ' · ' + money(h.listPrice) + (h.listingId ? ' · MLS #' + h.listingId : '') + '\n' + link);
+      var btn = f.querySelector('button'); btn.disabled = true; btn.textContent = t('Sending…', 'Enviando…');
+      fetch(ASK_SHEET, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(fd), keepalive: true }).catch(function () {});
+      fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { Accept: 'application/json' }, body: fd }).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.success === false) throw 0;
+        f.classList.add('done'); f.innerHTML = '<p class="msg">' + t('Got it, ' + esc(name.split(' ')[0]) + '! I’ll get back to you soon.', '¡Recibido, ' + esc(name.split(' ')[0]) + '! Le contesto pronto.') + '</p>';
+        if (window.gtag) gtag('event', 'generate_lead', { method: 'listing_question' });
+      }).catch(function () {
+        btn.disabled = false; btn.textContent = t('Send to Marcos', 'Enviar a Marcos');
+        msg.innerHTML = t('That didn’t go through. Please call or text me at <a href="tel:+16058389140">605-838-9140</a>.', 'No se pudo enviar. Llámeme o mándeme un texto al <a href="tel:+16058389140">605-838-9140</a>.');
+      });
+    };
+  }
+
+  // Assigned schools from the listing, matched by name to U.S. Dept. of Education locations
+  function schoolKey(n) {
+    return String(n || '').toLowerCase().split(' - ')[0].replace(/^ia-/, '').replace(/\./g, '').replace(/[^a-z0-9 ]/g, ' ')
+      .replace(/\b(es|ms|hs|jhs|elem|elementary|middle|high|junior|jr|senior|sr|school|schools|sch|academy|learning|center|intermediate|the|of|sd\d*|\d+)\b/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  // every word of one name is in the other ("Tea MS" = "Tea Area Middle School")
+  function sameSchool(a, b) {
+    if (!a || !b) return false;
+    var A = a.split(' '), B = b.split(' ');
+    function sub(x, y) { return x.every(function (w) { return y.indexOf(w) > -1; }); }
+    return sub(A, B) || sub(B, A);
+  }
+  function hdSchools(h) {
+    var s = h.school || {}, want = [['E', s.elementarySchool, t('Elementary', 'Primaria')], ['M', s.middleSchool, t('Middle', 'Secundaria')], ['H', s.highSchool, t('High', 'Preparatoria')]].filter(function (x) { return x[1]; });
+    if (!want.length || !$('hd-sch')) return;
+    var ll = [h.geo.lat, h.geo.lng], id = h.mlsId;
+    (schools ? Promise.resolve(schools) : fetch('/data/schools.json').then(function (r) { return r.json(); }).then(function (d) { schools = d; return d; })).then(function (d) {
+      if (!cur || cur.mlsId !== id || !$('hd-sch')) return;
+      var rows = want.map(function (w) {
+        var k = schoolKey(w[1]), best = null;
+        if (k) (d.pub || []).forEach(function (x) {
+          var xk = schoolKey(x[0]);
+          if (x[1] !== w[0] || !sameSchool(xk, k)) return;
+          var mi = Math.sqrt(Math.pow((x[4] - ll[0]) * 69, 2) + Math.pow((x[5] - ll[1]) * 50, 2)), ex = xk === k ? 0 : 1;
+          if (mi < 30 && (!best || ex < best.ex || (ex === best.ex && mi < best.mi))) best = { x: x, mi: mi, ex: ex };
+        });
+        if (best && hdMap) L.marker([best.x[4], best.x[5]], { icon: L.divIcon({ className: '', html: '<span class="pin p-sch">' + w[0] + '</span>' }) }).bindPopup('<b>' + esc(w[1]) + '</b>').addTo(hdMap);
+        return '<li><i>' + w[0] + '</i><span><b>' + esc(w[1]) + '</b>' + w[2] + (best ? ' · ' + (best.mi < 0.1 ? t('next door', 'al lado') : best.mi.toFixed(1) + t(' mi away', ' millas')) : '') + '</span></li>';
+      });
+      $('hd-sch').innerHTML = rows.join('') + '<li style="border:0;font-size:12px">' + t('Schools listed by the seller’s agent. Check with the district, since boundaries can change. Blue E / M / H pins are on the map.', 'Escuelas según el agente del vendedor. Confirme con el distrito porque los límites pueden cambiar. Los marcadores azules E / M / H están en el mapa.') + '</li>';
+      $('hd-sch').hidden = false;
+    }).catch(function () {});
+  }
+
+  function ppsfCompare(h, list) {
+    var area = (h.property || {}).area, el = $('hd-ppsf'); if (!el || !area || !h.listPrice) return;
+    var v = list.filter(function (o) { return (o.property || {}).area > 400 && o.listPrice; }).map(function (o) { return o.listPrice / o.property.area; }).sort(function (a, b) { return a - b; });
+    if (v.length < 4) return;
+    var med = v[Math.floor(v.length / 2)], me = h.listPrice / area, pct = Math.round((me - med) / med * 100);
+    el.innerHTML = '<b>' + money(me) + t('/sq ft', ' por pie²') + '</b> · ' + (Math.abs(pct) < 3 ? t('about the same as', 'casi igual que') : Math.abs(pct) + '% ' + (pct < 0 ? t('below', 'menos que') : t('above', 'más que'))) +
+      t(' similar homes for sale nearby (', ' las casas parecidas en venta cerca (') + money(med) + t('/sq ft). Ask me what they actually sold for.', ' por pie²). Pregúnteme en cuánto se vendieron de verdad.');
+    el.hidden = false;
+  }
+  // Similar homes for sale nearby: close by, price within about 20%, about the same bedrooms
+  var simHomes = {};
+  function similar(h) {
+    var row = $('hd-simrow'); if (!row || !h.listPrice || !LIVE) return;
+    var id = h.mlsId, lat = h.geo.lat, lng = h.geo.lng, beds = (h.property || {}).bedrooms || 0;
+    function ask(dLat, dLng) {
+      var p = new URLSearchParams();
+      p.append('status', 'Active');
+      p.set('minprice', Math.round(h.listPrice * 0.8)); p.set('maxprice', Math.round(h.listPrice * 1.2));
+      if (beds > 1) p.set('minbeds', beds - 1);
+      [[lat + dLat, lng - dLng], [lat + dLat, lng + dLng], [lat - dLat, lng + dLng], [lat - dLat, lng - dLng]].forEach(function (pt) { p.append('points', pt[0].toFixed(5) + ',' + pt[1].toFixed(5)); });
+      p.set('limit', 25);
+      return fetch(API + '?' + p.toString(), { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); });
+    }
+    function dist(o) { var g = o.geo || {}; return Math.pow((g.lat - lat) * 69, 2) + Math.pow((g.lng - lng) * 50, 2); }
+    function pick(data) {
+      return (data || []).filter(function (o) { return String(o.mlsId) !== String(id) && o.internetEntireListingDisplay !== false && o.geo && o.geo.lat && Math.abs(((o.property || {}).bedrooms || 0) - beds) <= 1; })
+        .sort(function (x, y) { return dist(x) - dist(y); }).slice(0, 8);
+    }
+    ask(0.03, 0.04).then(function (d) { var got = pick(d); return got.length >= 4 ? got : ask(0.09, 0.12).then(pick); }).then(function (list) {
+      if (!cur || cur.mlsId !== id || !list.length) return;
+      simHomes = {};
+      row.innerHTML = list.map(function (o) {
+        simHomes[o.mlsId] = o;
+        var p = o.property || {}, a = o.address || {}, mi = Math.sqrt(dist(o)), ph = (o.photos || [])[0];
+        return '<button type="button" class="hd-sim" data-sim="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(px(ph, 640)) + '\')"' : '') + '><span>' + (mi < 0.1 ? t('Next door', 'Al lado') : mi.toFixed(1) + t(' mi away', ' millas')) + '</span></div>' +
+          '<div class="tx"><b>' + money(o.listPrice) + '</b>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(o) + t(' ba', ' baños') + (p.area ? ' · ' + p.area.toLocaleString() + t(' sq ft', ' pies²') : '') +
+          '<br>' + (showAddr(o) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city || '') + '<small>' + attrHtml(o, false) + '</small></div></button>';
+      }).join('');
+      $('hd-simsec').hidden = false;
+      ppsfCompare(h, list);
+      row.onclick = function (e) { var b = e.target.closest('[data-sim]'); if (b && simHomes[b.dataset.sim]) { show(simHomes[b.dataset.sim]); } };
+    }).catch(function () {});
+  }
+
+  // ===== Listing page: section tabs, payment, neighborhood map =====
+  function hdTabs() {
+    var modal = $('sp-modal'), bar = $('hd-tabs'); if (!bar) return;
+    var top = document.querySelector('.hd-top');
+    modal.style.setProperty('--hdtop', (top ? top.offsetHeight : 58) + 'px');
+    var ids = [].map.call(bar.querySelectorAll('button'), function (b) { return b.dataset.go; });
+    function off() { return (top ? top.offsetHeight : 0) + bar.offsetHeight + 8; }
+    $('sp-detail').onclick = function (e) {
+      var b = e.target.closest('[data-go]'); if (!b) return;
+      var el = $(b.dataset.go); if (!el) return;
+      e.preventDefault();
+      modal.scrollTo({ top: b.dataset.go === 'hd-s-over' ? 0 : el.getBoundingClientRect().top + modal.scrollTop - off(), behavior: 'smooth' });
+    };
+    modal.onscroll = function () {
+      var on = ids[0];
+      ids.forEach(function (id) { var el = $(id); if (el && el.getBoundingClientRect().top - off() < 40) on = id; });
+      [].forEach.call(bar.querySelectorAll('button'), function (b) {
+        var was = b.classList.contains('on'), now = b.dataset.go === on;
+        b.classList.toggle('on', now);
+        if (now && !was) bar.scrollTo({ left: Math.max(0, b.offsetLeft - 20), behavior: 'smooth' });
+      });
+    };
+  }
+
+  var RATE = 7.25;
+  var rateReady = fetch('/data/rate.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) { if (d && +d.rate) RATE = +d.rate; }).catch(function () {});
+  function hoaMonthly(h) {
+    var as = h.association || {}, fee = +as.fee || 0, fq = String(as.frequency || 'monthly').toLowerCase();
+    return /ann|year/.test(fq) ? fee / 12 : /quarter/.test(fq) ? fee / 3 : fee;
+  }
+  function payHtml(h) {
+    if (!h.listPrice) return '';
+    var downs = [3, 3.5, 5, 10, 20].map(function (d) { return '<option value="' + d + '"' + (d === 5 ? ' selected' : '') + '>' + d + '%</option>'; }).join('');
+    return '<div class="hd-sec" id="hd-s-pay"><h2>' + t('Payment calculator', 'Calculadora de pago') + '</h2><div class="hd-pay">' +
+      '<div><div class="hd-pay-total" id="pc-total"></div><div class="hd-pay-bar" id="pc-bar"></div><ul id="pc-list"></ul></div>' +
+      '<div><label>' + t('Down payment', 'Enganche') + '<select id="pc-down">' + downs + '</select></label>' +
+      '<label>' + t('Interest rate (%)', 'Tasa de interés (%)') + '<input id="pc-rate" type="number" step="0.125" min="0" max="20"></label>' +
+      '<label>' + t('Loan length', 'Plazo del préstamo') + '<select id="pc-term"><option value="30">' + t('30 years', '30 años') + '</option><option value="15">' + t('15 years', '15 años') + '</option></select></label></div>' +
+      '</div><p class="hd-pay-note" id="pc-note"></p>' +
+      '<a class="hd-btn hd-b2" href="' + BOOK_URL.replace('home-showing', '') + '" target="_blank" rel="noopener" style="display:inline-block;padding:10px 18px">' + t('Talk to me about loans and help with the down payment', 'Hable conmigo sobre préstamos y ayuda para el enganche') + '</a></div>';
+  }
+  function payCalc(h) {
+    if (!$('pc-total')) return;
+    $('pc-rate').value = RATE;
+    var price = h.listPrice, tx = (h.tax || {}).taxAnnualAmount || price * 0.012, hoa = hoaMonthly(h);
+    function run() {
+      var down = +$('pc-down').value / 100, r = (+$('pc-rate').value || 0) / 100 / 12, n = +$('pc-term').value * 12, loan = price * (1 - down);
+      var pi = r ? loan * r / (1 - Math.pow(1 + r, -n)) : loan / n;
+      var parts = [[t('Principal &amp; interest', 'Préstamo e interés'), pi, '#1f3260'], [t('Property taxes', 'Impuestos'), tx / 12, '#b8743d'], [t('Home insurance', 'Seguro de casa'), 1800 / 12, '#6f9a7d'], [t('HOA', 'Cuota HOA'), hoa, '#8a8fb5']].filter(function (x) { return x[1] > 0; });
+      var tot = parts.reduce(function (s, x) { return s + x[1]; }, 0);
+      $('pc-total').innerHTML = money(tot) + '<small>' + t(' a month', ' al mes') + '</small>';
+      $('pc-bar').innerHTML = parts.map(function (x) { return '<i style="width:' + (x[1] / tot * 100).toFixed(1) + '%;background:' + x[2] + '"></i>'; }).join('');
+      $('pc-list').innerHTML = parts.map(function (x) { return '<li><span style="--c:' + x[2] + '">' + x[0] + '</span><b>' + money(x[1]) + '</b></li>'; }).join('') +
+        '<li><span style="--c:transparent">' + t('Down payment', 'Enganche') + '</span><b>' + money(price * down) + '</b></li>';
+      $('pc-note').innerHTML = t('Estimate only, not a loan offer or APR. Taxes are ' + ((h.tax || {}).taxAnnualAmount ? 'from the listing' : 'a guess (1.2% a year)') + ', insurance is a guess ($1,800 a year), and mortgage insurance (PMI) isn’t included. The starting rate is this week’s national average (Freddie Mac). Your lender’s quote will be different.',
+        'Solo es un estimado, no es una oferta de préstamo. Los impuestos ' + ((h.tax || {}).taxAnnualAmount ? 'vienen de la casa' : 'son un cálculo') + ', el seguro es un cálculo y no incluye el seguro hipotecario (PMI). La tasa es el promedio nacional de esta semana (Freddie Mac). Su banco le dará otro número.') + dpaNote(h);
+    }
+    ['pc-down', 'pc-rate', 'pc-term'].forEach(function (id) { $(id).addEventListener('input', run); });
+    run();
+    // if a shared link opened the home before this week's rate arrived, switch to it (unless they typed their own)
+    var touched = false; $('pc-rate').addEventListener('input', function () { touched = true; });
+    rateReady.then(function () { if (!touched && $('pc-rate') && +$('pc-rate').value !== RATE) { $('pc-rate').value = RATE; run(); } });
+  }
+  function dpaNote(h) { return isDpa(h) ? ' <a href="' + DPA_URL + '">' + t('This home’s price works with Give Me Five down payment help →', 'El precio de esta casa sirve para la ayuda Give Me Five →') + '</a>' : ''; }
+
+  // Free parcel (lot line) maps: City of Sioux Falls and Minnehaha County
+  var PARCELS = ['https://gis.siouxfalls.gov/arcgis/rest/services/Data/Property/MapServer/1', 'https://gis.minnehahacounty.gov/minnemap/rest/services/Parcels/MapServer/0'];
+  function parcelQuery(base, geom, type) {
+    return base + '/query?where=1%3D1&geometry=' + encodeURIComponent(geom) + '&geometryType=' + type + '&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID&returnGeometry=true&outSR=4326&geometryPrecision=6&resultRecordCount=500&f=geojson';
+  }
+  function hdMapSetup(h) {
+    if (hdMap) { hdMap.remove(); hdMap = null; }
+    var ll = [h.geo.lat, h.geo.lng];
+    hdMap = L.map('hd-map', { scrollWheelZoom: false }).setView(ll, 15);
+    var road = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(hdMap);
+    var sat = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 16, attribution: 'Imagery: USGS The National Map' });
+    var lots = L.layerGroup(), lotsOn = false, lotReq = 0, base = 'road';
+    L.marker(ll, { zIndexOffset: 2000, icon: L.divIcon({ className: '', html: '<span class="pin hi">' + short(h.listPrice) + '</span>' }) }).addTo(hdMap);
+    // other homes for sale nearby (from the search map's pins)
+    (allPins || []).forEach(function (o) {
+      if (String(o.mlsId) === String(h.mlsId) || Math.abs(o.lat - ll[0]) > .03 || Math.abs(o.lng - ll[1]) > .04) return;
+      L.marker([o.lat, o.lng], { icon: L.divIcon({ className: '', html: '<span class="pin p-near">' + short(o.listPrice) + '</span>' }) }).on('click', function () { openById(o.mlsId); }).addTo(hdMap);
+    });
+    function loadLots() {
+      if (!lotsOn) return;
+      var my = ++lotReq, b = hdMap.getBounds();
+      if (hdMap.getZoom() < 16) { lots.clearLayers(); return; }
+      var env = JSON.stringify({ xmin: b.getWest(), ymin: b.getSouth(), xmax: b.getEast(), ymax: b.getNorth(), spatialReference: { wkid: 4326 } });
+      var pt = JSON.stringify({ x: ll[1], y: ll[0], spatialReference: { wkid: 4326 } });
+      var line = base === 'sat' ? '#ffd166' : '#6b4fbb';
+      Promise.all(PARCELS.map(function (u) {
+        return Promise.all([fetch(parcelQuery(u, env, 'esriGeometryEnvelope')).then(function (r) { return r.json(); }).catch(function () { return null; }),
+          fetch(parcelQuery(u, pt, 'esriGeometryPoint')).then(function (r) { return r.json(); }).catch(function () { return null; })]);
+      })).then(function (res) {
+        if (my !== lotReq || !lotsOn) return;
+        lots.clearLayers();
+        var any = false, mine = false;
+        res.forEach(function (pair) {
+          if (pair[0] && pair[0].features && pair[0].features.length) { any = true; L.geoJSON(pair[0], { interactive: false, style: { color: line, weight: 1.5, fill: false } }).addTo(lots); }
+          if (!mine && pair[1] && pair[1].features && pair[1].features.length) { mine = true; L.geoJSON(pair[1], { interactive: false, style: { color: '#c47a2c', weight: 3, fillColor: '#c47a2c', fillOpacity: .18 } }).addTo(lots); }
+        });
+        $('hd-mapnote').textContent = any ? t('Lot lines are approximate (City of Sioux Falls and Minnehaha County maps). The survey is the official answer.', 'Los límites son aproximados (mapas de la ciudad de Sioux Falls y el condado de Minnehaha). El plano oficial es la última palabra.')
+          : t('Lot lines aren’t available for this area yet (Lincoln County towns like Tea and Harrisburg). Ask me and I’ll pull the county plat.', 'Todavía no hay límites del terreno para esta zona. Pregúnteme y le consigo el plano del condado.');
+      });
+    }
+    hdMap.on('moveend', loadLots);
+    $('hd-mt').onclick = function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.b === 'lots') {
+        lotsOn = !lotsOn; b.classList.toggle('on', lotsOn);
+        if (lotsOn) { lots.addTo(hdMap); if (hdMap.getZoom() < 17) hdMap.setView(ll, 18); else loadLots(); }
+        else { lots.remove(); $('hd-mapnote').textContent = t('White price tags are other homes for sale nearby. Tap one to see it.', 'Las etiquetas blancas son otras casas en venta cerca. Tóquela para verla.'); }
+        return;
+      }
+      base = b.dataset.b;
+      [].forEach.call(this.querySelectorAll('[data-b=road],[data-b=sat]'), function (x) { x.classList.toggle('on', x === b); });
+      if (base === 'sat') { hdMap.removeLayer(road); sat.addTo(hdMap); } else { hdMap.removeLayer(sat); road.addTo(hdMap); }
+      if (lotsOn) loadLots();
+    };
+    floodZone(h);
+    hdSchools(h);
+  }
+  // FEMA flood zone for one home (free public lookup). Not a flood determination for a loan.
+  function floodZone(h) {
+    var box = $('hd-flood'); if (!box) return;
+    var id = h.mlsId;
+    fetch(FEMA + '/28/query?geometry=' + h.geo.lng + ',' + h.geo.lat + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=FLD_ZONE,ZONE_SUBTY&returnGeometry=false&f=json')
+      .then(function (r) { return r.json(); }).then(function (d) {
+        if (!cur || cur.mlsId !== id || !$('hd-flood')) return;
+        var f = (d.features || [])[0], z = f && f.attributes.FLD_ZONE, sub = f && String(f.attributes.ZONE_SUBTY || '');
+        var msg, high = false;
+        if (!z) msg = t('No FEMA flood map for this spot yet.', 'FEMA todavía no tiene mapa de inundación para este lugar.');
+        else if (/^(A|V)/.test(z)) { high = true; msg = t('<b>FEMA flood zone ' + esc(z) + ': high-risk area.</b> Lenders usually require flood insurance here.', '<b>Zona de inundación FEMA ' + esc(z) + ': zona de alto riesgo.</b> Los bancos casi siempre piden seguro de inundación aquí.'); }
+        else if (z === 'X' && /0\.2/.test(sub)) msg = t('<b>FEMA flood zone X (shaded): moderate risk.</b> Flood insurance is usually optional.', '<b>Zona de inundación FEMA X (sombreada): riesgo moderado.</b> El seguro de inundación casi siempre es opcional.');
+        else if (z === 'X') msg = t('<b>FEMA flood zone X: minimal risk.</b> Flood insurance is usually optional.', '<b>Zona de inundación FEMA X: riesgo mínimo.</b> El seguro de inundación casi siempre es opcional.');
+        else msg = t('<b>FEMA flood zone ' + esc(z) + '.</b>', '<b>Zona de inundación FEMA ' + esc(z) + '.</b>');
+        box.innerHTML = msg + ' <small>' + t('From FEMA’s flood maps. Your lender or insurance agent makes the official call.', 'De los mapas de FEMA. Su banco o agente de seguros da la respuesta oficial.') + '</small>';
+        box.classList.toggle('hi', high); box.hidden = false;
+      }).catch(function () {});
+  }
+  function closeDetail(fromPop) {
+    $('sp-modal').classList.remove('open'); document.body.classList.remove('sp-lock'); closeLb(); drawRecent();
+    if (fromPop !== true && /^#home=/.test(location.hash)) history.pushState({}, '', location.pathname + location.search);
+  }
+  window.addEventListener('popstate', function () {
+    var id = (location.hash.match(/^#home=(\d+)/) || [])[1];
+    if (id && cur && String(cur.mlsId) === id) return;
+    if (id) openById(id); else closeDetail(true);
+  });
+  function openById(id) {
+    var hit = results.filter(function (h) { return String(h.mlsId) === String(id); })[0];
+    if (hit) return show(hit);
+    if (!LIVE) return;
+    fetch(API + '/' + encodeURIComponent(id)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (h) { if (h && h.internetEntireListingDisplay !== false) show(h); }).catch(function () {});
+  }
+  function toast(t) { var el = $('hd-toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(el._t); el._t = setTimeout(function () { el.style.display = 'none'; }, 2200); }
+  function share() {
+    var url = location.origin + location.pathname + '#home=' + cur.mlsId;
+    var title = money(cur.listPrice) + ' · ' + (showAddr(cur) ? cleanAddr((cur.address || {}).full) + ', ' : '') + ((cur.address || {}).city || '');
+    if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+    try { navigator.clipboard.writeText(url).then(function () { toast(t('Link copied', 'Enlace copiado')); }, function () { prompt(t('Copy this link:', 'Copie este enlace:'), url); }); }
+    catch (e) { prompt(t('Copy this link:', 'Copie este enlace:'), url); }
+  }
+  // Photo viewer
+  function openLb(k) {
+    var ph = (cur && cur.photos) || []; if (!ph.length) return;
+    $('hd-lb-track').innerHTML = ph.map(function (u) { return '<img src="' + esc(px(u, 2048)) + '" alt="" loading="lazy">'; }).join('');
+    $('hd-lb').classList.add('open');
+    var tr = $('hd-lb-track');
+    requestAnimationFrame(function () { tr.scrollLeft = k * tr.clientWidth; lbCount(); });
+  }
+  function closeLb() { $('hd-lb').classList.remove('open'); }
+  function lbCount() { var tr = $('hd-lb-track'); $('hd-lb-n').textContent = (Math.round(tr.scrollLeft / tr.clientWidth) + 1) + ' / ' + tr.children.length; }
+  $('hd-lb-track').addEventListener('scroll', lbCount, { passive: true });
+  $('hd-lb-x').onclick = closeLb;
+  $('hd-lb-prev').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: -tr.clientWidth, behavior: 'smooth' }); };
+  $('hd-lb-next').onclick = function () { var tr = $('hd-lb-track'); tr.scrollBy({ left: tr.clientWidth, behavior: 'smooth' }); };
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && openPop) { closePops(); return; }
+    if (e.key === 'Escape' && $('tr').classList.contains('open')) { closeTour(); return; }
+    if (e.key === 'Escape' && $('cmp').classList.contains('open')) { $('cmp').classList.remove('open'); return; }
+    if (e.key === 'Escape' && $('al').classList.contains('open')) { closeAlert(); return; }
+    if ($('hd-lb').classList.contains('open')) {
+      if (e.key === 'Escape') closeLb();
+      if (e.key === 'ArrowRight') $('hd-lb-next').click();
+      if (e.key === 'ArrowLeft') $('hd-lb-prev').click();
+    } else if (e.key === 'Escape' && $('sp-modal').classList.contains('open')) closeDetail();
+  });
+
+
+  // ===== Showings, Give Me Five, price history, favorites, compare, drive time =====
+  var BOOK_URL = 'https://calendly.com/marcosdiaz1-kw/home-showing';
+  var DPA_LIMIT = 410000;   // Give Me Five purchase price limit (South Dakota Housing)
+  var DPA_URL = ES ? '/es/blog/give-me-five-ayuda-pago-inicial/' : '/blog/give-me-five-down-payment-assistance/';
+  function isDpa(h) { var ty = String((h.property || {}).type || ''); return h.listPrice && h.listPrice <= DPA_LIMIT && !/LND|land/i.test(ty) && !/MLF|multi/i.test(ty); }
+  function cut(h) { return h.originalListPrice && h.listPrice && h.originalListPrice > h.listPrice ? h.originalListPrice - h.listPrice : 0; }
+  function cardTags(h) {
+    var c = cut(h), tags = [];
+    if (c) tags.push('<span class="tag tag-cut">↓ ' + short(c) + ' ' + t('price cut', 'menos') + '</span>');
+    var oh = ohList(h)[0]; if (oh) tags.unshift('<span class="tag tag-oh">' + t('Open ', 'Abierta ') + esc(ohWhen(oh, true)) + '</span>');
+    if (isDpa(h)) tags.push('<span class="tag tag-dpa">' + t('Give Me Five eligible price', 'Precio para Give Me Five') + '</span>');
+    return tags.length ? '<div class="tags">' + tags.join('') + '</div>' : '';
+  }
+  function histHtml(h) {
+    var c = cut(h), dom = (h.mls || {}).daysOnMarket, bits = [];
+    if (c) bits.push(t('Listed at ', 'Salió a la venta en ') + money(h.originalListPrice) + ' · <b>' + t('price cut ', 'bajó ') + money(c) + ' (' + Math.round(c / h.originalListPrice * 100) + '%)</b>');
+    else if (h.originalListPrice) bits.push(t('No price changes since listed', 'Sin cambios de precio desde que salió'));
+    if (dom != null) bits.push(dom + (ES ? (dom === 1 ? ' día' : ' días') : (dom === 1 ? ' day' : ' days')) + t(' on market', ' en el mercado'));
+    if (h.listDate) bits.push(t('listed ', 'desde el ') + new Date(h.listDate).toLocaleDateString(ES ? 'es-US' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }));
+    return bits.length ? '<p class="hd-hist">' + bits.join(' · ') + '</p>' : '';
+  }
+  function dpaHtml(h) {
+    if (!isDpa(h)) return '';
+    var five = Math.round((h.listPrice * 0.95) * 0.05 / 100) * 100;
+    return '<div class="hd-dpa">' + t('<b>First-time buyer?</b> This price is under the $410,000 limit for South Dakota’s <b>Give Me Five</b> program: up to 5% of your loan (about ', '<b>¿Primera casa?</b> Este precio está bajo el límite de $410,000 del programa <b>Give Me Five</b> de Dakota del Sur: hasta 5% de su préstamo (unos ') + money(five) + t(') toward your down payment, if you qualify. ', ') para su pago inicial, si califica. ') + '<a href="' + DPA_URL + '">' + t('See who qualifies →', 'Vea quién califica →') + '</a></div>';
+  }
+  function payUrl(h) { return (ES ? '/es/' : '/') + '?price=' + Math.round(h.listPrice || 0) + '#calculator'; }
+
+  // Favorites (kept only in this browser; no account needed)
+  function favs() { try { var v = JSON.parse(localStorage.getItem('mdSaved') || '[]'); return Array.isArray(v) ? v.map(String) : []; } catch (e) { return []; } }
+  function setFavs(v) { try { localStorage.setItem('mdSaved', JSON.stringify(v.slice(0, 40))); } catch (e) {} updSaved(); }
+  function isFav(id) { return favs().indexOf(String(id)) > -1; }
+  var HEART = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg>';
+  function favBtn(h, big) {
+    if (!h.mlsId) return '';
+    var on = isFav(h.mlsId);
+    return '<button type="button" class="fav' + (on ? ' on' : '') + '" data-fav="' + esc(h.mlsId) + '" aria-pressed="' + on + '" aria-label="' + t('Save home', 'Guardar casa') + '">' + HEART + (big ? '<span class="lbl">' + (on ? t('Saved', 'Guardada') : t('Save', 'Guardar')) + '</span>' : '') + '</button>';
+  }
+  function toggleFav(id, h) {
+    id = String(id); var v = favs(), i = v.indexOf(id);
+    if (i > -1) v.splice(i, 1); else { v.unshift(id); if (h) trackView(h); }
+    setFavs(v);
+    document.querySelectorAll('.fav[data-fav="' + id + '"]').forEach(function (b) {
+      var on = i === -1; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+      var sp = b.querySelector('span'); if (sp) sp.textContent = on ? t('Saved', 'Guardada') : t('Save', 'Guardar');
+    });
+    toast(i === -1 ? t('Saved. Tap “Saved” to see your homes.', 'Guardada. Toque “Guardadas” para verlas.') : t('Removed from saved', 'Quitada de guardadas'));
+    if (savedMode && i > -1) showSaved();
+  }
+  function updSaved() { var n = favs().length; $('sp-savedn').textContent = t('Saved', 'Guardadas') + ' (' + n + ')'; }
+  document.addEventListener('click', function (e) { var b = e.target.closest('.hd-top .fav'); if (b && cur) toggleFav(b.dataset.fav, cur); });
+
+  var savedMode = false, cmpSel = [];
+  function showSaved() {
+    var ids = favs();
+    savedMode = true; cmpSel = cmpSel.filter(function (x) { return ids.indexOf(x) > -1; }); $('sp-recent').hidden = true;
+    $('sp-saved').classList.add('on'); $('sp-more').hidden = true;
+    pinReq++; drawPins();
+    $('sp-cmpbar').classList.toggle('on', ids.length > 1); updCmp();
+    if (!ids.length) { results = []; render(false); $('sp-count').textContent = t('No saved homes yet. Tap the ♥ on any home to save it.', 'Aún no hay casas guardadas. Toque el ♥ en cualquier casa para guardarla.'); return; }
+    $('sp-count').textContent = t('Loading your saved homes…', 'Cargando sus casas guardadas…');
+    Promise.all(ids.map(function (id) { return fetch(API + '/' + encodeURIComponent(id)).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }))
+      .then(function (list) {
+        results = list.filter(function (h) { return h && h.mlsId && h.internetEntireListingDisplay !== false; });
+        render(true);
+        var gone = ids.length - results.length;
+        $('sp-count').textContent = results.length + ' ' + t('saved', 'guardadas') + (gone ? ' · ' + gone + t(' no longer for sale', ' ya no están en venta') : '') + ' · ';
+        var back = document.createElement('button'); back.type = 'button'; back.className = 'hd-more'; back.textContent = t('Back to all homes', 'Ver todas las casas');
+        back.onclick = leaveSaved; $('sp-count').appendChild(back);
+      });
+  }
+  function leaveSaved() { savedMode = false; cmpSel = []; setTimeout(drawRecent, 0); $('sp-saved').classList.remove('on'); $('sp-cmpbar').classList.remove('on'); load(false); }
+  $('sp-saved').onclick = function () { if (savedMode) leaveSaved(); else showSaved(); };
+  updSaved();
+
+  function pickCmp(id, on, box) {
+    var i = cmpSel.indexOf(id);
+    if (on && i === -1) { if (cmpSel.length >= 3) { box.checked = false; toast(t('Compare up to 3 homes', 'Compare hasta 3 casas')); return; } cmpSel.push(id); }
+    if (!on && i > -1) cmpSel.splice(i, 1);
+    updCmp();
+  }
+  function updCmp() {
+    $('sp-cmpgo').disabled = cmpSel.length < 2;
+    $('sp-cmptxt').textContent = cmpSel.length < 2 ? t('Check 2 or 3 homes to compare', 'Marque 2 o 3 casas para comparar') : cmpSel.length + t(' homes picked', ' casas escogidas');
+  }
+  $('sp-cmpgo').onclick = function () {
+    var hs = cmpSel.map(function (id) { return results.filter(function (h) { return String(h.mlsId) === id; })[0]; }).filter(Boolean);
+    var num = function (f) { return hs.map(function (h) { var v = f(h); return typeof v === 'number' && isFinite(v) ? v : null; }); };
+    var best = function (vals, low) { var ok = vals.filter(function (v) { return v != null; }); if (ok.length < 2) return -1; var b = low ? Math.min.apply(null, ok) : Math.max.apply(null, ok); return ok.filter(function (v) { return v === b; }).length === 1 ? vals.indexOf(b) : -1; };
+    var rows = [
+      ['', hs.map(function (h) { return (h.photos && h.photos[0] ? '<img src="' + esc(px(h.photos[0], 400)) + '" alt="">' : ''); })],
+      [t('Price', 'Precio'), num(function (h) { return h.listPrice; }), money, true],
+      ['$/sq ft', num(function (h) { return h.listPrice && (h.property || {}).area ? h.listPrice / h.property.area : null; }), money, true],
+      [t('Beds', 'Recámaras'), num(function (h) { return (h.property || {}).bedrooms; }), String, false],
+      [t('Baths', 'Baños'), num(function (h) { return Number(baths(h)) || null; }), String, false],
+      [t('Sq ft', 'Pies²'), num(function (h) { return (h.property || {}).area; }), function (v) { return v.toLocaleString(); }, false],
+      [t('Year built', 'Año'), num(function (h) { return (h.property || {}).yearBuilt; }), String, false],
+      [t('Garage', 'Garaje'), num(function (h) { return (h.property || {}).garageSpaces; }), function (v) { return Math.round(v) + t('-car', ' autos'); }, false],
+      [t('Yearly taxes', 'Impuestos al año'), num(function (h) { return (h.tax || {}).taxAnnualAmount; }), money, true],
+      [t('Days on market', 'Días en el mercado'), num(function (h) { return (h.mls || {}).daysOnMarket; }), String, null],
+      [t('Price cut', 'Bajó de precio'), num(function (h) { return cut(h) || 0; }), function (v) { return v ? money(v) : '—'; }, null],
+      [t('School district', 'Distrito escolar'), hs.map(function (h) { return esc((h.school || {}).district || '—'); })],
+      [t('Address', 'Dirección'), hs.map(function (h) { return esc((showAddr(h) ? cleanAddr((h.address || {}).full) + ', ' : '') + ((h.address || {}).city || '')); })],
+      ['', hs.map(function (h) { return '<span class="co">' + attrHtml(h, false) + '</span>'; })]
+    ];
+    $('cmp-body').innerHTML = '<table class="cmp-t">' + rows.map(function (r) {
+      var cells;
+      if (r.length > 2) { var bi = r[3] == null ? -1 : best(r[1], r[3]); cells = r[1].map(function (v, k) { return '<td' + (k === bi ? ' class="best"' : '') + '>' + (v == null ? '—' : r[2](v)) + '</td>'; }); }
+      else cells = r[1].map(function (v) { return '<td>' + v + '</td>'; });
+      return '<tr><th>' + r[0] + '</th>' + cells.join('') + '</tr>';
+    }).join('') + '</table>';
+    $('cmp').classList.add('open');
+  };
+  $('cmp-x').onclick = function () { $('cmp').classList.remove('open'); };
+  $('cmp').addEventListener('click', function (e) { if (e.target.id === 'cmp') $('cmp').classList.remove('open'); });
+
+  // Drive time to the buyer's work (OpenStreetMap geocoding + OSRM routing, free; place kept in this browser)
+  function getWork() { try { return JSON.parse(localStorage.getItem('mdWork') || 'null'); } catch (e) { return null; } }
+  function setWork(w) { try { if (w) localStorage.setItem('mdWork', JSON.stringify(w)); else localStorage.removeItem('mdWork'); } catch (e) {} }
+  function drive(h) {
+    var box = $('hd-drive'); if (!box || !h.geo || !h.geo.lat) return;
+    var w = getWork();
+    if (!w) {
+      box.innerHTML = '<form id="dv-f"><input id="dv-q" type="text" maxlength="120" placeholder="' + t('Your work or school (e.g. Sanford Hospital)', 'Su trabajo o escuela (ej. Sanford Hospital)') + '" aria-label="' + t('Your work or school', 'Su trabajo o escuela') + '"><button type="submit">' + t('Show drive time', 'Ver tiempo') + '</button></form>' +
+        '<p class="note">' + t('We look up the place with OpenStreetMap. It’s saved only in this browser.', 'Buscamos el lugar con OpenStreetMap. Solo se guarda en este navegador.') + '</p>';
+      $('dv-f').onsubmit = function (e) {
+        e.preventDefault(); var q = $('dv-q').value.trim(); if (!q) return;
+        box.querySelector('button').disabled = true;
+        fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&viewbox=-97.4,43.9,-96.2,43.2&q=' + encodeURIComponent(q))
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (!d || !d[0]) { box.querySelector('button').disabled = false; box.querySelector('.note').textContent = t('Couldn’t find that place. Try adding the city, like “Sanford Hospital Sioux Falls”.', 'No encontramos ese lugar. Agregue la ciudad, como “Sanford Hospital Sioux Falls”.'); return; }
+            setWork({ name: q, lat: +d[0].lat, lng: +d[0].lon }); drive(h);
+          }).catch(function () { box.querySelector('button').disabled = false; });
+      };
+      return;
+    }
+    box.innerHTML = '<p class="res">' + t('Calculating…', 'Calculando…') + '</p>';
+    fetch('https://router.project-osrm.org/route/v1/driving/' + h.geo.lng + ',' + h.geo.lat + ';' + w.lng + ',' + w.lat + '?overview=false')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var rt = d && d.routes && d.routes[0]; if (!rt) throw 0;
+        var mins = Math.max(1, Math.round(rt.duration / 60)), mi = (rt.distance / 1609.34).toFixed(1);
+        box.innerHTML = '<p class="res"><b>' + mins + ' min</b> · ' + mi + ' mi ' + t('to ', 'a ') + esc(w.name) + '</p>' +
+          '<p class="note">' + t('Typical drive without traffic. ', 'Manejo normal sin tráfico. ') + '<button type="button" class="chg" id="dv-c">' + t('Change place', 'Cambiar lugar') + '</button></p>';
+        $('dv-c').onclick = function () { setWork(null); drive(h); };
+      }).catch(function () { box.innerHTML = '<p class="note">' + t('Drive time isn’t available right now.', 'El tiempo de manejo no está disponible ahora.') + ' <button type="button" class="chg" id="dv-c">' + t('Change place', 'Cambiar lugar') + '</button></p>'; $('dv-c').onclick = function () { setWork(null); drive(h); }; });
+  }
+
+  // Tour booking: Marcos's Calendly "Home Showing" calendar, shown inside the page
+  var tourHome = null, calLoaded = null;
+  function loadCalendly() {
+    if (calLoaded) return calLoaded;
+    calLoaded = new Promise(function (ok, bad) {
+      var sc = document.createElement('script'); sc.src = 'https://assets.calendly.com/assets/external/widget.js'; sc.async = true;
+      sc.onload = function () { ok(); }; sc.onerror = function () { calLoaded = null; bad(); };
+      document.head.appendChild(sc);
+    });
+    return calLoaded;
+  }
+  function openTour(h, href) {
+    tourHome = h;
+    var p = h.property || {}, a = h.address || {};
+    var street = showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible');
+    var photo = (h.photos && h.photos[0]) || '';
+    $('tr-head').innerHTML = (photo ? '<img src="' + esc(px(photo, 400)) + '" alt="">' : '') +
+      '<div><h2 id="tr-h">' + t('Request a showing', 'Solicitar una visita') + '</h2>' +
+      '<p><b>' + esc(street) + '</b>, ' + esc(a.city || '') + '<br>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(h) + t(' ba', ' baños') + (p.area ? ' · ' + p.area.toLocaleString() + t(' sq ft', ' pies²') : '') + ' · ' + money(h.listPrice) + '</p></div>';
+    $('tr-note').textContent = t('Pick a time that works for you. I’ll confirm it with the seller’s agent and get back to you. Questions? Call or text 605-838-9140.', 'Escoja la hora que le convenga. La confirmaré con el agente del vendedor y le avisaré. ¿Preguntas? Llame o envíe un texto al 605-838-9140.');
+    $('tr-body').innerHTML = '<div class="tr-load">' + t('Loading my calendar…', 'Cargando mi calendario…') + '</div>';
+    $('tr').classList.add('open'); document.body.classList.add('sp-lock');
+    var home = t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : '');
+    loadCalendly().then(function () {
+      $('tr-body').innerHTML = '';
+      window.Calendly.initInlineWidget({
+        url: BOOK_URL + '?hide_event_type_details=1&hide_gdpr_banner=1&primary_color=b98b5c&text_color=1a2237',
+        parentElement: $('tr-body'),
+        prefill: { customAnswers: { a1: home } }
+      });
+    }).catch(function () { window.open(href, '_blank', 'noopener'); closeTour(); });
+  }
+  function closeTour() { $('tr').classList.remove('open'); if (!$('sp-modal').classList.contains('open')) document.body.classList.remove('sp-lock'); }
+  $('tr-x').onclick = closeTour;
+  $('tr').addEventListener('click', function (e) { if (e.target.id === 'tr') closeTour(); });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tour]'); if (!b || !cur) return;
+    e.preventDefault(); openTour(cur, b.href);
+  });
+  // When the booking is done, show a thank-you and count it as strong interest for their alerts
+  window.addEventListener('message', function (e) {
+    if (e.origin !== 'https://calendly.com' || !e.data || e.data.event !== 'calendly.event_scheduled') return;
+    if (tourHome) trackView(tourHome);
+    $('tr-note').textContent = t('Request sent! I’ll confirm the time with the seller’s agent and get back to you soon. Check your email for the details.', '¡Solicitud enviada! Confirmaré la hora con el agente del vendedor y le avisaré pronto. Revise su correo para ver los detalles.');
+  });
+
+  // ===== New listing alerts (saved to Marcos's "Listing Alert Leads" Google Sheet) =====
+  function alertWhat() {
+    var bits = [], q = $('f-q').value.trim();
+    bits.push(q || t('Homes in this map area', 'Casas en esta área del mapa'));
+    var mn = $('f-min').value, mx = $('f-max').value;
+    if (mn && mx) bits.push(short(+mn) + '–' + short(+mx)); else if (mx) bits.push(t('up to ', 'hasta ') + short(+mx)); else if (mn) bits.push(short(+mn) + '+');
+    if ($('f-beds').value) bits.push($('f-beds').value + t('+ beds', '+ recámaras'));
+    if ($('f-baths').value) bits.push($('f-baths').value + t('+ baths', '+ baños'));
+    if ($('f-type').value) bits.push(typeName($('f-type').value));
+    return bits.join(' · ');
+  }
+  var alSent = false;
+  function openAlert(h) {
+    // from a home page: use that home's city and a price range around it
+    if (h && h.address) {
+      if (!$('f-q').value.trim() && h.address.city) $('f-q').value = h.address.city;
+      if (!$('f-max').value && h.listPrice) $('f-max').value = String(Math.ceil(h.listPrice * 1.15 / 10000) * 10000);
+      if (!$('f-beds').value && h.property && h.property.bedrooms) $('f-beds').value = String(Math.min(h.property.bedrooms, 5));
+      pillLabels();
+    }
+    $('al-what').textContent = alertWhat();
+    $('al-form').hidden = alSent; $('al-done').hidden = !alSent; $('al-msg').textContent = '';
+    $('al').classList.add('open');
+    if (!alSent) setTimeout(function () { $('al-name').focus(); }, 50);
+  }
+  function closeAlert() { $('al').classList.remove('open'); }
+  if (ALERTS_URL) document.querySelectorAll('[data-alert]').forEach(function (b) { b.hidden = false; });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-alert]'); if (!b || !ALERTS_URL) return;
+    openAlert(b.closest('#sp-modal') ? cur : null);
+  });
+  $('al-x').onclick = closeAlert;
+  $('al').addEventListener('click', function (e) { if (e.target.id === 'al') closeAlert(); });
+  $('al-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target, name = f.name.value.trim(), email = f.email.value.trim();
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('al-msg').textContent = t('Please add your name and a good email.', 'Escriba su nombre y un correo válido.'); return; }
+    if (!f.consent.checked) { $('al-msg').textContent = t('Please check the box so I can email you.', 'Marque la casilla para poder enviarle correos.'); return; }
+    var d = new URLSearchParams();
+    d.set('name', name); d.set('email', email); d.set('phone', f.phone.value.trim());
+    d.set('freq', f.freq.value); d.set('consent', 'yes'); d.set('botcheck', f.botcheck.value);
+    var aid = getAid() || newId(); d.set('id', aid);
+    d.set('lang', document.documentElement.lang || 'en'); d.set('source', location.href.slice(0, 200));
+    d.set('q', $('f-q').value.trim()); d.set('minprice', $('f-min').value); d.set('maxprice', $('f-max').value);
+    d.set('minbeds', $('f-beds').value); d.set('minbaths', $('f-baths').value); d.set('type', $('f-type').value);
+    if (!$('f-q').value.trim()) d.set('points', areaPoints().join('|'));
+    f.querySelector('.al-send').disabled = true;
+    fetch(ALERTS_URL, { method: 'POST', mode: 'no-cors', body: d }).then(function () {
+      alSent = true; setAid(aid); $('al-form').hidden = true; $('al-done').hidden = false;
+    }).catch(function () {
+      $('al-msg').textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.');
+    }).then(function () { f.querySelector('.al-send').disabled = false; });
+  });
+
+  $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); acClose(); if ($('f-q').value.trim() && drawPts) clearDrawing(false); load(false); });
+
+  // ---- Suggestions pop up as you type: towns, ZIP codes, and matching homes ----
+  var PLACES = [
+    ['Sioux Falls', '57103 57104 57105 57106 57107 57108 57110'], ['Tea', '57064'], ['Harrisburg', '57032'], ['Brandon', '57005'],
+    ['Hartford', '57033'], ['Crooks', '57020'], ['Lennox', '57039'], ['Canton', '57013'], ['Garretson', '57030'], ['Worthing', '57077'],
+    ['Renner', '57055'], ['Baltic', '57003'], ['Dell Rapids', '57022'], ['Valley Springs', '57068'], ['Colton', '57018'], ['Humboldt', '57035'],
+    ['Parker', '57053'], ['Beresford', '57004'], ['Chancellor', '57015'], ['Marion', '57043'], ['Montrose', '57048'], ['Madison', '57042']
+  ];
+  var acBox = document.createElement('div'); acBox.className = 'sp-ac'; acBox.id = 'sp-ac'; acBox.hidden = true; acBox.setAttribute('role', 'listbox');
+  $('f-q').parentNode.appendChild(acBox);
+  $('f-q').setAttribute('autocomplete', 'off'); $('f-q').setAttribute('aria-autocomplete', 'list'); $('f-q').setAttribute('aria-controls', 'sp-ac');
+  var acItems = [], acSel = -1, acTimer = null, acReq = 0;
+  var PIN_IC = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+  function acClose() { acBox.hidden = true; acItems = []; acSel = -1; document.body.classList.remove('ac-on'); }
+  function acPaint(homesHtml) {
+    var html = '', places = acItems.filter(function (x) { return x.kind === 'place'; });
+    if (places.length) html += '<div class="ac-h">' + t('Places', 'Lugares') + '</div>' + places.map(function (x) { return '<div class="ac-i" role="option" data-k="' + acItems.indexOf(x) + '">' + PIN_IC + '<div><b>' + esc(x.label) + '</b>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div></div>'; }).join('');
+    html += homesHtml || '';
+    acBox.innerHTML = html; acBox.hidden = !html; document.body.classList.toggle('ac-on', !!html);
+    acMark();
+  }
+  function acMark() { acBox.querySelectorAll('.ac-i').forEach(function (el) { el.classList.toggle('on', +el.dataset.k === acSel); }); }
+  function acHomesHtml() {
+    var hs = acItems.filter(function (x) { return x.kind === 'home'; });
+    if (!hs.length) return '';
+    return '<div class="ac-h">' + t('Homes for sale', 'Casas en venta') + '</div>' + hs.map(function (x) {
+      var h = x.h, a = h.address || {}, p = h.property || {};
+      return '<div class="ac-i" role="option" data-k="' + acItems.indexOf(x) + '"><img src="' + esc(px((h.photos || [])[0] || '', 200)) + '" alt=""><div><b>' + esc(showAddr(h) ? cleanAddr(a.full) : t('Address not shown', 'Dirección no disponible')) + '</b><small>' +
+        esc((a.city || '') + ' · ' + money(h.listPrice) + ' · ' + (p.bedrooms || 0) + t(' bd', ' rec') + (h.listingId ? ' · MLS #' + h.listingId : '')) + '</small></div></div>';
+    }).join('');
+  }
+  function acUpdate() {
+    var v = $('f-q').value.trim(), lv = v.toLowerCase();
+    if (!v) { acClose(); return; }
+    var places = [];
+    PLACES.forEach(function (pl) {
+      if (pl[0].toLowerCase().indexOf(lv) === 0 || (lv.length > 2 && pl[0].toLowerCase().indexOf(lv) > -1)) places.push({ kind: 'place', q: pl[0], label: pl[0] + ', SD', sub: pl[1].split(' ').length > 1 ? t('City', 'Ciudad') : 'ZIP ' + pl[1] });
+      pl[1].split(' ').forEach(function (z) { if (/^\d{2,}$/.test(v) && z.indexOf(v) === 0) places.push({ kind: 'place', q: z, label: z, sub: pl[0] + ', SD' }); });
+    });
+    // small typos ("siouix falls"): fall back to towns that start with the same first 3 letters
+    if (!places.length && lv.length >= 3 && !/^\d/.test(lv)) PLACES.forEach(function (pl) { if (pl[0].toLowerCase().indexOf(lv.slice(0, 3)) === 0) places.push({ kind: 'place', q: pl[0], label: pl[0] + ', SD', sub: pl[1].split(' ').length > 1 ? t('City', 'Ciudad') : 'ZIP ' + pl[1] }); });
+    acItems = places.slice(0, 5).concat(acItems.filter(function (x) { return x.kind === 'home' && x.for === v; }));
+    acSel = -1; acPaint(acHomesHtml());
+    if (v.length < 3 || !LIVE) return;
+    clearTimeout(acTimer);
+    acTimer = setTimeout(function () {
+      var my = ++acReq;
+      if (!acItems.some(function (x) { return x.kind === 'home'; })) { acBox.hidden = false; acBox.insertAdjacentHTML('beforeend', '<div class="ac-load">' + t('Looking for homes…', 'Buscando casas…') + '</div>'); }
+      fetch(API + '?q=' + encodeURIComponent(v) + '&limit=6', { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : []; }).then(function (list) {
+        if (my !== acReq || $('f-q').value.trim() !== v) return;
+        acItems = acItems.filter(function (x) { return x.kind === 'place'; }).concat((list || []).filter(function (h) { return h && h.internetEntireListingDisplay !== false; }).slice(0, 6).map(function (h) { return { kind: 'home', h: h, for: v }; }));
+        acPaint(acHomesHtml());
+      }).catch(function () {});
+    }, 220);
+  }
+  function acPick(i) {
+    var x = acItems[i]; if (!x) return;
+    acClose();
+    if (x.kind === 'place') { $('f-q').value = x.q; if (drawPts) clearDrawing(false); load(false); }
+    else { $('f-q').blur(); show(x.h); }
+  }
+  $('f-q').addEventListener('input', acUpdate);
+  $('f-q').addEventListener('focus', function () { if (this.value.trim()) acUpdate(); });
+  $('f-q').addEventListener('keydown', function (e) {
+    if (acBox.hidden || !acItems.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); acSel = Math.min(acSel + 1, acItems.length - 1); acMark(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); acSel = Math.max(acSel - 1, -1); acMark(); }
+    else if (e.key === 'Enter' && acSel > -1) { e.preventDefault(); acPick(acSel); }
+    else if (e.key === 'Escape') acClose();
+  });
+  acBox.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  acBox.addEventListener('click', function (e) { var el = e.target.closest('.ac-i'); if (el) acPick(+el.dataset.k); });
+  document.addEventListener('click', function (e) { if (!e.target.closest('.sp-q')) acClose(); });
+  $('sp-more').onclick = function () { load(true); };
+  map.on('moveend', function () {
+    if (!mapShown()) return;  // e.g. the phone's address bar hiding while the list scrolls
+    if (skipMove) { skipMove = false; return; }
+    if (savedMode) return;
+    if ($('f-q').value.trim()) return;
+    if (drawPts) return;  // a drawn area stays put when the map moves
+    clearTimeout(moveTimer); moveTimer = setTimeout(function () { load(false); }, 350);
+  });
+
+  // Phones open on the list (like Zillow); the pill switches to the map and back
+  var MAP_IC = '<svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>';
+  var LIST_IC = '<svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
+  function setView(v, first) {
+    if (mapShown()) lastBounds = map.getBounds();
+    $('sp-body').className = 'sp-body show-' + v;
+    $('v-toggle').innerHTML = v === 'list' ? MAP_IC + t('Map', 'Mapa') : LIST_IC + t('List', 'Lista');
+    if (v === 'map') setTimeout(function () { skipMove = true; map.invalidateSize(); if (lastBounds) map.fitBounds(lastBounds, { animate: false }); skipMove = false; }, 50);
+    else if (!first) window.scrollTo({ top: Math.max(0, $('sp-body').getBoundingClientRect().top + window.pageYOffset - 140) });
+  }
+  $('v-toggle').onclick = function () { setView(/show-list/.test($('sp-body').className) ? 'map' : 'list'); };
+  setView(window.matchMedia('(max-width: 860px)').matches ? 'list' : 'map', true);
+  // Sort
+  $('sort-d').innerHTML = SORTS.map(function (o) { return '<option value="' + o[0] + '">' + t('Sort: ', 'Orden: ') + o[1] + '</option>'; }).join('');
+  $('sort-btn-t').textContent = t('Sort', 'Ordenar');
+  function setSort(v) { sortVal = v; $('sort-d').value = v; load(false); }
+  $('sort-d').onchange = function () { setSort(this.value); };
+  $('sort-btn').onclick = function () {
+    var shade = document.createElement('div'); shade.className = 'sp-sheet-shade';
+    var sh = document.createElement('div'); sh.className = 'sp-sheet'; sh.setAttribute('role', 'dialog');
+    sh.innerHTML = '<h3>' + t('Sort by', 'Ordenar por') + '</h3>' + SORTS.map(function (o) { return '<label><input type="radio" name="sort-r" value="' + o[0] + '"' + (o[0] === sortVal ? ' checked' : '') + '>' + o[1] + '</label>'; }).join('');
+    function close() { shade.remove(); sh.remove(); }
+    shade.onclick = close;
+    sh.addEventListener('change', function (e) { close(); setSort(e.target.value); });
+    document.body.appendChild(shade); document.body.appendChild(sh);
+  };
+
+  // Listing data "last updated" time for the disclaimer (SimplyRETS: OPTIONS on the API root, or the X-SimplyRETS-Last-Update header).
+  (LIVE ? fetch(LIVE_API.replace(/\/$/, '') + '/last-update') : fetch('https://api.simplyrets.com/', { method: 'OPTIONS', headers: HEADERS }))
+    .then(function (r) { return r.json(); })
+    .then(function (o) {
+      var u = o.lastUpdate || (o.updates && Object.keys(o.updates).map(function (k) { return o.updates[k]; }).filter(Boolean).sort().pop());
+      var d = u && new Date(u);
+      if (d && !isNaN(d)) $('sp-updated').textContent = t('Listing data last updated ', 'Información actualizada el ') + d.toLocaleString(ES ? 'es-US' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
+    }).catch(function () {});
+
+
+  // ===== Zillow-style filter bar: Price, Beds & baths, Home type, More, Save search =====
+  function typeName(v) { return ({ residential: t('House', 'Casa'), condominium: t('Condo / townhome', 'Condominio / townhome'), multifamily: t('Multi-family', 'Multifamiliar'), land: t('Land', 'Terreno') })[v] || v; }
+  function digits(v) { return String(v || '').replace(/[^0-9]/g, '').slice(0, 9); }
+  function fmtMoney(v) { var d = digits(v); return d ? '$' + Number(d).toLocaleString('en-US') : ''; }
+  var POPS = ['price', 'beds', 'type', 'more'], openPop = null;
+  function closePops() {
+    POPS.forEach(function (k) { $('pop-' + k).classList.remove('open'); });
+    document.querySelectorAll('.pill-b').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+    $('pop-shade').classList.remove('on'); document.body.classList.remove('pop-on'); openPop = null;
+  }
+  function fillPop(k) {
+    if (k === 'price') { $('pp-min').value = fmtMoney($('f-min').value); $('pp-max').value = fmtMoney($('f-max').value); }
+    if (k === 'beds') {
+      [['pb-beds', 'f-beds'], ['pb-baths', 'f-baths']].forEach(function (x) { $(x[0]).querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === $(x[1]).value); }); });
+    }
+    if (k === 'type') document.querySelectorAll('#pt-type input').forEach(function (r) { r.checked = r.value === $('f-type').value; });
+    if (k === 'more') { $('pm-area').value = $('f-area').value; $('pm-year').value = $('f-year').value; $('pm-dom').value = $('f-dom').value; $('pm-acres').value = $('f-acres').value; $('pm-pend').checked = !!$('f-pend').value; }
+  }
+  document.querySelectorAll('.pill-b').forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var k = b.dataset.pop, was = openPop === k;
+      closePops();
+      if (was) return;
+      fillPop(k); $('pop-' + k).classList.add('open'); b.setAttribute('aria-expanded', 'true'); openPop = k;
+      if (window.innerWidth <= 860) { $('pop-shade').classList.add('on'); document.body.classList.add('pop-on'); }
+      var first = $('pop-' + k).querySelector('input[type=text]'); if (first && window.innerWidth > 860) first.focus();
+    });
+  });
+  document.addEventListener('click', function (e) { if (openPop && !e.target.closest('.pop') && !e.target.closest('.pill-b')) closePops(); });
+  $('pop-shade').addEventListener('click', closePops);
+  ['pp-min', 'pp-max'].forEach(function (id) {
+    $(id).addEventListener('input', function () { var el = $(id), d = digits(el.value); el.value = d ? '$' + Number(d).toLocaleString('en-US') : ''; });
+    $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyPop('price'); } });
+  });
+  // quick price picks
+  [[0, 250000], [250000, 350000], [350000, 450000], [450000, 600000], [600000, 0]].forEach(function (r) {
+    var b = document.createElement('button'); b.type = 'button';
+    b.textContent = r[0] && r[1] ? short(r[0]) + '–' + short(r[1]) : r[1] ? t('Under ', 'Menos de ') + short(r[1]) : short(r[0]) + '+';
+    b.onclick = function () { $('pp-min').value = r[0] ? fmtMoney(r[0]) : ''; $('pp-max').value = r[1] ? fmtMoney(r[1]) : ''; };
+    $('pp-chips').appendChild(b);
+  });
+  ['pb-beds', 'pb-baths'].forEach(function (id) {
+    $(id).addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; $(id).querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); });
+  });
+  function applyPop(k) {
+    if (k === 'price') {
+      var mn = digits($('pp-min').value), mx = digits($('pp-max').value);
+      if (mn && mx && +mn > +mx) { var tmp = mn; mn = mx; mx = tmp; }
+      $('f-min').value = mn; $('f-max').value = mx;
+    }
+    if (k === 'beds') {
+      var bb = $('pb-beds').querySelector('.on'), ba = $('pb-baths').querySelector('.on');
+      $('f-beds').value = bb ? bb.dataset.v : ''; $('f-baths').value = ba ? ba.dataset.v : '';
+    }
+    if (k === 'type') { var r = document.querySelector('#pt-type input:checked'); $('f-type').value = r ? r.value : ''; }
+    if (k === 'more') { $('f-area').value = $('pm-area').value; $('f-year').value = $('pm-year').value; $('f-dom').value = $('pm-dom').value; $('f-acres').value = $('pm-acres').value; $('f-pend').value = $('pm-pend').checked ? '1' : ''; }
+    closePops(); pillLabels(); load(false);
+  }
+  function resetPop(k) {
+    if (k === 'price') { $('pp-min').value = ''; $('pp-max').value = ''; }
+    if (k === 'beds') ['pb-beds', 'pb-baths'].forEach(function (id) { $(id).querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.v === ''); }); });
+    if (k === 'type') document.querySelectorAll('#pt-type input').forEach(function (r) { r.checked = r.value === ''; });
+    if (k === 'more') { $('pm-area').value = ''; $('pm-year').value = ''; $('pm-dom').value = ''; $('pm-acres').value = ''; $('pm-pend').checked = false; }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-apply]'); if (a) { applyPop(a.dataset.apply); return; }
+    var r = e.target.closest('[data-reset]'); if (r) resetPop(r.dataset.reset);
+  });
+  function pillLabels() {
+    var mn = $('f-min').value, mx = $('f-max').value, bd = $('f-beds').value, ba = $('f-baths').value, ty = $('f-type').value;
+    var more = [$('f-area').value, $('f-acres').value, $('f-year').value, $('f-dom').value, $('f-pend').value].filter(Boolean).length;
+    $('pl-price').textContent = mn && mx ? short(+mn) + '–' + short(+mx) : mx ? t('Up to ', 'Hasta ') + short(+mx) : mn ? short(+mn) + '+' : t('Price', 'Precio');
+    $('pl-beds').textContent = bd || ba ? [bd && bd + t('+ bd', '+ rec'), ba && ba + t('+ ba', '+ baños')].filter(Boolean).join(', ') : t('Beds & baths', 'Recámaras y baños');
+    $('pl-type').textContent = ty ? typeName(ty) : t('Home type', 'Tipo de casa');
+    $('pl-more').innerHTML = t('More', 'Más') + (more ? ' <span class="n">' + more + '</span>' : '');
+    document.querySelector('[data-pop="price"]').classList.toggle('on', !!(mn || mx));
+    document.querySelector('[data-pop="beds"]').classList.toggle('on', !!(bd || ba));
+    document.querySelector('[data-pop="type"]').classList.toggle('on', !!ty);
+    document.querySelector('[data-pop="more"]').classList.toggle('on', !!more);
+  }
+
+  // Start from a link like ?maxprice=272000&minbeds=3 (used by the affordability calculator)
+  (function () {
+    var u = new URLSearchParams(location.search);
+    function setSel(id, v) { if (v && /^\d+(\.\d+)?$/.test(v)) $(id).value = v; }
+    setSel('f-min', u.get('minprice')); setSel('f-max', u.get('maxprice'));
+    setSel('f-beds', u.get('minbeds')); setSel('f-baths', u.get('minbaths'));
+    setSel('f-area', u.get('minarea')); setSel('f-year', u.get('minyear')); setSel('f-dom', u.get('maxdom')); setSel('f-acres', u.get('minacres')); if (u.get('pending') === '1') $('f-pend').value = '1';
+    if (u.get('type') && /^(residential|condominium)$/.test(u.get('type'))) $('f-type').value = u.get('type');
+    if (u.get('q')) $('f-q').value = u.get('q').slice(0, 80);
+    pillLabels();
+    // a shared search link: map position (c=lat,lng,zoom) or a drawn area (d=lat,lng|lat,lng|...)
+    var c = (u.get('c') || '').split(',').map(Number);
+    if (c.length === 3 && c.every(isFinite) && !u.get('q')) { skipMove = true; map.setView([c[0], c[1]], Math.max(5, Math.min(18, c[2])), { animate: false }); skipMove = false; }
+    var d = (u.get('d') || '').split('|').filter(function (p) { return /^-?\d{1,3}\.\d{1,6},-?\d{1,3}\.\d{1,6}$/.test(p); }).slice(0, 30);
+    if (d.length >= 3) { applyDrawing(d.map(function (p) { var x = p.split(','); return L.latLng(+x[0], +x[1]); }), false); skipMove = true; map.fitBounds(drawShape.getBounds(), { padding: [20, 20], animate: false }); skipMove = false; }
+  })();
+
+  load(false);
+  var deep = (location.hash.match(/^#home=(\d+)/) || [])[1];
+  if (deep) openById(deep); else drawRecent();
+})();
+</script>
 </body>
 </html>
