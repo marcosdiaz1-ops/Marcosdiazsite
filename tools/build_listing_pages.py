@@ -244,6 +244,7 @@ CSS = '''<style>
 .lp-body{display:flex;flex-direction:column;gap:2px;padding:12px 14px}
 .lp-body b{font-size:1.25rem;color:var(--navy)}.lp-body small{color:#555;margin-top:6px;line-height:1.4}
 .lp-towns{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.lp-groups{margin-top:36px}.lp-gh{font-size:20px;margin:26px 0 4px}.lp-quick{margin:4px 0 20px}.lp-more summary{cursor:pointer;color:var(--navy);font-weight:600;margin:10px 0}
 .lp-towns a{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;text-decoration:none;color:var(--navy)}
 .lp-disc{font-size:.85rem;color:#555;border-top:1px solid var(--line);padding-top:14px;margin:30px 0}
 .lp-body-sec{padding:10px 0 40px}
@@ -459,7 +460,7 @@ def coll_page(c, updated, es):
     n = len(homes)
     prices = sorted(x['listPrice'] for x in homes if x.get('listPrice'))
     med = prices[len(prices) // 2] if prices else 0
-    new7 = sum(1 for x in homes if ((x.get('mls') or {}).get('daysOnMarket') or 99) <= 7)
+    new7 = sum(1 for x in homes if is_new_week(x))
     url = c.es_url if es else c.en_url
     h1, title, kw = (x[1] if es else x[0] for x in (c.h1, c.title, c.desc_kw))
     search = T(es, '/search/', '/es/buscar-casas/') + (('?q=' + urllib.parse.quote(c.q)) if c.q else '')
@@ -474,7 +475,7 @@ def coll_page(c, updated, es):
     if c.en_url == '/homes-for-sale/': crumbs = crumbs[:1]
     crumbs_html = ' / '.join(f'<a href="{u}">{e(l)}</a>' for l, u in crumbs) + ' / ' + e(h1)
     cards = ''.join(card(x, url_of(x, es), es) for x in homes[:MAX_TOWN_CARDS])
-    sub_html = ''.join(f'<a href="{u[1] if es else u[0]}">{e(l[1] if es else l[0])} <b>({k})</b></a>' for l, u, k in c.sub)
+    quick_html, groups_html = sub_groups(c.sub, es)
     a = c.alert
     alert = alert_box(es, a.get('q', ''), a.get('minprice', ''), a.get('maxprice', ''), a.get('minbeds', ''), a.get('type', ''), '',
                       T(es, 'New homes like these, sent to you as soon as they hit the market. Free, and you can stop anytime.',
@@ -489,9 +490,10 @@ def coll_page(c, updated, es):
   </div></section>
   <section class="lp-body-sec"><div class="lp-wrap">
     <div class="lp-btns"><a class="lp-btn gold" href="{e(search)}">{T(es, "See them on the map", "Verlas en el mapa")}</a>{area_btn}<a class="lp-btn" href="tel:+16058389140">{T(es, "Call or text", "Llame o mande texto:")} 605-838-9140</a></div>
-    {f'<div class="lp-towns">{sub_html}</div>' if sub_html else ''}
+    {quick_html}
     {f'<div class="lp-grid">{cards}</div>' if cards else f'<p>{empty}</p>'}
     {f'<p><a href="{e(search)}">{T(es, f"See all {n} homes on the map →", f"Ver las {n} casas en el mapa →")}</a></p>' if n > MAX_TOWN_CARDS else ''}
+    {groups_html}
     {alert}
     <p class="lp-disc">{disclaimer(es, updated)}</p>
     {f'<p class="lp-foot">*{e(pay_note(es))}</p>' if homes else ''}
@@ -503,6 +505,35 @@ def coll_page(c, updated, es):
     photo = next((x['photos'][0] for x in homes if x.get('photos')), None)
     if photo: set_og_image(url.strip('/') + '/index.html', px(photo, 1200), h1)
     return url
+
+
+def sub_groups(subs, es):
+    """Short quick links above the homes (new / price cuts), the rest grouped under headings below them."""
+    def link(l, u, k, short=None):
+        return f'<a href="{u[1] if es else u[0]}">{e(short or (l[1] if es else l[0]))} <b>({k})</b></a>'
+    quick, price, beds, nb, other = [], [], [], [], []
+    for l, u, k in subs:
+        url = u[0]
+        if url.endswith('new-this-week/'): quick.append(link(l, u, k, T(es, 'New this week', 'Nuevas esta semana')))
+        elif url.endswith('price-cuts/'): quick.append(link(l, u, k, T(es, 'Price cuts', 'Bajaron de precio')))
+        elif '/under-' in url:
+            cap = url.rstrip('/').rsplit('under-', 1)[1].upper()
+            price.append(link(l, u, k, T(es, f'Under ${cap}', f'Menos de ${cap}')))
+        elif re.search(r'/(\d)-bedrooms/$', url):
+            b = re.search(r'/(\d)-bedrooms/$', url).group(1)
+            beds.append(link(l, u, k, T(es, f'{b}+ beds', f'{b}+ recámaras')))
+        elif '/neighborhoods/' in url:
+            name = re.sub(r'^(Homes for Sale in |Casas en venta en )', '', l[1] if es else l[0]).rsplit(',', 1)[0]
+            nb.append(link(l, u, k, re.sub(r' neighborhood$', '', name)))
+        else: other.append(link(l, u, k))
+    quick_html = f'<div class="lp-towns lp-quick">{"".join(quick)}</div>' if quick else ''
+    sec = lambda h, xs: f'<h2 class="lp-gh">{h}</h2><div class="lp-towns">{"".join(xs)}</div>' if xs else ''
+    more = ''
+    if len(nb) > 12:
+        more = f'<details class="lp-more"><summary>{T(es, f"{len(nb) - 12} more neighborhoods", f"{len(nb) - 12} vecindarios más")}</summary><div class="lp-towns">{"".join(nb[12:])}</div></details>'
+    groups = (sec(T(es, 'Shop by price', 'Por precio'), price) + sec(T(es, 'Shop by bedrooms', 'Por recámaras'), beds)
+              + sec(T(es, 'Popular neighborhoods', 'Vecindarios populares'), nb[:12]) + more + sec(T(es, 'More searches', 'Más búsquedas'), other))
+    return quick_html, (f'<div class="lp-groups">{groups}</div>' if groups else '')
 
 # ---------- What goes in each set ----------
 PRICE_CAPS = [200000, 250000, 300000, 350000, 400000, 500000]
@@ -543,10 +574,21 @@ def fresh_subs(homes, base_en, base_es, where_en, where_es, q, crumbs, always=Fa
     return out
 
 def is_ranch(h): return bool(re.search(r'ranch', str((h.get('property') or {}).get('style') or ''), re.I))
+ROMAN = re.compile(r'^(i{1,3}|iv|v|vi{1,3}|ix|x)$', re.I)
+def nice_case(s):  # "KLEIN'S 2ND ADDN III" -> "Klein's 2nd Addn III"
+    return ' '.join(w.upper() if ROMAN.match(w) else re.sub(r"^([a-z])", lambda m: m.group(1).upper(), w.lower()) for w in s.split())
+SUB_JUNK = re.compile(r'temporary|check back|unknown|^none$|^n/?a$|metes|unplatted|^tbd$', re.I)
 def nice_sub(s):
-    s = re.sub(r'\b(ADDN?|ADDITION|ADD\.?|SUBD?|SUBDIVISION|PLAT|PH(ASE)?\s*\w+)\b\.?', '', str(s or ''), flags=re.I)
+    s = str(s or '')
+    if SUB_JUNK.search(s.strip()): return ''  # MLS placeholders, not real neighborhoods
+    s = re.sub(r'\b(ADDN?|ADDITION|ADD\.?|SUBD?|SUBDIVISION|PLAT|PH(ASE)?\s*\w+)\b\.?', '', s, flags=re.I)
+    # "Copper Creek Heights An To The City Of Sioux Falls" -> "Copper Creek Heights"
+    s = re.sub(r'\b(an\s+|a\s+)?to\s+(the\s+)?(city\s+of\s+)?[A-Za-z .]+$', '', s, flags=re.I) if re.search(r'\bto\s+(the\s+)?(city|sioux|tea|harrisburg|brandon)', s, re.I) else s
+    s = re.sub(r'(\d)(?!(?:st|nd|rd|th)\b)([A-Za-z]{2,})', r'\1 \2', s, flags=re.I)  # "41Ellis" -> "41 Ellis"
+    s = re.sub(r'\s+(an|a)$', '', s.strip(), flags=re.I)
     s = re.sub(r'\s+', ' ', s).strip(' -,')
-    return s.title() if s.isupper() or s.islower() else s
+    if SUB_JUNK.search(s): return ''
+    return nice_case(s) if s.isupper() or s.islower() else s
 def fix_typos(s):  # spelling mistakes that come in from the MLS feed
     return re.sub(r'\bComminty\b', 'Community', str(s or ''))
 
