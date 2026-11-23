@@ -203,7 +203,7 @@ def px(u, w):
 def card(h, href, es=False):
     p, ph = h.get('property') or {}, (h.get('photos') or [None])[0]
     dom = (h.get('mls') or {}).get('daysOnMarket')
-    tag = ('<span class="lp-new">' + ('Nueva' if es else 'New') + '</span>') if dom is not None and dom <= 7 else ''
+    tag = ('<span class="lp-new">' + ('Nueva' if es else 'New') + '</span>') if is_new_week(h) else ''
     if price_cut(h): tag += f'<span class="lp-cut">↓ {money(price_cut(h))}</span>'
     elif not tag and highlights(h, es): tag = f'<span class="lp-new lp-hl">{e(highlights(h, es)[0])}</span>'
     bd = f"{p.get('bedrooms') or 0} {'rec' if es else 'bd'} · {baths(p) or 0} {'baños' if es else 'ba'}" + (f" · {p['area']:,} {'pies²' if es else 'sq ft'}" if p.get('area') else '')
@@ -554,8 +554,13 @@ def price_cut(h):
     o, l = h.get('originalListPrice') or 0, h.get('listPrice') or 0
     return o - l if o and l and o > l else 0
 def is_new_week(h):
+    # Use the real list date; the MLS days-on-market field is 0 for many older listings
+    ld = str(h.get('listDate') or '')[:10]
+    if ld:
+        try: return (datetime.date.today() - datetime.date.fromisoformat(ld)).days <= 7
+        except ValueError: pass
     d = (h.get('mls') or {}).get('daysOnMarket')
-    return d is not None and d <= 7
+    return bool(d) and d <= 7
 
 def fresh_subs(homes, base_en, base_es, where_en, where_es, q, crumbs, always=False):
     """'New this week' and 'Price cuts' pages. Area-wide ones are always built; town ones need 3+ homes."""

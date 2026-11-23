@@ -915,6 +915,11 @@
 
   // ---- Every home in the area as a pin (crowded pins grouped into a numbered bubble) ----
   var allPins = null, pinReq = 0;
+  // "New" = listed in the last 7 days (by list date; the MLS days-on-market field is 0 on many older listings)
+  function isNewH(h) {
+    if (h.listDate) { var d = (Date.now() - new Date(h.listDate).getTime()) / 864e5; if (!isNaN(d)) return d <= 7; }
+    var dom = (h.mls || {}).daysOnMarket; return !!dom && dom <= 7;
+  }
   function pinCls(dom, orig, price) { return (orig && price && orig > price) ? ' p-cut' : (dom != null && dom <= 7 ? ' p-new' : ''); }
   function loadPins() {
     var my = ++pinReq;
@@ -1119,7 +1124,7 @@
       var p = h.property || {}, a = h.address || {}, g = h.geo || {};
       if (g.lat && g.lng && pinMode) { if (!h._sample) pts.push([g.lat, g.lng]); }
       else if (g.lat && g.lng) {
-        var m = L.marker([g.lat, g.lng], { icon: L.divIcon({ className: '', html: '<span class="pin' + pinCls((h.mls || {}).daysOnMarket, h.originalListPrice, h.listPrice) + '" data-i="' + i + '" data-m="' + esc(h.mlsId) + '">' + short(h.listPrice) + '</span>' }) })
+        var m = L.marker([g.lat, g.lng], { icon: L.divIcon({ className: '', html: '<span class="pin' + pinCls(isNewH(h) ? 0 : null, h.originalListPrice, h.listPrice) + '" data-i="' + i + '" data-m="' + esc(h.mlsId) + '">' + short(h.listPrice) + '</span>' }) })
           .on('click', function () { openDetail(i); }).addTo(layer);
         markers[i] = m; if (!h._sample) pts.push([g.lat, g.lng]);
       }
@@ -1216,7 +1221,7 @@
     var book = BOOK_URL + '?a1=' + encodeURIComponent(t('Home: ', 'Casa: ') + street + ', ' + (a.city || '') + (h.listingId ? ' (MLS #' + h.listingId + ')' : ''));
     var tiles = photos.slice(0, 5).map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(px(u, k ? 800 : 1600)) + '\')" aria-label="' + t('Open photo ', 'Abrir foto ') + (k + 1) + '"></button>'; }).join('');
     var mobileTiles = photos.map(function (u, k) { return '<button type="button" data-k="' + k + '" style="background-image:url(\'' + esc(px(u, 1024)) + '\')" aria-label="Open photo ' + (k + 1) + '"></button>'; }).join('');
-    var isNew = dom != null && dom <= 7;
+    var isNew = isNewH(h);
     var remarks = h.remarks || '';
     var hasMap = !!(showAddr(h) && h.geo && h.geo.lat);
 
