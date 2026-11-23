@@ -129,6 +129,14 @@
   .hd-sv svg { width: 34px; height: 34px; flex: none; fill: none; stroke: var(--gold-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .hd-sv b { display: block; font-weight: 500; }
   .hd-sv small { color: var(--text); font-size: 13px; }
+  .hd-simrow { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 12px; scrollbar-width: thin; }
+  .hd-sim { flex: 0 0 250px; scroll-snap-align: start; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; cursor: pointer; text-align: left; font: inherit; padding: 0; color: var(--ink); }
+  .hd-sim:hover { box-shadow: 0 6px 18px rgba(19,32,59,.12); }
+  .hd-sim .im { aspect-ratio: 3/2; background: var(--sand) center/cover no-repeat; position: relative; }
+  .hd-sim .im span { position: absolute; left: 8px; top: 8px; background: rgba(255,255,255,.95); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 500; color: var(--navy); }
+  .hd-sim .tx { padding: 10px 12px 12px; font-size: 14px; color: var(--text); line-height: 1.35; }
+  .hd-sim .tx b { display: block; font-size: 19px; font-weight: 600; color: var(--ink); }
+  .hd-sim .tx small { display: block; font-size: 11px; color: #666; margin-top: 6px; }
   @media (max-width: 640px) { .hd-pay { grid-template-columns: 1fr; } #hd-map { height: 320px; } }
   /* Search suggestions as you type */
   body.ac-on .sp-toggle { display: none !important; }
@@ -1154,6 +1162,7 @@
           '<div class="hd-mapwrap"><div id="hd-map"></div><div class="hd-mt" id="hd-mt"><button type="button" data-b="road" class="on">' + t('Map', 'Mapa') + '</button><button type="button" data-b="sat">' + t('Satellite', 'Satélite') + '</button><button type="button" data-b="lots">' + t('Lot lines', 'Límites del terreno') + '</button></div></div>' +
           '<p class="hd-mapnote" id="hd-mapnote">' + t('White price tags are other homes for sale nearby. Tap one to see it.', 'Las etiquetas blancas son otras casas en venta cerca. Tóquela para verla.') + '</p>' +
           '<a class="hd-sv" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + h.geo.lat + ',' + h.geo.lng + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M9.5 21v-6H8v-4.5A2.5 2.5 0 0 1 10.5 8h3a2.5 2.5 0 0 1 2.5 2.5V15h-1.5v6M5 18c-1.8.6-3 1.3-3 2 0 1.7 4.5 3 10 3s10-1.3 10-3c0-.7-1.2-1.4-3-2"/></svg><span><b>' + t('Street View', 'Ver la calle') + ' ↗</b><small>' + t('Look at the house and the street from the road (Google)', 'Vea la casa y la calle desde la calle (Google)') + '</small></span></a></div>' +
+          '<div class="hd-sec" id="hd-simsec" hidden><h2>' + t('Similar homes nearby', 'Casas parecidas cerca') + '</h2><div class="hd-simrow" id="hd-simrow"></div></div>' +
           '<div class="hd-sec"><h2>' + t('Flood zone', 'Zona de inundación') + '</h2><div class="hd-flood" id="hd-flood">' + t('Checking FEMA flood maps…', 'Revisando los mapas de FEMA…') + '</div>' +
           '<div class="hd-env"><a href="https://riskfactor.com/search?query=' + encodeURIComponent(cleanAddr(a.full) + ', ' + (a.city || '') + ', ' + (a.state || 'SD') + ' ' + (a.postalCode || '')) + '" target="_blank" rel="noopener">' + t('Flood, fire, heat &amp; wind risk (Risk Factor)', 'Riesgo de inundación, fuego, calor y viento (Risk Factor)') + ' ↗</a></div></div>' +
           '<div class="hd-sec hd-drive"><h2>' + t('Getting around', 'Cómo moverse') + '</h2><div id="hd-drive"></div></div>' : '') +
@@ -1185,6 +1194,41 @@
     hdTabs();
     payCalc(h);
     if ($('hd-map')) hdMapSetup(h);
+    similar(h);
+  }
+
+  // Similar homes for sale nearby: close by, price within about 20%, about the same bedrooms
+  var simHomes = {};
+  function similar(h) {
+    var row = $('hd-simrow'); if (!row || !h.listPrice || !LIVE) return;
+    var id = h.mlsId, lat = h.geo.lat, lng = h.geo.lng, beds = (h.property || {}).bedrooms || 0;
+    function ask(dLat, dLng) {
+      var p = new URLSearchParams();
+      p.append('status', 'Active');
+      p.set('minprice', Math.round(h.listPrice * 0.8)); p.set('maxprice', Math.round(h.listPrice * 1.2));
+      if (beds > 1) p.set('minbeds', beds - 1);
+      [[lat + dLat, lng - dLng], [lat + dLat, lng + dLng], [lat - dLat, lng + dLng], [lat - dLat, lng - dLng]].forEach(function (pt) { p.append('points', pt[0].toFixed(5) + ',' + pt[1].toFixed(5)); });
+      p.set('limit', 25);
+      return fetch(API + '?' + p.toString(), { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); });
+    }
+    function dist(o) { var g = o.geo || {}; return Math.pow((g.lat - lat) * 69, 2) + Math.pow((g.lng - lng) * 50, 2); }
+    function pick(data) {
+      return (data || []).filter(function (o) { return String(o.mlsId) !== String(id) && o.internetEntireListingDisplay !== false && o.geo && o.geo.lat && Math.abs(((o.property || {}).bedrooms || 0) - beds) <= 1; })
+        .sort(function (x, y) { return dist(x) - dist(y); }).slice(0, 8);
+    }
+    ask(0.03, 0.04).then(function (d) { var got = pick(d); return got.length >= 4 ? got : ask(0.09, 0.12).then(pick); }).then(function (list) {
+      if (!cur || cur.mlsId !== id || !list.length) return;
+      simHomes = {};
+      row.innerHTML = list.map(function (o) {
+        simHomes[o.mlsId] = o;
+        var p = o.property || {}, a = o.address || {}, mi = Math.sqrt(dist(o)), ph = (o.photos || [])[0];
+        return '<button type="button" class="hd-sim" data-sim="' + esc(o.mlsId) + '"><div class="im"' + (ph ? ' style="background-image:url(\'' + esc(ph) + '\')"' : '') + '><span>' + (mi < 0.1 ? t('Next door', 'Al lado') : mi.toFixed(1) + t(' mi away', ' millas')) + '</span></div>' +
+          '<div class="tx"><b>' + money(o.listPrice) + '</b>' + (p.bedrooms || 0) + t(' bd · ', ' rec · ') + baths(o) + t(' ba', ' baños') + (p.area ? ' · ' + p.area.toLocaleString() + t(' sq ft', ' pies²') : '') +
+          '<br>' + (showAddr(o) ? esc(cleanAddr(a.full)) + ', ' : '') + esc(a.city || '') + '<small>' + attrHtml(o, false) + '</small></div></button>';
+      }).join('');
+      $('hd-simsec').hidden = false;
+      row.onclick = function (e) { var b = e.target.closest('[data-sim]'); if (b && simHomes[b.dataset.sim]) { show(simHomes[b.dataset.sim]); } };
+    }).catch(function () {});
   }
 
   // ===== Listing page: section tabs, payment, neighborhood map =====
