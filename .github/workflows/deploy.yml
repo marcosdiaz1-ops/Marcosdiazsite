@@ -74,29 +74,44 @@ jobs:
         uses: actions/deploy-pages@v4
 
   indexnow:
-    # Tell Bing (and other IndexNow search engines) which pages changed
+    # Tell Bing (and other IndexNow search engines: Yandex, Seznam, Naver...) which pages are new or changed.
+    #  - push: the site pages changed in that commit
+    #  - schedule: once a day (the 12:17 UTC run), every listing page added or changed in the last 2 days
+    #  - manual run (workflow_dispatch): every page on the site, including all listing pages
     needs: deploy
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - name: Submit changed pages to IndexNow
+      - name: Submit pages to IndexNow
         env:
           KEY: b53b2d172794472fa3604e6999f0cc64
           EVENT: ${{ github.event_name }}
         run: |
           sleep 30
           python3 - <<'PY'
-          import os, re, subprocess, json, urllib.request
+          import os, re, subprocess, json, datetime, urllib.request, urllib.error
           site = "https://605homesearch.com"
+          event = os.environ["EVENT"]
           skip = ("tools/", "automation/", "google", "thank-you", "review/", "search-preview/", "lp/", "es/lp/")
-          sm = open("sitemap.xml").read()
-          all_urls = re.findall(r"<loc>([^<]+)</loc>", sm)
+          all_urls = re.findall(r"<loc>([^<]+)</loc>", open("sitemap.xml").read())
+
+          def listing_urls(days=None):
+              """Listing pages from the live homes-sitemap.xml (built during publish, not in the repo)."""
+              try:
+                  sm = urllib.request.urlopen(site + "/homes-sitemap.xml?n=" + os.environ.get("GITHUB_RUN_ID", ""), timeout=60).read().decode()
+              except Exception as e:
+                  print("Couldn't read homes-sitemap.xml:", e); return []
+              rows = re.findall(r"<loc>([^<]+)</loc>(?:<lastmod>([^<]+)</lastmod>)?", sm)
+              if days is None:
+                  return [u for u, _ in rows]
+              since = (datetime.datetime.utcnow().date() - datetime.timedelta(days=days)).isoformat()
+              return [u for u, d in rows if d and d[:10] >= since]
+
           urls = []
-          if os.environ["EVENT"] == "push":
+          if event == "push":
               try:
                   files = subprocess.check_output(["git", "diff", "--name-only", "HEAD~1", "HEAD"], text=True).split()
               except Exception:
@@ -104,22 +119,27 @@ jobs:
               for f in files:
                   if not f.endswith(".html") or f.startswith(skip) or not os.path.exists(f):
                       continue
-                  path = "/" + (f[:-10] if f.endswith("index.html") else f)
-                  urls.append(site + path)
-              if any(f in ("sitemap.xml",) for f in files):
+                  urls.append(site + "/" + (f[:-10] if f.endswith("index.html") else f))
+              if "sitemap.xml" in files:
                   urls.append(site + "/sitemap.xml")
+          elif event == "schedule":
+              if datetime.datetime.utcnow().hour != 12:
+                  print("Listing pages go to IndexNow once a day (12:17 UTC run); nothing to do now."); raise SystemExit(0)
+              urls = listing_urls(days=2) + [site + "/homes-sitemap.xml"]
           else:
-              urls = all_urls
-          urls = sorted(set(urls))[:10000]
-          print("Submitting", len(urls), "URLs"); print("\n".join(urls))
+              urls = all_urls + listing_urls() + [site + "/sitemap.xml", site + "/homes-sitemap.xml"]
+
+          urls = sorted(set(u for u in urls if u.startswith(site + "/")))
+          print("Submitting", len(urls), "URLs"); print("\n".join(urls[:40]) + ("\n..." if len(urls) > 40 else ""))
           if not urls:
               raise SystemExit(0)
-          body = json.dumps({"host": "605homesearch.com", "key": os.environ["KEY"],
-                             "keyLocation": f"{site}/{os.environ['KEY']}.txt", "urlList": urls}).encode()
-          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
-                                       headers={"Content-Type": "application/json; charset=utf-8"})
-          try:
-              r = urllib.request.urlopen(req, timeout=30); print("IndexNow status:", r.status)
-          except urllib.error.HTTPError as e:
-              print("IndexNow status:", e.code, e.read()[:300])
+          for i in range(0, len(urls), 10000):  # IndexNow takes up to 10,000 URLs per request
+              body = json.dumps({"host": "605homesearch.com", "key": os.environ["KEY"],
+                                 "keyLocation": f"{site}/{os.environ['KEY']}.txt", "urlList": urls[i:i + 10000]}).encode()
+              req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                                           headers={"Content-Type": "application/json; charset=utf-8"})
+              try:
+                  r = urllib.request.urlopen(req, timeout=60); print("IndexNow status:", r.status)
+              except urllib.error.HTTPError as e:
+                  print("IndexNow status:", e.code, e.read()[:300])
           PY
