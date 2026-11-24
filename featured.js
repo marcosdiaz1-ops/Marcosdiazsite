@@ -11,6 +11,9 @@
   var SEARCH = ES ? '/es/buscar-casas/' : '/search/';
   // Sioux Falls plus Tea, Harrisburg, Brandon, Hartford, Crooks, Lennox, Canton and Garretson
   var AREA = ['43.80000,-97.05000', '43.80000,-96.45000', '43.25000,-96.45000', '43.25000,-97.05000'];
+  // Town pages can narrow it down: data-cities="Tea" or data-points="lat,lng|lat,lng|..."
+  var CITIES = box.getAttribute('data-cities');
+  if (box.getAttribute('data-points')) AREA = box.getAttribute('data-points').split('|');
 
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var money = function (n) { return n ? '$' + Math.round(n).toLocaleString() : ''; };
@@ -55,7 +58,8 @@
   var q = new URLSearchParams();
   q.append('status', 'Active');
   q.set('type', 'residential');
-  AREA.forEach(function (pt) { q.append('points', pt); });
+  if (CITIES && !box.getAttribute('data-points')) CITIES.split('|').forEach(function (c) { q.append('cities', c); });
+  else AREA.forEach(function (pt) { q.append('points', pt); });
   q.set('sort', '-listdate');
   q.set('limit', '12');
   q.set('include', 'compliance');
