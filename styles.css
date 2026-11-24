@@ -815,3 +815,23 @@ html, body { overflow-x: clip; }
   .fh-track { min-height: 340px; }
 }
 @media (prefers-reduced-motion: reduce) { .fh-card { transition: none; } .fh-card:hover { transform: none; } }
+
+/* Reviews: tighter spacing so the section fits on one computer screen */
+@media (min-width: 561px) {
+  .reviews { padding: 72px 0; }
+  .reviews-head { margin-bottom: 28px; }
+  .rating-num { font-size: 3.2rem; }
+  .review { padding: 40px 56px 30px; }
+  .review::before { top: -4px; font-size: 4rem; }
+  .review blockquote { margin: 14px auto 22px; }
+  .review blockquote.clamp { -webkit-line-clamp: 4; line-clamp: 4; }
+  .review-more { margin: -12px 0 16px; }
+  .slider-controls { margin-top: 18px; }
+  .reviews-cta { margin-top: 22px; }
+  .review-ask { margin: 0; }
+  .reviews .reviews-head h2 { font-size: clamp(2rem, 3.2vw, 2.8rem); }
+  .review { padding: 30px 56px 24px; }
+  .review blockquote { font-size: clamp(1.2rem, 1.7vw, 1.45rem); margin: 10px auto 18px; }
+  .reviews-cta { display: flex; justify-content: center; align-items: center; gap: 22px; flex-wrap: wrap; margin-top: 18px; }
+  .slider-controls { margin-top: 14px; }
+}
