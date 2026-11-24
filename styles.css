@@ -608,7 +608,12 @@ html, body { overflow-x: clip; }
 .news-form input::placeholder { color: #a9a296; }
 .news-form .news-msg { grid-column: 1 / -1; min-height: 1.2em; margin: 4px 0 0; font-size: .95rem; color: var(--gold-soft); }
 .news-form.done label, .news-form.done button { display: none; }
-.news-form.done .news-msg { font-size: 1.1rem; color: #fff; }
+.news-form.done .news-msg { display: flex; gap: 14px; align-items: flex-start; font-size: 1.1rem; color: #fff; background: rgba(255,255,255,.06); border: 1px solid var(--gold); border-radius: 8px; padding: 18px 20px; margin: 0; outline: none; animation: newsIn .35s ease-out; }
+.news-form.done .news-msg strong { display: block; font-weight: 500; font-size: 1.2rem; color: #fff; }
+.news-form.done .news-sub { display: block; font-size: .95rem; color: #c9c2b5; margin-top: 4px; }
+.news-check { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: var(--gold-btn); color: #fff; display: grid; place-items: center; font-size: 18px; line-height: 1; }
+@keyframes newsIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .news-form.done .news-msg { animation: none; } }
 @media (max-width: 900px) { .news-inner { grid-template-columns: 1fr; gap: 26px; } .news-form { grid-template-columns: 1fr; } }
 
 /* ---------- Down payment assistance ---------- */

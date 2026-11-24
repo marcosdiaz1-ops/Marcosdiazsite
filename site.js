@@ -340,6 +340,7 @@
         if (!el.checkValidity()) { msg.textContent = ES ? 'Escriba su nombre y un correo válido.' : 'Please enter your name and a valid email.'; el.focus(); return; }
       }
       const btn = form.querySelector('button'); btn.disabled = true;
+      const btnText = btn.textContent; btn.textContent = ES ? 'Enviando…' : 'Signing you up…';
       const fd = new FormData(form);
       fd.set('Looking to', form.dataset.looking || 'Monthly market update email');
       fd.set('Timeline', form.dataset.timeline || 'Newsletter signup');
@@ -351,7 +352,14 @@
       clearTimeout(timer);
       const first = (fd.get('Name') || '').trim().split(' ')[0];
       form.classList.add('done');
-      msg.textContent = form.dataset.done ? form.dataset.done.replace('{name}', first ? ', ' + first : '') : (ES ? `¡Listo${first ? ', ' + first : ''}! Recibirá el próximo reporte del mercado.` : `You're in${first ? ', ' + first : ''}! Watch for the next market update.`);
+      btn.textContent = btnText;
+      // Big, clear confirmation so people know it worked
+      const title = form.dataset.done ? form.dataset.done.replace('{name}', first ? ', ' + first : '') : (ES ? `¡Listo${first ? ', ' + first : ''}!` : `You're signed up${first ? ', ' + first : ''}!`);
+      const sub = form.dataset.done ? '' : (ES ? 'Recibirá el próximo reporte del mercado de Sioux Falls en su correo. Si no lo ve, revise su carpeta de spam.' : "Watch your inbox for the next Sioux Falls market update. If you don't see it, check your spam folder.");
+      msg.innerHTML = '<span class="news-check" aria-hidden="true">✓</span><span><strong></strong>' + (sub ? '<span class="news-sub"></span>' : '') + '</span>';
+      msg.querySelector('strong').textContent = title;
+      if (sub) msg.querySelector('.news-sub').textContent = sub;
+      msg.setAttribute('tabindex', '-1'); msg.focus({ preventScroll: true });
       if (window.gtag) gtag('event', 'generate_lead', { method: 'newsletter' });
     });
   });
