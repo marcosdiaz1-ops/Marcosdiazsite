@@ -14,6 +14,8 @@
  *      (city, price range, beds) to match what they actually look at. Set "Auto-adjust" to No on
  *      a row to stop that for one person.
  *   5. Hot lead notice: if someone opens the same home 3 times, Marcos gets a 🔥 email.
+ *      "Call now" notice (email + phone alert): someone opens 6+ different homes in 24 hours,
+ *      comes back after 14+ days without looking, or saves (♥) a home.
  *   6. Besides new listings, alert emails include PRICE DROPS on homes that match and homes
  *      BACK ON THE MARKET. A hidden "Snapshots" tab remembers each person's matching homes and
  *      prices so it can spot the changes.
@@ -239,12 +241,14 @@ function handleView_(p) {
     const baths = (hp.bathsFull || 0) + (hp.bathsHalf ? 0.5 * hp.bathsHalf : 0) || hp.bathrooms || '';
     const addr = h.internetAddressDisplay === false ? '' : cleanAddr_(ad.full);
     const act = activity_();
+    const before = recentViews_(act, id);               // this person's views before this one
     act.appendRow([new Date(), r[C.Name], r[C.Email], h.listingId || mlsId, h.listPrice || '', hp.bedrooms || '', baths, ad.city || '', addr, id]);
     const views = (Number(r[C.Views]) || 0) + 1;
     sh.getRange(rowNum, C.Views + 1).setValue(views);
 
     const mine = myViews_(act, id);
     hotLead_(r, id, mlsId, mine, h, addr);
+    try { browsingAlert_(r, id, before, h.listingId || mlsId, addr, (h.address || {}).city || ''); } catch (err) { console.error('browsing alert failed', err); }
     if (String(r[C['Auto-adjust']] || 'Yes').trim().toLowerCase() !== 'no' && mine.length >= 3) learn_(sh, rowNum, mine);
   } finally {
     lock.releaseLock();
@@ -677,13 +681,109 @@ function saveHomes_(id, ids, on) {
     if (on) {
       const have = {}; rows.forEach(function (r) { if (String(r[0]) === id) have[String(r[1])] = 1; });
       if (rows.filter(function (r) { return String(r[0]) === id; }).length >= 60) return;
-      ids.forEach(function (m) { if (!have[m]) { sh.appendRow([id, m, new Date(), '', '', '']); have[m] = 1; } });
+      let added = 0;
+      ids.forEach(function (m) { if (!have[m]) { sh.appendRow([id, m, new Date(), '', '', '']); have[m] = 1; added++; } });
+      if (added) { try { savedAlert_(id, added); } catch (err) { console.error('saved alert failed', err); } }
     } else {
       for (let i = rows.length - 1; i >= 0; i--) if (String(rows[i][0]) === id && ids.indexOf(String(rows[i][1])) > -1) sh.deleteRow(i + 2);
     }
   } finally {
     lock.releaseLock();
   }
+}
+
+// ---------- "They're browsing a lot – call them" alerts ----------
+// Sends Marcos an email + phone alert (ntfy) when a signed-up person:
+//   • opens BROWSE_HOMES or more different homes within BROWSE_HOURS hours (at most once every 3 days per person)
+//   • comes back and opens a home after QUIET_DAYS+ days without looking (at most once every 3 days per person)
+//   • saves (♥) a home (at most once a day per person)
+const BROWSE_HOMES = 6;
+const BROWSE_HOURS = 24;
+const QUIET_DAYS = 14;
+
+// This person's views (newest first) from the Activity tab: [{ when: Date, mls: '...' }]
+function recentViews_(act, id) {
+  const last = act.getLastRow(); if (last < 2) return [];
+  const start = Math.max(2, last - 3000);
+  const rows = act.getRange(start, 1, last - start + 1, ACT_HEADERS.length).getValues();
+  const out = [];
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (String(rows[i][9]) !== id) continue;
+    const d = rows[i][0] instanceof Date ? rows[i][0] : new Date(rows[i][0]);
+    if (!isNaN(d)) out.push({ when: d, mls: String(rows[i][3]) });
+  }
+  return out;
+}
+
+function browsingAlert_(r, id, before, listingId, addr, city) {
+  const now = new Date(), props = PropertiesService.getScriptProperties();
+  const coolKey = 'browse_' + id.slice(0, 8), cool = Number(props.getProperty(coolKey) || 0);
+  if (now.getTime() - cool < 3 * 86400000) return;      // already told Marcos in the last 3 days
+
+  const lastSeen = before.length ? before[0].when : null;
+  if (lastSeen && now - lastSeen >= QUIET_DAYS * 86400000) {
+    const days = Math.round((now - lastSeen) / 86400000);
+    props.setProperty(coolKey, String(now.getTime()));
+    activityNotice_(r, 'is back looking at homes after ' + days + ' days',
+      'Just opened ' + ((addr ? addr + ', ' : '') + city || 'a home') + ' (MLS #' + listingId + ').', listingId);
+    return;
+  }
+
+  const since = now.getTime() - BROWSE_HOURS * 3600000, homes = {};
+  homes[String(listingId)] = 1;
+  before.forEach(function (v) { if (v.when.getTime() >= since) homes[v.mls] = 1; });
+  const n = Object.keys(homes).length;
+  if (n >= BROWSE_HOMES) {
+    props.setProperty(coolKey, String(now.getTime()));
+    activityNotice_(r, 'opened ' + n + ' different homes in the last ' + BROWSE_HOURS + ' hours',
+      'Latest: ' + ((addr ? addr + ', ' : '') + city || 'a home') + ' (MLS #' + listingId + '). See everything they opened on the Activity tab.', listingId);
+  }
+}
+
+function savedAlert_(id, added) {
+  const props = PropertiesService.getScriptProperties();
+  const day = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd');
+  const key = 'saved_' + id.slice(0, 8) + '_' + day;
+  if (props.getProperty(key)) return;
+  const sh = sheet_(), rowNum = findRow_(sh, id); if (!rowNum) return;
+  const r = sh.getRange(rowNum, 1, 1, HEADERS.length).getValues()[0];
+  if (String(r[C.Status]).trim() !== 'Active') return;
+  props.setProperty(key, '1');
+  activityNotice_(r, 'just saved ' + (added === 1 ? 'a home' : added + ' homes') + ' ♥',
+    'See which ones on the Saved homes tab.', '');
+}
+
+// Email + phone alert to Marcos with Call / Text buttons
+function activityNotice_(r, what, detail, mlsId) {
+  const name = String(r[C.Name]), first = name.split(' ')[0];
+  const tel = String(r[C.Phone] || '').replace(/[^0-9+]/g, '');
+  const email = String(r[C.Email] || '');
+  const search = [r[C.Search], (r[C['Min price']] || r[C['Max price']]) ? money_(r[C['Min price']]) + '–' + money_(r[C['Max price']]) : '', r[C.Beds] ? r[C.Beds] + '+ beds' : ''].filter(String).join(' · ');
+  const subject = '📈 CALL NOW: ' + name + ' ' + what;
+  const home = mlsId ? SEARCH_PAGE + '#home=' + encodeURIComponent(String(mlsId).replace(/[^0-9]/g, '')) : '';
+  const html = '<div style="font-family:Arial,sans-serif;font-size:15px;color:#1a2237">' +
+    '<h2 style="margin:0 0 12px;color:#13203b">' + esc_(name) + ' ' + esc_(what) + '</h2>' +
+    '<p>' + esc_(detail) + (home ? ' <a href="' + home + '">See the home</a>' : '') + '</p>' +
+    (search ? '<p><b>Their search:</b> ' + esc_(search) + '</p>' : '') +
+    '<p><b>Email:</b> ' + esc_(email) + '<br><b>Phone:</b> ' + (tel ? '<a href="tel:' + tel + '">' + esc_(String(r[C.Phone])) + '</a>' : '(not given)') + '</p>' +
+    (tel ? '<p><a href="tel:' + tel + '" style="background:#b98b5c;color:#fff;padding:10px 18px;text-decoration:none">Call ' + esc_(first) + '</a> &nbsp; <a href="sms:' + tel + '" style="background:#13203b;color:#fff;padding:10px 18px;text-decoration:none">Text ' + esc_(first) + '</a></p>' : '') +
+    '<p style="color:#8a8579;font-size:12px">Tip: mention a home they looked at, not that you saw them browsing. From your Listing Alert Leads sheet: ' + SpreadsheetApp.getActive().getUrl() + '</p></div>';
+  GmailApp.sendEmail(OWNER_EMAIL, subject, subject, { htmlBody: html, name: '605homesearch Alerts' });
+  if (!NTFY_TOPIC) return;
+  const actions = [];
+  if (tel) actions.push({ action: 'view', label: 'Call', url: 'tel:' + tel, clear: false });
+  if (tel) actions.push({ action: 'view', label: 'Text', url: 'sms:' + tel, clear: false });
+  if (home) actions.push({ action: 'view', label: 'See home', url: home, clear: false });
+  UrlFetchApp.fetch('https://ntfy.sh', {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    payload: JSON.stringify({
+      topic: NTFY_TOPIC, priority: 5, tags: ['chart_with_upwards_trend'],
+      title: 'Call now: ' + name + ' ' + what,
+      message: [detail, tel ? 'Phone: ' + tel : '', email ? 'Email: ' + email : ''].filter(String).join('\n'),
+      click: tel ? 'tel:' + tel : (home || SEARCH_PAGE),
+      actions: actions,
+    }),
+  });
 }
 
 // Upcoming public open houses by MLS id: { mlsId: [{start, end}] }
