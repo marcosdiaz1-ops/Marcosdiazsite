@@ -1289,7 +1289,7 @@
       '<div class="hd-dock"><a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Request a showing', 'Solicitar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
 
     $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
-    trackView(h);
+    trackView(h); noteSeen(h);
     if (h.mlsId && location.hash !== '#home=' + h.mlsId) history.pushState({ home: h.mlsId }, '', '#home=' + h.mlsId);
 
     $('hd-back').onclick = closeDetail;
@@ -1643,6 +1643,7 @@
   }
   function closeDetail(fromPop) {
     $('sp-modal').classList.remove('open'); document.body.classList.remove('sp-lock'); closeLb(); drawRecent();
+    maybeNudge(cur);
     if (fromPop !== true && /^#home=/.test(location.hash)) history.pushState({}, '', location.pathname + location.search);
   }
   window.addEventListener('popstate', function () {
@@ -1924,7 +1925,9 @@
     return bits.join(' · ');
   }
   var alSent = false;
-  function openAlert(h) {
+  var alH = $('al-h').textContent;
+  function openAlert(h, nudge) {
+    $('al-h').textContent = nudge ? t('Want new homes like these first?', '¿Quiere ver primero casas nuevas como estas?') : alH;
     // from a home page: use that home's city and a price range around it
     if (h && h.address) {
       if (!$('f-q').value.trim() && h.address.city) $('f-q').value = h.address.city;
@@ -1965,6 +1968,29 @@
       $('al-msg').textContent = t('That didn’t go through. Please try again, or text me at 605-838-9140.', 'No se pudo enviar. Intente de nuevo o envíeme un texto al 605-838-9140.');
     }).then(function () { f.querySelector('.al-send').disabled = false; });
   });
+
+  // ---- Save-search nudge (like Zillow): after a visitor opens a few homes, offer listing alerts once ----
+  // Only for people not signed up yet; at most once per visit and once a week. Uses this browser only.
+  var NUDGE_AFTER = 4;
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function seenList() { try { var v = JSON.parse(lsGet('mdSeenHomes') || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function noteSeen(h) {
+    if (!h || !h.mlsId || getAid()) return;
+    var seen = seenList(), id = String(h.mlsId);
+    if (seen.indexOf(id) < 0) { seen.push(id); lsSet('mdSeenHomes', JSON.stringify(seen.slice(-50))); }
+  }
+  function maybeNudge(h) {
+    if (!ALERTS_URL || alSent || getAid() || seenList().length < NUDGE_AFTER) return;
+    if (Date.now() - Number(lsGet('mdNudgeAt') || 0) < 7 * 86400000) return;
+    try { if (sessionStorage.getItem('mdNudged')) return; sessionStorage.setItem('mdNudged', '1'); } catch (e) {}
+    lsSet('mdNudgeAt', String(Date.now()));
+    setTimeout(function () {
+      if ($('sp-modal').classList.contains('open') || $('al').classList.contains('open')) return;
+      openAlert(h, true);
+      if (window.gtag) gtag('event', 'alert_nudge_shown');
+    }, 700);
+  }
 
   $('sp-form').addEventListener('submit', function (e) { e.preventDefault(); acClose(); if ($('f-q').value.trim() && drawPts) clearDrawing(false); load(false); });
 
