@@ -515,7 +515,7 @@ function sendEmail_(a, id, homes, welcome, total, allHomes, recs) {
     // logo
     '<table cellpadding="0" cellspacing="0" style="margin:0 28px;padding-top:22px"><tr>' +
     '<td style="width:42px;vertical-align:middle">' + mono_(38, 15) + '</td>' +
-    '<td style="padding-left:10px;font-family:Georgia,serif;font-size:22px;font-weight:bold;color:' + NAVY + '">Marcos Díaz</td></tr></table>' +
+    '<td style="padding-left:10px;font-family:Georgia,serif;font-size:22px;font-weight:bold;color:' + NAVY + '">Marcos Diaz</td></tr></table>' +
     // headline
     '<div style="padding:22px 28px 0">' +
     '<h1 style="margin:0 0 10px;font-size:26px;line-height:1.2;font-weight:800;color:' + INK + '">' + headline + '</h1>' +
@@ -529,7 +529,7 @@ function sendEmail_(a, id, homes, welcome, total, allHomes, recs) {
     '<table cellpadding="0" cellspacing="0"><tr>' +
     '<td style="width:50px;vertical-align:middle">' + mono_(46, 17) + '</td>' +
     '<td style="padding-left:14px;font-size:14px;line-height:1.5"><b style="font-size:16px">' + call + '</b><br>' +
-    '<span style="color:' + GRAY + '">Marcos Díaz · Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls</span><br>' +
+    '<span style="color:' + GRAY + '">Marcos Diaz · Broker Associate · REALTOR® · Keller Williams Realty Sioux Falls</span><br>' +
     '<a href="tel:+16058389140" style="color:' + NAVY + ';font-weight:bold;text-decoration:none">' + PHONE + '</a> · ' +
     '<a href="mailto:' + OWNER_EMAIL + '" style="color:' + NAVY + ';font-weight:bold;text-decoration:none">' + OWNER_EMAIL + '</a></td></tr></table>' +
     '</td></tr></table>' +
