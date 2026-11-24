@@ -1306,7 +1306,7 @@
     var u = pageUrl(h);
     fetch(u, { method: 'HEAD' }).then(function (r) {
       if (!r.ok) return;
-      h._page = location.origin + u;
+      h._page = location.origin + u + '?s=1';
       if (cur === h && $('hd-txt')) $('hd-txt').href = textHref(h);
     }).catch(function () {});
   }

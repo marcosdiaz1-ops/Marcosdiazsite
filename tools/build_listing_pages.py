@@ -401,7 +401,10 @@ def home_page(h, same_town, updated, es, links):
     if (h.get('geo') or {}).get('lat') and show_addr(h):
         ld['about']['geo'] = {'@type': 'GeoCoordinates', 'latitude': h['geo']['lat'], 'longitude': h['geo']['lng']}
     strip = lambda o: {k: strip(v) for k, v in o.items() if v not in (None, '', [])} if isinstance(o, dict) else o
-    head = CSS + alts(en_url, es_url) + '<script type="application/ld+json">' + json.dumps(strip(ld)).replace('</', '<\\/') + '</script>\n'
+    # A link Marcos shares from the search ("?s=1") shows this page's photo preview in texts, then opens the
+    # full search view of the home for the person who taps it. Google and plain visits see this page as usual.
+    go = ('/es/buscar-casas/' if es else '/search/') + '#home=' + str(h['mlsId'])
+    head = f'<script>if(/[?&]s=1(&|$)/.test(location.search))location.replace("{go}");</script>\n' + CSS + alts(en_url, es_url) + '<script type="application/ld+json">' + json.dumps(strip(ld)).replace('</', '<\\/') + '</script>\n'
     remarks = h.get('remarks') or ''
     mo = payment(h)
     pay_html = ''
