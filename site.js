@@ -157,7 +157,37 @@
       d.addEventListener('click', () => { go(k); restart(); });
       dotsBox.appendChild(d); return d;
     });
+    // Long reviews show the first few lines with a "Read more" link, so the box stays a good size
+    const ES = document.documentElement.lang === 'es';
+    slides.forEach(s => {
+      const q = s.querySelector('blockquote'); if (!q) return;
+      q.classList.add('clamp');
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'review-more'; b.hidden = true;
+      b.textContent = ES ? 'Leer más' : 'Read more';
+      b.addEventListener('click', () => {
+        const open = q.classList.toggle('clamp');
+        b.textContent = open ? (ES ? 'Leer más' : 'Read more') : (ES ? 'Leer menos' : 'Read less');
+        b.setAttribute('aria-expanded', String(!open));
+        if (!open) clearInterval(timer); else restart();
+      });
+      q.after(b);
+    });
+    function checkMore() {
+      slides.forEach(s => {
+        const q = s.querySelector('blockquote'), b = s.querySelector('.review-more'); if (!q || !b) return;
+        if (!q.classList.contains('clamp')) return;
+        b.hidden = q.scrollHeight <= q.clientHeight + 2;
+      });
+    }
+    checkMore();
+    window.addEventListener('resize', checkMore);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(checkMore);
     function go(n) {
+      slides.forEach(s => {
+        const q = s.querySelector('blockquote'), b = s.querySelector('.review-more');
+        if (q && b && !q.classList.contains('clamp')) { q.classList.add('clamp'); b.textContent = ES ? 'Leer más' : 'Read more'; b.setAttribute('aria-expanded', 'false'); }
+      });
       i = (n + slides.length) % slides.length;
       slides.forEach((s, k) => { s.classList.toggle('active', k === i); s.setAttribute('aria-hidden', k !== i); });
       dots.forEach((d, k) => d.classList.toggle('active', k === i));
