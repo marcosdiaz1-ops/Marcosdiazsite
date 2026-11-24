@@ -75,6 +75,29 @@
   </section>
 
 
+  <!-- FEATURED HOMES (filled in by featured.js from the live MLS feed) -->
+  <section id="featured" class="featured" aria-label="Featured homes for sale">
+    <div class="wrap">
+      <div class="fh-head">
+        <div>
+          <p class="eyebrow">Featured Homes</p>
+          <h2>New on the market around Sioux Falls.</h2>
+          <p class="fh-sub">The newest homes for sale in Sioux Falls and the surrounding towns. Tap any home for photos, details, and to request a showing.</p>
+          <p class="fh-fallback">Browse every home for sale with live MLS listings, then call or text me to see any home you like.</p>
+        </div>
+        <div class="fh-arrows">
+          <button type="button" class="fh-nav p" aria-label="Previous homes">‹</button>
+          <button type="button" class="fh-nav n" aria-label="More homes">›</button>
+        </div>
+      </div>
+      <div class="fh-track"></div>
+      <div class="fh-foot">
+        <a href="/search/" class="btn btn-navy">See All Homes for Sale</a>
+      </div>
+      <p class="fh-disc">Listing information is deemed reliable but not guaranteed and should be independently verified. Listings shown are courtesy of the listing brokerage named on each listing. Listing data provided by the REALTOR® Association of the Sioux Empire MLS.</p>
+    </div>
+  </section>
+
   <!-- ABOUT -->
   <section id="about" class="about about-short">
     <div class="wrap about-grid">
@@ -161,18 +184,6 @@
         <a href="https://share.google/v6YCQtRhQyUzibmrY" target="_blank" rel="noopener" class="btn btn-navy">Read All 16 Reviews on Google</a>
         <p class="review-ask">Worked with me? <a href="review/">Leave a review</a></p>
       </div>
-    </div>
-  </section>
-
-  <!-- SEARCH BAND -->
-  <section class="search-band">
-    <div class="wrap search-inner">
-      <div>
-        <p class="eyebrow light">Search Homes</p>
-        <h2>See every home for sale in Sioux Falls and the surrounding areas.</h2>
-        <p>Browse live MLS listings, then call or text me to see any home you like.</p>
-      </div>
-      <a href="/search/" class="btn btn-gold">Start Searching</a>
     </div>
   </section>
 
@@ -436,5 +447,6 @@
 </footer>
 
 <script src="site.js?v=BUILD" defer></script>
+<script src="featured.js?v=BUILD" defer></script>
 </body>
 </html>

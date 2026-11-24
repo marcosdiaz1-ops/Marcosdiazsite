@@ -75,6 +75,29 @@
   </section>
 
 
+  <!-- FEATURED HOMES (filled in by featured.js from the live MLS feed) -->
+  <section id="featured" class="featured" aria-label="Casas destacadas en venta">
+    <div class="wrap">
+      <div class="fh-head">
+        <div>
+          <p class="eyebrow">Casas destacadas</p>
+          <h2>Nuevas en el mercado en Sioux Falls y sus alrededores.</h2>
+          <p class="fh-sub">Las casas más nuevas en venta en Sioux Falls y los pueblos cercanos. Toque cualquier casa para ver fotos, detalles y pedir una visita.</p>
+          <p class="fh-fallback">Vea todas las casas en venta con información del MLS en tiempo real, y llámeme o envíeme un mensaje para ver cualquier casa que le guste.</p>
+        </div>
+        <div class="fh-arrows">
+          <button type="button" class="fh-nav p" aria-label="Casas anteriores">‹</button>
+          <button type="button" class="fh-nav n" aria-label="Más casas">›</button>
+        </div>
+      </div>
+      <div class="fh-track"></div>
+      <div class="fh-foot">
+        <a href="/es/buscar-casas/" class="btn btn-navy">Ver todas las casas en venta</a>
+      </div>
+      <p class="fh-disc">La información de las casas se considera confiable pero no está garantizada y debe verificarse. Las casas que se muestran son cortesía de la agencia nombrada en cada una. Información proporcionada por el MLS de la REALTOR® Association of the Sioux Empire.</p>
+    </div>
+  </section>
+
   <!-- ABOUT -->
   <section id="about" class="about about-short">
     <div class="wrap about-grid">
@@ -161,18 +184,6 @@
         <a href="https://share.google/v6YCQtRhQyUzibmrY" target="_blank" rel="noopener" class="btn btn-navy">Ver las 16 reseñas en Google</a>
         <p class="review-ask">¿Trabajó conmigo? <a href="../review/">Deje una reseña</a></p>
       </div>
-    </div>
-  </section>
-
-  <!-- SEARCH BAND -->
-  <section class="search-band">
-    <div class="wrap search-inner">
-      <div>
-        <p class="eyebrow light">Buscar casas</p>
-        <h2>Vea todas las casas en venta en Sioux Falls y sus alrededores.</h2>
-        <p>Explore las propiedades del MLS en tiempo real y llámeme o envíeme un mensaje para ver cualquier casa que le guste.</p>
-      </div>
-      <a href="/es/buscar-casas/" class="btn btn-gold">Empezar a buscar</a>
     </div>
   </section>
 
@@ -436,5 +447,6 @@
 </footer>
 
 <script src="../site.js?v=BUILD" defer></script>
+<script src="../featured.js?v=BUILD" defer></script>
 </body>
 </html>

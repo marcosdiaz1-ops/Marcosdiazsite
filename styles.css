@@ -763,3 +763,42 @@ html, body { overflow-x: clip; }
   .results-grid.one .sold li:nth-child(n+4) { display: none; }
   .results-grid.one { margin-top: 36px; }
 }
+
+/* Featured Homes carousel (homepage) */
+.featured { background: var(--sand); padding: 90px 0 70px; }
+.fh-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; margin-bottom: 34px; }
+.fh-head h2 { margin-bottom: 14px; }
+.fh-sub, .fh-fallback { max-width: 640px; }
+.fh-fallback { display: none; }
+.fh-arrows { display: flex; gap: 10px; flex-shrink: 0; }
+.fh-nav { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--navy); background: transparent; color: var(--navy); font-size: 26px; line-height: 1; cursor: pointer; transition: background .2s, color .2s; }
+.fh-nav:hover { background: var(--navy); color: #fff; }
+.fh-track { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 6px; min-height: 380px; }
+.fh-track::-webkit-scrollbar { display: none; }
+.fh-card { flex: 0 0 calc((100% - 60px) / 4); scroll-snap-align: start; background: #fff; color: var(--text); text-decoration: none; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 14px rgba(19,32,59,.08); transition: transform .2s, box-shadow .2s; display: flex; flex-direction: column; }
+.fh-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(19,32,59,.14); }
+.fh-ph { position: relative; aspect-ratio: 4 / 3; background: var(--line); }
+.fh-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fh-tag { position: absolute; left: 10px; top: 10px; background: var(--navy); color: #fff; font-size: 12px; font-weight: 500; letter-spacing: .04em; padding: 3px 10px; border-radius: 20px; }
+.fh-in { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.fh-pr { font-family: var(--serif); font-size: 1.75rem; font-weight: 600; color: var(--ink); line-height: 1.2; }
+.fh-st { font-size: 15px; color: var(--ink); font-weight: 400; }
+.fh-ad { font-size: 15px; }
+.fh-co { font-size: 12px; color: #666; margin-top: auto; padding-top: 10px; line-height: 1.45; }
+.fh-foot { margin-top: 30px; text-align: center; }
+.fh-disc { font-size: 12px; color: #666; margin-top: 22px; line-height: 1.5; text-align: center; }
+/* loading: soft placeholder blocks */
+.featured:not(.fh-ready):not(.fh-empty) .fh-track { background: linear-gradient(90deg, rgba(255,255,255,.5) 25%, transparent 25%) 0 0 / calc(25% + 5px) 100%; border-radius: 6px; }
+/* feed unavailable: keep a simple search prompt */
+.featured.fh-empty .fh-track, .featured.fh-empty .fh-arrows, .featured.fh-empty .fh-disc, .featured.fh-empty .fh-sub { display: none; }
+.featured.fh-empty .fh-fallback { display: block; }
+.featured.fh-empty .fh-foot { text-align: left; margin-top: 0; }
+@media (max-width: 1100px) { .fh-card { flex-basis: calc((100% - 40px) / 3); } }
+@media (max-width: 800px) { .fh-card { flex-basis: calc((100% - 20px) / 2); } }
+@media (max-width: 560px) {
+  .featured { padding: 64px 0 50px; }
+  .fh-arrows { display: none; }
+  .fh-card { flex-basis: 82%; }
+  .fh-track { min-height: 340px; }
+}
+@media (prefers-reduced-motion: reduce) { .fh-card { transition: none; } .fh-card:hover { transform: none; } }
