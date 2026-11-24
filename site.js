@@ -394,4 +394,13 @@
     });
   });
 
+  // ---------- Chat helper (chat.js): every page except the /lp/ ad landing pages ----------
+  (function () {
+    if (/^\/(es\/)?lp\//.test(location.pathname)) return;
+    var me = document.currentScript, v = me && me.src ? (me.src.split('?')[1] || '') : '';
+    var s = document.createElement('script');
+    s.src = '/chat.js' + (v ? '?' + v : ''); s.defer = true;
+    document.body.appendChild(s);
+  })();
+
 })();
