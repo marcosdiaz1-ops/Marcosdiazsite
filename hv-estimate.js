@@ -19,20 +19,23 @@
   // ---------- the new step ----------
   var step1 = form.querySelector('fieldset.step[data-step="1"]');
   if (!step1) return;
+  // Tap-to-pick buttons (same look as the pills/cards on the main contact form)
+  function pillGroup(name, label, opts, def) {
+    return '<div class="full hv-field" role="radiogroup" aria-label="' + label + '"><span class="hv-lab">' + label + '</span><div class="pills">' +
+      opts.map(function (o) { return '<label class="pill"><input type="radio" name="' + name + '" value="' + o[0] + '"' + (o[0] === def ? ' checked' : '') + '><span>' + o[1] + '</span></label>'; }).join('') +
+      '</div></div>';
+  }
   var fs = document.createElement('fieldset');
   fs.className = 'step info hv-details';
   fs.innerHTML =
     '<legend>' + t('Tell me about the home', 'Cuénteme sobre la casa') + '</legend>' +
     '<p class="hv-why">' + t('This lets me show you an instant estimate.', 'Así le puedo mostrar un cálculo al instante.') + '</p>' +
     '<div class="hv-grid">' +
-      '<label>' + t('Type', 'Tipo') + '<select name="Home type">' +
-        '<option value="House">' + t('House', 'Casa') + '</option>' +
-        '<option value="Townhome">' + t('Townhome / twin home', 'Townhome / casa gemela') + '</option>' +
-        '<option value="Condo">' + t('Condo', 'Condominio') + '</option></select></label>' +
-      '<label>' + t('Bedrooms', 'Recámaras') + '<select name="Bedrooms">' + [1, 2, 3, 4, 5, 6].map(function (n) { return '<option' + (n === 3 ? ' selected' : '') + ' value="' + n + '">' + n + (n === 6 ? '+' : '') + '</option>'; }).join('') + '</select></label>' +
-      '<label>' + t('Bathrooms', 'Baños') + '<select name="Bathrooms">' + ['1', '1.5', '2', '2.5', '3', '3.5', '4+'].map(function (n) { return '<option' + (n === '2' ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label>' +
+      pillGroup('Home type', t('Type', 'Tipo'), [['House', t('House', 'Casa')], ['Townhome', t('Townhome / twin home', 'Townhome / casa gemela')], ['Condo', t('Condo', 'Condominio')]], 'House') +
+      pillGroup('Bedrooms', t('Bedrooms', 'Recámaras'), [['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6+']], '3') +
+      pillGroup('Bathrooms', t('Bathrooms', 'Baños'), [['1', '1'], ['1.5', '1.5'], ['2', '2'], ['2.5', '2.5'], ['3', '3'], ['3.5', '3.5'], ['4+', '4+']], '2') +
       '<label>' + t('Year built', 'Año construida') + '<input type="text" name="Year built" inputmode="numeric" maxlength="4" placeholder="' + t('e.g. 1998', 'ej. 1998') + '"></label>' +
-      '<label class="full">' + t('Finished square feet (all levels)', 'Pies cuadrados terminados (todos los niveles)') + '<input type="text" name="Finished sq ft" inputmode="numeric" maxlength="6" placeholder="' + t('e.g. 1,850', 'ej. 1,850') + '"></label>' +
+      '<label>' + t('Finished sq ft (all levels)', 'Pies cuadrados (todos los niveles)') + '<input type="text" name="Finished sq ft" inputmode="numeric" maxlength="6" placeholder="' + t('e.g. 1,850', 'ej. 1,850') + '"></label>' +
     '</div>' +
     '<p class="hv-skip"><button type="button" class="hv-dunno">' + t("Not sure? Skip this and I'll look it up", 'No sé, sáltelo y yo lo busco') + '</button></p>' +
     '<p class="error" role="alert"></p>' +
@@ -54,7 +57,7 @@
   var num = function (v) { return +String(v || '').replace(/[^0-9.]/g, '') || 0; };
   var skipped = false;
   function details() {
-    var g = function (n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value : ''; };
+    var g = function (n) { var el = form.querySelector('[name="' + n + '"]:checked') || form.querySelector('[name="' + n + '"]:not([type=radio])'); return el ? el.value : ''; };
     return { type: g('Home type'), beds: num(g('Bedrooms')), baths: g('Bathrooms'), sqft: num(g('Finished sq ft')), year: num(g('Year built')), address: (g('Address') || '').trim() };
   }
   function valid(d) {

@@ -842,6 +842,11 @@ html, body { overflow-x: clip; }
 .hv-grid .full { grid-column: 1 / -1; }
 .hv-grid label { min-width: 0; }
 .hv-grid input, .hv-grid select { width: 100%; min-width: 0; }
+.hv-grid .pill input { width: auto; }
+.hv-field { display: grid; gap: 10px; }
+.hv-lab { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-soft); }
+.hv-field .pill span { min-width: 48px; text-align: center; }
+@media (max-width: 560px) { .hv-field .pills { gap: 6px; } .hv-field .pill span { min-width: 0; padding: 8px 11px; } }
 .hv-skip { margin: 0; }
 .hv-dunno { background: none; border: 0; padding: 0; color: var(--gold-soft); font: inherit; font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .form label.hv-optin { display: flex; align-items: flex-start; gap: 10px; font-size: .92rem; letter-spacing: 0; text-transform: none; color: #d9d2c6; cursor: pointer; }
