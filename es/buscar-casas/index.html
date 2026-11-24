@@ -1477,6 +1477,7 @@
       if (beds > 1) p.set('minbeds', beds - 1);
       [[lat + dLat, lng - dLng], [lat + dLat, lng + dLng], [lat - dLat, lng + dLng], [lat - dLat, lng - dLng]].forEach(function (pt) { p.append('points', pt[0].toFixed(5) + ',' + pt[1].toFixed(5)); });
       p.set('limit', 25);
+      p.set('include', 'compliance');
       return fetch(API + '?' + p.toString(), { headers: HEADERS }).then(function (r) { if (!r.ok) throw 0; return r.json(); });
     }
     function dist(o) { var g = o.geo || {}; return Math.pow((g.lat - lat) * 69, 2) + Math.pow((g.lng - lng) * 50, 2); }
@@ -2014,7 +2015,7 @@
     acTimer = setTimeout(function () {
       var my = ++acReq;
       if (!acItems.some(function (x) { return x.kind === 'home'; })) { acBox.hidden = false; acBox.insertAdjacentHTML('beforeend', '<div class="ac-load">' + t('Looking for homes…', 'Buscando casas…') + '</div>'); }
-      fetch(API + '?q=' + encodeURIComponent(v) + '&limit=6', { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : []; }).then(function (list) {
+      fetch(API + '?q=' + encodeURIComponent(v) + '&limit=6&include=compliance', { headers: HEADERS }).then(function (r) { return r.ok ? r.json() : []; }).then(function (list) {
         if (my !== acReq || $('f-q').value.trim() !== v) return;
         acItems = acItems.filter(function (x) { return x.kind === 'place'; }).concat((list || []).filter(function (h) { return h && h.internetEntireListingDisplay !== false; }).slice(0, 6).map(function (h) { return { kind: 'home', h: h, for: v }; }));
         acPaint(acHomesHtml());
