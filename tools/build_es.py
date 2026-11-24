@@ -70,7 +70,7 @@ T = [
 ('<p class="book-call"><a href="https://calendar.app.google/rymyVUbd555Y3xSDA" target="_blank" rel="noopener" class="btn btn-ghost"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3zm12 8H5v9h14zM5 6v2h14V6z"/></svg> Book a 15-Min Call</a></p>', '<p class="book-call"><a href="https://calendar.app.google/rymyVUbd555Y3xSDA" target="_blank" rel="noopener" class="btn btn-ghost"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3zm12 8H5v9h14zM5 6v2h14V6z"/></svg> Agendar una llamada</a></p>'),
 # head
 ('<title>605 Home Search | Sioux Falls Real Estate Agent Marcos Diaz</title>',
- '<title>605 Home Search | Agente de bienes raíces que habla español en Sioux Falls</title>'),
+ '<title>605 Home Search | Agente que habla español en Sioux Falls</title>'),
 ('content="Sioux Falls real estate agent Marcos Diaz (Keller Williams Realty Sioux Falls) helps you buy and sell homes in Sioux Falls, Tea, Harrisburg and Brandon. 5.0★ on Google. Se habla español. Call 605-838-9140."',
  'content="Agente de bienes raíces hispano que habla español en Sioux Falls, SD. Casas en venta, préstamos ITIN, ayuda para el pago inicial y venta de su casa. Marcos Diaz, Keller Williams. 5.0★ en Google. 605-838-9140."'),
 ('alt="Bright home office in a newer Sioux Falls area home"', 'alt="Oficina luminosa en una casa nueva del área de Sioux Falls"'),
