@@ -506,4 +506,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/about/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/sobre-mi/"/>
   </url>
+  <url>
+    <loc>https://605homesearch.com/blog/home-inspection-radon-sioux-falls/</loc>
+    <lastmod>2026-11-24</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/home-inspection-radon-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/inspeccion-de-casa-y-radon-sioux-falls/"/>
+  </url>
+  <url>
+    <loc>https://605homesearch.com/es/blog/inspeccion-de-casa-y-radon-sioux-falls/</loc>
+    <lastmod>2026-11-24</lastmod>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://605homesearch.com/blog/home-inspection-radon-sioux-falls/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://605homesearch.com/es/blog/inspeccion-de-casa-y-radon-sioux-falls/"/>
+  </url>
 </urlset>

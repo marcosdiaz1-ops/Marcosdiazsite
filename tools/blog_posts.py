@@ -327,4 +327,91 @@ POSTS = [
 <p>Si le ofrecieron un contrato por escritura en Sioux Falls, Tea, Harrisburg, Brandon o cerca, con gusto le ayudo a compararlo con una hipoteca normal antes de decidir. Llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>, o <a href="{book}" target="_blank" rel="noopener">agende una llamada rápida</a>. Se habla español.</p>
 <p class="note">La información viene de materiales para consumidores de la Oficina para la Protección Financiera del Consumidor (CFPB) sobre contratos por escritura (agosto de 2024, ahora archivados en consumerfinance.gov, en inglés). Esto es información general, no consejo legal. Las leyes y reglas pueden cambiar; consulte con un abogado de Dakota del Sur antes de firmar cualquier contrato.</p>''',
  },
+ {
+  'slug': 'home-inspection-radon-sioux-falls', 'es_slug': 'inspeccion-de-casa-y-radon-sioux-falls',
+  'date': '2026-11-24', 'date_en': 'November 24, 2026', 'date_es': '24 de noviembre de 2026',
+  'tag': 'Buyer Tips', 'tag_es': 'Consejos para compradores',
+  'title': 'Home Inspections and Radon Tests in Sioux Falls: A Buyer’s Guide',
+  'title_es': 'Inspección de casa y prueba de radón en Sioux Falls: guía para compradores',
+  'desc': 'What a home inspection covers, why an appraisal isn’t an inspection, how to check a South Dakota inspector’s license, and why radon testing matters in Sioux Falls.',
+  'desc_es': 'Qué revisa una inspección de casa, por qué el avalúo no es una inspección, cómo verificar la licencia del inspector y por qué hacer la prueba de radón en Sioux Falls.',
+  'body': '''<p>You found the house. Your offer was accepted. Now comes one of the most important steps in buying a home: the inspection. Here is what to expect in Sioux Falls, and why a radon test belongs on your list too.</p>
+<h2>What a home inspection is</h2>
+<p>A home inspection is a careful, unbiased look at the home by a trained inspector. The inspector checks the condition of the house, points out things that need repair or replacement, and gives you an idea of how much life is left in major systems like the roof, furnace and water heater.</p>
+<p>Most buyers make their offer <strong>contingent on the inspection</strong>. That means the sale depends on the results, so you have a chance to ask for repairs, renegotiate or walk away if something serious comes up. We’ll set that timeline when we write your offer.</p>
+<h2>An appraisal is not an inspection</h2>
+<p>This one confuses a lot of buyers. HUD explains the difference clearly:</p>
+<ul>
+<li><strong>The appraisal is for the lender.</strong> It estimates what the home is worth and, for FHA loans, checks minimum property standards.</li>
+<li><strong>The inspection is for you.</strong> It looks much deeper at the home’s condition.</li>
+<li><strong>FHA does not guarantee the home’s value or condition.</strong> After closing, FHA can’t pay for repairs or buy the home back. That’s why HUD says to get your own inspection.</li>
+</ul>
+<h2>Check your inspector’s license</h2>
+<p>South Dakota regulates home inspectors through the South Dakota Real Estate Commission. There are two levels:</p>
+<ul>
+<li><strong>Registered Home Inspector:</strong> has finished a 40-hour course and passed a state exam.</li>
+<li><strong>Licensed Home Inspector:</strong> has done at least 100 paid inspections at the registered level.</li>
+</ul>
+<p>You can look up an inspector on the Commission’s <a href="https://dlr.sd.gov/realestate/license_verification_system.aspx" target="_blank" rel="noopener">license verification page</a>. It’s also smart to ask for a sample report so you know what you’ll get.</p>
+<h2>Don’t skip the radon test</h2>
+<p>Radon is a gas you can’t see or smell. It comes from the ground and can build up inside homes. The South Dakota Department of Agriculture and Natural Resources (DANR) calls it the second leading cause of lung cancer after smoking.</p>
+<ul>
+<li><strong>Eastern South Dakota is EPA Zone 1</strong>, the highest radon potential. That includes the Sioux Falls area.</li>
+<li><strong>The EPA action level is 4 pCi/L.</strong> The only way to know a home’s level is to test it.</li>
+<li><strong>Radon is usually not part of a standard inspection</strong>, according to the American Lung Association. Ask for it as an add-on, or ask the seller if the home was tested recently.</li>
+<li><strong>Short-term tests take about 2 to 7 days.</strong> The house should stay closed up during the test.</li>
+<li><strong>If levels are high, it can be fixed.</strong> DANR lists an average mitigation system cost of about $1,200. Many buyers ask the seller to pay for it.</li>
+</ul>
+<h2>Buying new construction?</h2>
+<p>A brand-new home can still have issues, and it can still have radon. The American Lung Association recommends testing every new home after you move in. Many buyers also hire their own inspector before closing on a new build. If you’re looking at new homes in <a href="{areas}tea.html">Tea</a>, <a href="{areas}harrisburg.html">Harrisburg</a> or <a href="{areas}southwest-sioux-falls.html">Southwest Sioux Falls</a>, ask the builder early about inspection timing.</p>
+<h2>After the inspection</h2>
+<ul>
+<li><strong>Read the whole report</strong> and go over the big items with your inspector.</li>
+<li><strong>Focus on safety and big-ticket items</strong> like the roof, foundation, electrical, furnace and radon, not small cosmetic things.</li>
+<li><strong>Decide together</strong> whether to ask for repairs, a price credit or to move on.</li>
+</ul>
+<p>Planning your budget? Add inspection and radon testing costs to your list, and try the <a href="{home}buyers/#calculator">mortgage calculator</a>. New to buying? Start with my <a href="{blog}first-time-home-buyer-guide-sioux-falls/">first-time buyer guide</a> or the <a href="{home}guides/">free buyer guides</a>.</p>
+<h2>Questions about a home you like?</h2>
+<p>I’m happy to help you plan inspections, read the report and decide what to ask for in Sioux Falls, Brandon, Hartford, Lennox, Canton or nearby. Call or text me at <a href="tel:+16058389140">605-838-9140</a> or <a href="{book}" target="_blank" rel="noopener">book a quick call</a>.</p>
+<p class="note">Sources: HUD form 92564-CN, “For Your Protection: Get a Home Inspection”; South Dakota Real Estate Commission (dlr.sd.gov) home inspector license pages; South Dakota DANR radon page (danr.sd.gov); EPA radon zone map for South Dakota; American Lung Association, “Radon and Home Buying” (updated October 2025). This is general information, not professional advice. Rules, costs and programs can change.</p>''',
+  'body_es': '''<p>Encontró la casa y le aceptaron la oferta. Ahora viene uno de los pasos más importantes de la compra: la inspección. Esto es lo que puede esperar en Sioux Falls y por qué también debe hacer la prueba de radón.</p>
+<h2>¿Qué es una inspección de casa?</h2>
+<p>Es una revisión cuidadosa e imparcial de la casa hecha por un inspector capacitado. El inspector revisa el estado de la casa, le dice qué necesita reparación o reemplazo y le da una idea de cuánta vida les queda a sistemas grandes como el techo, la calefacción (<em>furnace</em>) y el calentador de agua.</p>
+<p>La mayoría de los compradores ponen en su oferta que la compra <strong>depende de la inspección</strong> (una contingencia). Así, si aparece algo serio, usted puede pedir reparaciones, negociar el precio o retirarse. Definimos esos plazos juntos al escribir la oferta.</p>
+<h2>El avalúo no es una inspección</h2>
+<p>Esto confunde a muchos compradores. HUD lo explica así:</p>
+<ul>
+<li><strong>El avalúo (<em>appraisal</em>) es para el prestamista.</strong> Calcula cuánto vale la casa y, en préstamos FHA, revisa unos estándares mínimos.</li>
+<li><strong>La inspección es para usted.</strong> Revisa el estado de la casa mucho más a fondo.</li>
+<li><strong>FHA no garantiza el valor ni el estado de la casa.</strong> Después del cierre, FHA no puede pagar reparaciones ni recomprar la casa. Por eso HUD recomienda hacer su propia inspección.</li>
+</ul>
+<h2>Verifique la licencia del inspector</h2>
+<p>En Dakota del Sur, los inspectores de casas están regulados por la Comisión de Bienes Raíces del estado (<em>South Dakota Real Estate Commission</em>). Hay dos niveles:</p>
+<ul>
+<li><strong>Inspector registrado:</strong> terminó un curso de 40 horas y pasó un examen estatal.</li>
+<li><strong>Inspector con licencia:</strong> además hizo por lo menos 100 inspecciones pagadas como inspector registrado.</li>
+</ul>
+<p>Puede buscar al inspector en la <a href="https://dlr.sd.gov/realestate/license_verification_system.aspx" target="_blank" rel="noopener">página de verificación de licencias</a> de la Comisión (en inglés). También es buena idea pedirle un reporte de ejemplo.</p>
+<h2>No se salte la prueba de radón</h2>
+<p>El radón es un gas que no se ve ni se huele. Sale de la tierra y se puede acumular dentro de las casas. El Departamento de Agricultura y Recursos Naturales de Dakota del Sur (DANR) dice que es la segunda causa principal de cáncer de pulmón, después de fumar.</p>
+<ul>
+<li><strong>El este de Dakota del Sur está en la Zona 1 de la EPA</strong>, la de mayor potencial de radón. Eso incluye el área de Sioux Falls.</li>
+<li><strong>El nivel de acción de la EPA es 4 pCi/L.</strong> La única forma de saber el nivel de una casa es hacer la prueba.</li>
+<li><strong>Normalmente el radón no viene incluido en la inspección estándar</strong>, según la American Lung Association. Pídalo como servicio adicional o pregunte al vendedor si la casa se probó hace poco.</li>
+<li><strong>Una prueba corta dura de 2 a 7 días.</strong> La casa debe quedarse cerrada durante la prueba.</li>
+<li><strong>Si el nivel sale alto, se puede arreglar.</strong> DANR indica un costo promedio de unos $1,200 por un sistema de mitigación. Muchos compradores le piden al vendedor que lo pague.</li>
+</ul>
+<h2>¿Va a comprar una casa nueva?</h2>
+<p>Una casa recién construida también puede tener problemas, y también puede tener radón. La American Lung Association recomienda hacer la prueba en toda casa nueva después de mudarse. Muchos compradores también contratan su propio inspector antes del cierre. Si busca casas nuevas en <a href="{areas}tea.html">Tea</a>, <a href="{areas}harrisburg.html">Harrisburg</a> o el <a href="{areas}southwest-sioux-falls.html">suroeste de Sioux Falls</a>, pregunte al constructor desde el principio cuándo se puede inspeccionar.</p>
+<h2>Después de la inspección</h2>
+<ul>
+<li><strong>Lea todo el reporte</strong> y repase los puntos grandes con el inspector.</li>
+<li><strong>Enfóquese en la seguridad y en lo costoso</strong>: techo, cimientos, electricidad, calefacción y radón, no en detalles cosméticos.</li>
+<li><strong>Decidamos juntos</strong> si pedir reparaciones, un crédito en el precio o seguir buscando.</li>
+</ul>
+<p>¿Está armando su presupuesto? Incluya el costo de la inspección y de la prueba de radón, y use la <a href="{home}compradores/#calculator">calculadora de hipoteca</a>. Si es su primera compra, empiece con mi <a href="{blog}guia-comprar-primera-casa-sioux-falls/">guía para comprar su primera casa</a> o las <a href="{home}guias/">guías gratis</a>.</p>
+<h2>¿Tiene preguntas sobre una casa que le gusta?</h2>
+<p>Con gusto le ayudo a planear las inspecciones, entender el reporte y decidir qué pedir, en Sioux Falls, Brandon, Hartford, Lennox, Canton o cerca. Llámeme o envíeme un texto al <a href="tel:+16058389140">605-838-9140</a>, o <a href="{book}" target="_blank" rel="noopener">agende una llamada rápida</a>. Se habla español.</p>
+<p class="note">Fuentes (en inglés): formulario HUD 92564-CN, “For Your Protection: Get a Home Inspection”; páginas de licencias de inspectores de la Comisión de Bienes Raíces de Dakota del Sur (dlr.sd.gov); página de radón de DANR (danr.sd.gov); mapa de zonas de radón de la EPA para Dakota del Sur; American Lung Association, “Radon and Home Buying” (actualizado en octubre de 2025). Esto es información general, no consejo profesional. Las reglas, costos y programas pueden cambiar.</p>''',
+ },
 ]
