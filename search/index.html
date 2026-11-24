@@ -1272,7 +1272,7 @@
       '<div class="hd-dock"><a class="hd-btn hd-b1" data-tour href="' + book + '" target="_blank" rel="noopener">' + t('Request a showing', 'Solicitar visita') + '</a><a class="hd-btn hd-b3" href="tel:+16058389140">' + t('Call', 'Llamar') + '</a></div>';
 
     $('sp-modal').classList.add('open'); $('sp-modal').scrollTop = 0; document.body.classList.add('sp-lock');
-    trackView(h); noteSeen(h);
+    trackView(h); noteSeen(h); checkPage(h);
     if (h.mlsId && location.hash !== '#home=' + h.mlsId) history.pushState({ home: h.mlsId }, '', '#home=' + h.mlsId);
 
     $('hd-back').onclick = closeDetail;
@@ -1292,9 +1292,27 @@
   }
 
   // Text a home to someone (opens the phone's messages app with the link filled in)
+  // Each home also has its own page (/homes/... or /es/casas/..., built from the MLS every few hours) with the
+  // home's photo, address and price in its link preview, like Zillow. Share that page when it exists.
+  function pageUrl(h) {
+    var a = h.address || {}, st = showAddr(h) ? cleanAddr(String(a.full || '').trim()) : '';
+    var base = (st ? st + ' ' : 'home ') + String(a.city || '').trim() + ' ' + (a.state || 'SD') + ' ' + (a.postalCode || '');
+    return (ES ? '/es/casas/' : '/homes/') + base.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') + '-' + h.mlsId + '/';
+  }
+  function linkFor(h) { return h._page || (location.origin + location.pathname + '#home=' + h.mlsId); }
+  function checkPage(h) {
+    if (!h || !h.mlsId || h._page !== undefined) return;
+    h._page = '';
+    var u = pageUrl(h);
+    fetch(u, { method: 'HEAD' }).then(function (r) {
+      if (!r.ok) return;
+      h._page = location.origin + u;
+      if (cur === h && $('hd-txt')) $('hd-txt').href = textHref(h);
+    }).catch(function () {});
+  }
   function textHref(h) {
     var a = h.address || {};
-    var msg = t('Check out this home: ', 'Mira esta casa: ') + money(h.listPrice) + ' · ' + ((h.property || {}).bedrooms || 0) + t(' bd, ', ' rec, ') + baths(h) + t(' ba · ', ' baños · ') + (showAddr(h) ? cleanAddr(a.full) + ', ' : '') + (a.city || '') + '\n' + location.origin + location.pathname + '#home=' + h.mlsId;
+    var msg = t('Check out this home: ', 'Mira esta casa: ') + money(h.listPrice) + ' · ' + ((h.property || {}).bedrooms || 0) + t(' bd, ', ' rec, ') + baths(h) + t(' ba · ', ' baños · ') + (showAddr(h) ? cleanAddr(a.full) + ', ' : '') + (a.city || '') + '\n' + linkFor(h);
     return 'sms:?&body=' + encodeURIComponent(msg);
   }
 
@@ -1662,7 +1680,7 @@
   }
   function toast(t) { var el = $('hd-toast'); el.textContent = t; el.style.display = 'block'; clearTimeout(el._t); el._t = setTimeout(function () { el.style.display = 'none'; }, 2200); }
   function share() {
-    var url = location.origin + location.pathname + '#home=' + cur.mlsId;
+    var url = linkFor(cur);
     var title = money(cur.listPrice) + ' · ' + (showAddr(cur) ? cleanAddr((cur.address || {}).full) + ', ' : '') + ((cur.address || {}).city || '');
     if (navigator.share) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
     try { navigator.clipboard.writeText(url).then(function () { toast(t('Link copied', 'Enlace copiado')); }, function () { prompt(t('Copy this link:', 'Copie este enlace:'), url); }); }
