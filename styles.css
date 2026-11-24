@@ -835,3 +835,21 @@ html, body { overflow-x: clip; }
   .reviews-cta { display: flex; justify-content: center; align-items: center; gap: 22px; flex-wrap: wrap; margin-top: 18px; }
   .slider-controls { margin-top: 14px; }
 }
+
+/* Instant home value estimate (hv-estimate.js) */
+.hv-why { margin: -6px 0 4px; color: #c9c2b5; font-size: .95rem; }
+.hv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 22px; }
+.hv-grid .full { grid-column: 1 / -1; }
+.hv-grid label { min-width: 0; }
+.hv-grid input, .hv-grid select { width: 100%; min-width: 0; }
+.hv-skip { margin: 0; }
+.hv-dunno { background: none; border: 0; padding: 0; color: var(--gold-soft); font: inherit; font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.form label.hv-optin { display: flex; align-items: flex-start; gap: 10px; font-size: .92rem; letter-spacing: 0; text-transform: none; color: #d9d2c6; cursor: pointer; }
+.hv-optin input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--gold); flex-shrink: 0; padding: 0; }
+.hv-result { margin: 6px 0 18px; padding: 20px 22px; border: 1px solid var(--gold); border-radius: 8px; background: rgba(255,255,255,.05); text-align: left; }
+.hv-result p { margin: 0; }
+.hv-label { font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-soft); }
+.hv-range { font-family: var(--serif); font-size: clamp(2rem, 5vw, 2.6rem); color: #fff; line-height: 1.2; margin: 6px 0 4px !important; }
+.hv-basis { color: #d9d2c6; font-size: .95rem; }
+.hv-note { color: #a9a296; font-size: .82rem; line-height: 1.5; margin-top: 10px !important; }
+@media (max-width: 560px) { .hv-grid { grid-template-columns: 1fr 1fr; gap: 16px; } }

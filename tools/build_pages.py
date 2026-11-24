@@ -98,7 +98,7 @@ def page(path, title, desc, body, lang='en', canonical='', alt_es='', alt_en='',
     <p>&copy; <span class="year">2026</span> Marcos Diaz · <a href="{priv}">{privlabel}</a></p>
   </div>
 </footer>
-<script src="{p}site.js?v=BUILD" defer></script>
+{f'<script src="{p}hv-estimate.js?v=BUILD" defer></script>' + chr(10) if 'data-kind="home-value"' in body else ''}<script src="{p}site.js?v=BUILD" defer></script>
 </body>
 </html>
 '''
