@@ -161,13 +161,17 @@
   var result = null;
   form.addEventListener('wizard:submit', function (e) {
     var fd = e.detail && e.detail.fd; if (!fd) return;
-    var d = details(), bits = [];
-    if (d.sqft) bits.push(d.type + ' ' + d.beds + 'bd/' + d.baths + 'ba ' + d.sqft.toLocaleString('en-US') + ' sf' + (d.year ? ' ' + d.year : ''));
-    else bits.push(d.type + ' ' + d.beds + 'bd/' + d.baths + 'ba (size not given)');
-    if (result) { bits.push('est ' + money(result.low) + '–' + money(result.high)); fd.set('Instant estimate', money(result.low) + ' – ' + money(result.high) + ' (from ' + result.n + ' similar homes for sale)'); }
-    if (fd.get('Value updates')) bits.push('wants value updates');
-    fd.set('Looking to', (fd.get('Looking to') || 'Home value') + ' · ' + bits.join(' · '));
-    fd.set('Home details', bits[0]);
+    var d = details(), home = d.sqft
+      ? d.type + ' ' + d.beds + 'bd/' + d.baths + 'ba ' + d.sqft.toLocaleString('en-US') + ' sf' + (d.year ? ' built ' + d.year : '')
+      : d.type + ' ' + d.beds + 'bd/' + d.baths + 'ba (size not given)';
+    var est = result ? money(result.low) + ' – ' + money(result.high) + ' (from ' + result.n + ' similar homes for sale nearby)' : 'none shown';
+    var wants = !!fd.get('Value updates');
+    // The lead sheet keeps only ~60 characters of "Looking to", so the details go in the message (Notes column)
+    if (wants) fd.set('Looking to', 'Value updates · ' + (fd.get('Looking to') || 'Home value'));
+    fd.set('message', 'Address: ' + d.address + '\nHome details: ' + home + '\nInstant estimate shown: ' + est +
+      (wants ? '\nWants home value updates by email: Yes' : ''));
+    fd.set('Home details', home);
+    fd.set('Instant estimate', est);
   });
   // when they reach the contact step, wait (briefly) for the estimate so it can go with the lead
   form.addEventListener('wizard:step', function (e) {
