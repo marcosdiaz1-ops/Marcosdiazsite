@@ -1105,3 +1105,22 @@ html, body { overflow-x: clip; }
 .market-band .eyebrow { white-space: nowrap; letter-spacing: .22em; font-size: .68rem; }
 @media (max-width: 640px) { .market-band .eyebrow { font-size: .6rem; letter-spacing: .14em; gap: 10px; } }
 @media (max-width: 640px) { .kicker { font-size: .66rem; letter-spacing: .2em; } }
+
+/* Results: numbers left, recent sales right (compact) */
+.results { padding: 100px 0; }
+.results-head { margin-bottom: 40px; }
+.results-body { display: grid; grid-template-columns: 4fr 8fr; gap: 70px; align-items: start; }
+.stats.stack { display: flex; flex-direction: column; max-width: none; border-bottom: 0; }
+.stats.stack div { padding: 26px 0; border-left: 0 !important; padding-left: 0 !important; }
+.stats.stack div + div { border-top: 1px solid var(--line); }
+.results-list .sub { margin-bottom: 6px; }
+.results-list .source { margin-top: 22px; }
+.results-list .source a { text-decoration: none; letter-spacing: .04em; }
+.results-list .source a:hover { text-decoration: underline; }
+@media (max-width: 900px) {
+  .results { padding: 70px 0; }
+  .results-body { grid-template-columns: 1fr; gap: 24px; }
+  .stats.stack { flex-direction: row; }
+  .stats.stack div { flex: 1; padding: 20px 0; }
+  .stats.stack div + div { border-top: 0; border-left: 1px solid var(--line) !important; padding-left: 18px !important; }
+}
