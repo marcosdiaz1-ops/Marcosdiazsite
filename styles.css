@@ -68,7 +68,8 @@ h2 { font-size: clamp(2.2rem, 4.2vw, 3.4rem); margin-bottom: 26px; }
 
 /* Hero */
 .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; color: #fff; overflow: hidden; }
-.hero-bg { position: absolute; inset: 0; background: url('images/kitchen.jpg') center / cover no-repeat; transform: scale(1.04); }
+.hero-bg { position: absolute; inset: 0; background: url('images/kitchen.jpg') center / cover no-repeat; background-image: image-set(url('images/kitchen-1600.webp') type('image/webp'), url('images/kitchen.jpg') type('image/jpeg')); transform: scale(1.04); }
+@media (max-width: 900px) { .hero-bg { background-image: image-set(url('images/kitchen-900.webp') type('image/webp'), url('images/kitchen.jpg') type('image/jpeg')); } }
 .hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(13,23,48,.88) 0%, rgba(13,23,48,.62) 45%, rgba(13,23,48,.25) 100%); }
 .hero-content { position: relative; z-index: 2; width: min(1200px, 90%); margin: 0 auto; padding-top: 60px; }
 .kicker { font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold-soft); margin-bottom: 22px; }
@@ -1084,3 +1085,7 @@ html, body { overflow-x: clip; }
   .np-fine { font-size: .68rem; margin-top: 6px; }
   .np-no { margin-top: 0; }
 }
+
+.tp-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.tp-hero::before { z-index: 1; }
+.tp-hero .wrap, .tp-credit { z-index: 2; }

@@ -65,7 +65,7 @@ def build(key, lang):
     eyebrow = 'Guía gratis' if es else 'Free Guide'
     back = f'''<div class="back">
   <div class="card">
-    <img class="photo" src="{BASE}/images/marcos-about.jpg" alt="">
+    <img class="photo" src="{BASE}/images/marcos-about.webp" alt="">
     <div>
       <p class="eyebrow">{'¿Listo para el siguiente paso?' if es else 'Ready for the next step?'}</p>
       <h2>{'Hablemos.' if es else "Let's talk."}</h2>

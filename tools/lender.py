@@ -3,7 +3,7 @@ def lender(es, img_prefix, compact=False):
     t=lambda e,s: s if es else e
     cls='lender-card compact' if compact else 'lender-card'
     return f'''<div class="{cls}">
-  <img src="{img_prefix}images/lender-gisselle-perez.jpg" alt="Gisselle Perez, CharterWest Bank" width="96" height="96" loading="lazy">
+  <img src="{img_prefix}images/lender-gisselle-perez.webp" alt="Gisselle Perez, CharterWest Bank" width="96" height="96" loading="lazy">
   <div class="lender-info">
     <p class="eyebrow">{t('Get Pre-Approved', 'Obtenga su preaprobación')}</p>
     <h3>Gisselle Perez</h3>

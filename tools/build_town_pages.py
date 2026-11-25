@@ -73,6 +73,14 @@ SPOT_ES = {'Downtown & Phillips Avenue': 'Centro y Phillips Avenue', 'The Empire
  'Tri-Valley schools': 'Escuelas de Tri-Valley', 'North Sioux Falls': 'Norte de Sioux Falls', 'Lennox City Pool': 'Alberca de Lennox',
  'Lake Alvin & the Big Sioux River': 'Lago Alvin y el río Big Sioux', 'Golf course & city pool': 'Golf y alberca',
  'Downtown Canton': 'Centro de Canton', 'Garretson Heritage Museum': 'Museo histórico de Garretson'}
+def srcset(slug):
+    # Smaller WebP copies made for phones and laptops (images/towns/<slug>-640/1280/1920.webp)
+    p = PHOTOS.get(slug)
+    if not p or not p[0].startswith('/'): return ''
+    base = p[0][:-4]
+    sizes = [w for w in (640, 1280, 1920) if os.path.exists(os.path.join(ROOT, base.lstrip('/') + f'-{w}.webp'))]
+    return ', '.join(f'{base}-{w}.webp {w}w' for w in sizes)
+
 SCHOOLS = json.load(open(os.path.join(ROOT, 'data', 'schools.json')))
 LEVEL = {'E': 0, 'M': 1, 'H': 2}
 
@@ -157,7 +165,9 @@ def build(slug, es):
     s_, w_, n_, e_ = box
     points = f'data-points="{n_:.4f},{w_:.4f}|{n_:.4f},{e_:.4f}|{s_:.4f},{e_:.4f}|{s_:.4f},{w_:.4f}"' if sub else f'data-cities="{city}"'
     ph = photo(slug, 1800)
-    hero_bg = f' style="background-image:url(\'{ph}\')"' if ph else ''
+    ss = srcset(slug)
+    hero_bg = f' style="background-image:url(\'{ph}\')"' if ph and not ss else ''
+    hero_img = f'<img class="tp-hero-img" src="{ph}" srcset="{ss}" sizes="100vw" alt="" fetchpriority="high" decoding="async">' if ss else ''
     pc = PHOTOS.get(slug)
     credit = ''
     if pc and not pc[0].startswith('/'):
@@ -174,11 +184,12 @@ def build(slug, es):
     others = []
     for o in STRIP:
         if o == slug: continue
-        img = f'<img src="{photo(o, 600)}" alt="" loading="lazy" width="600" height="450">' if PHOTOS.get(o) else f'<span class="tp-blank"><img src="{up}images/logo.svg" alt="" width="56" height="56"></span>'
+        img = f'<img src="{photo(o, 600)}" srcset="{srcset(o)}" sizes="(max-width: 900px) 50vw, 25vw" alt="" loading="lazy" width="600" height="450">' if PHOTOS.get(o) else f'<span class="tp-blank"><img src="{up}images/logo.svg" alt="" width="56" height="56"></span>'
         others.append(f'<a href="{o}.html" class="tp-other"><span class="tp-oimg">{img}</span><span class="tp-oname">{(NAMES_ES if es else NAMES)[o]}</span></a>')
     living_h, living = t['living']; know_h, know = t['know']; sch_h, sch = t['schools']; faq_h, faq = t['faq']; cta_h, cta = t['cta']
     main = f'''<main class="town-page">
   <section class="tp-hero{' tp-noimg' if not ph else ''}"{hero_bg}>
+    {hero_img}
     <div class="wrap">
       <p class="crumbs">{t['crumbs']}</p>
       <p class="eyebrow">{T(es, 'Explore', 'Explore')}</p>
