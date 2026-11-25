@@ -160,8 +160,8 @@ T = [
 # results
 ('<p class="eyebrow">Track Record</p>', '<p class="eyebrow">Resultados</p>'),
 ('<h2>Results across Sioux Falls.</h2>', '<h2>Resultados en Sioux Falls.</h2>'),
-("<p class=\"results-note\">Specializing in first-time homebuyers, military families and veteran's programs, investments, new construction, and luxury homes.</p>",
- '<p class="results-note">Especializado en compradores de primera vivienda, familias militares y programas para veteranos, inversiones, construcción nueva y casas de lujo.</p>'),
+("<p class=\"results-note\">Helping buyers and sellers in Sioux Falls and the surrounding towns, with a focus on first-time homebuyers, military families and VA loans, Spanish-speaking families, and new construction.</p>",
+ '<p class="results-note">Ayudo a compradores y vendedores en Sioux Falls y los pueblos cercanos, con enfoque en compradores de primera vivienda, familias militares y préstamos VA, familias hispanohablantes y construcción nueva.</p>'),
 ('<div><dt>$3.8M</dt><dd>In sales</dd></div>', '<div><dt>$3.8M</dt><dd>En ventas</dd></div>'),
 ('<div><dt>5.0 <span class="st-star">★</span></dt><dd>Google rating</dd></div>', '<div><dt>5.0 <span class="st-star">★</span></dt><dd>Calificación en Google</dd></div>'),
 ('<dd>Total value</dd>', '<dd>Valor total</dd>'),
