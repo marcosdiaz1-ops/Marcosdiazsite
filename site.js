@@ -394,6 +394,14 @@
     });
   });
 
+  // ---------- Listing-alerts pop-up (popup.js): shows once per visitor; it skips the pages it shouldn't run on ----------
+  (function () {
+    var me = document.currentScript, v = me && me.src ? (me.src.split('?')[1] || '') : '';
+    var s = document.createElement('script');
+    s.src = '/popup.js' + (v ? '?' + v : ''); s.defer = true;
+    document.body.appendChild(s);
+  })();
+
   // ---------- Chat helper (chat.js): every page except the /lp/ ad landing pages ----------
   (function () {
     if (/^\/(es\/)?lp\//.test(location.pathname)) return;
