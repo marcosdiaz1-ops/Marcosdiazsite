@@ -75,8 +75,8 @@ for path, es in ((ROOT / 'index.html', False), (ROOT / 'es/index.html', True)):
     up = _dt.date.fromisoformat(cfg['updated_iso'][:10])
     EN_AB = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split()
     ES_AB = 'ene feb mar abr may jun jul ago sep oct nov dic'.split()
-    eyebrow = (f'Último reporte · cifras de {ES_FULL[mo]} · actualizado el {up.day} de {ES_AB[up.month-1]}.' if es
-               else f'Latest Market Report · {EN_FULL[mo]} numbers · Updated {EN_AB[up.month-1]} {up.day}')
+    eyebrow = (f'Reporte de {ES_FULL[mo]} · actualizado {up.day} {ES_AB[up.month-1]}' if es
+               else f'{EN_FULL[mo]} report · Updated {EN_AB[up.month-1]} {up.day}')
     rows = (f'<div><dt>{med}</dt><dd>Precio mediano · {fix(B["median_chg"])}</dd></div>\n'
             f'        <div><dt>{B["sold"]}</dt><dd>Casas vendidas · {fix(B["sold_chg"])}</dd></div>\n'
             f'        <div><dt>{B["supply"]}</dt><dd>Meses de inventario</dd></div>') if es else (
