@@ -54,13 +54,15 @@ PHOTOS = {
  'brandon': ("Big_Sioux_River_at_Big_Sioux_Recreation_Area,_Brandon,_South_Dakota.jpg", "Votesmall", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0"),
  'garretson': ("Palisades_Along_Split_Rock_Creek_-_Garretson,_South_Dakota_(8-30-26).jpg", "ToxicFlame427", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0"),
  'hartford': ("Hartford,_South_Dakota_5.jpg", "Jon Platek", "CC BY-SA 3.0", "https://creativecommons.org/licenses/by-sa/3.0"),
- 'crooks': None,
+ 'crooks': ('/images/towns/crooks.jpg', '', '', ''),  # Marcos's own photo
  'lennox': ("Lennox,_South_Dakota_5.jpg", "Jon Platek", "CC BY-SA 3.0", "https://creativecommons.org/licenses/by-sa/3.0"),
  'canton': ("Canton,_South_Dakota_5.jpg", "AlexiusHoratius", "CC BY-SA 3.0", "https://creativecommons.org/licenses/by-sa/3.0"),
 }
 def photo(slug, w):
     p = PHOTOS.get(slug)
-    return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + urllib.parse.quote(p[0]) + f'?width={w}' if p else ''
+    if not p: return ''
+    if p[0].startswith('/'): return p[0]
+    return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + urllib.parse.quote(p[0]) + f'?width={w}'
 
 SCHOOLS = json.load(open(os.path.join(ROOT, 'data', 'schools.json')))
 LEVEL = {'E': 0, 'M': 1, 'H': 2}
@@ -141,7 +143,7 @@ def build(slug, es):
     hero_bg = f' style="background-image:url(\'{ph}\')"' if ph else ''
     pc = PHOTOS.get(slug)
     credit = ''
-    if pc:
+    if pc and not pc[0].startswith('/'):
         lic = f'<a href="{pc[3]}" rel="nofollow noopener" target="_blank">{pc[2]}</a>' if pc[3] else pc[2]
         credit = f'<p class="tp-credit">{T(es, "Photo", "Foto")}: <a href="https://commons.wikimedia.org/wiki/File:{urllib.parse.quote(pc[0])}" rel="nofollow noopener" target="_blank">{html.escape(pc[1])}</a>, {lic}</p>'
     census_note = T(es, f'Source: U.S. Census Bureau, American Community Survey ({ACS} estimates), city of {city}.',
