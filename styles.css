@@ -68,8 +68,8 @@ h2 { font-size: clamp(2.2rem, 4.2vw, 3.4rem); margin-bottom: 26px; }
 
 /* Hero */
 .hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; color: #fff; overflow: hidden; }
-.hero-bg { position: absolute; inset: 0; background: url('images/kitchen.jpg') center / cover no-repeat; background-image: image-set(url('images/towns/sioux-falls-1920.webp') type('image/webp'), url('images/towns/sioux-falls.jpg') type('image/jpeg')); background-position: center 60%; transform: scale(1.04); }
-@media (max-width: 900px) { .hero-bg { background-image: image-set(url('images/towns/sioux-falls-1280.webp') type('image/webp'), url('images/towns/sioux-falls.jpg') type('image/jpeg')); background-position: 62% center; } }
+.hero-bg { position: absolute; inset: 0; background: url('images/kitchen.jpg') center / cover no-repeat; background-image: image-set(url('images/towns/hero-sunset-1920.webp') type('image/webp'), url('images/towns/hero-sunset.jpg') type('image/jpeg')); background-position: center 60%; transform: scale(1.04); }
+@media (max-width: 900px) { .hero-bg { background-image: image-set(url('images/towns/hero-sunset-1280.webp') type('image/webp'), url('images/towns/hero-sunset.jpg') type('image/jpeg')); background-position: 62% center; } }
 .hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(13,23,48,.88) 0%, rgba(13,23,48,.62) 45%, rgba(13,23,48,.25) 100%); }
 .hero-content { position: relative; z-index: 2; width: min(1200px, 90%); margin: 0 auto; padding-top: 60px; }
 .kicker { font-size: .78rem; letter-spacing: .3em; text-transform: uppercase; color: #e6cdb0; font-weight: 500; margin-bottom: 22px; text-shadow: 0 1px 12px rgba(0,0,0,.35); }
@@ -1096,7 +1096,7 @@ html, body { overflow-x: clip; }
 .stats.two div + div { border-left: 1px solid var(--line); padding-left: 24px; }
 .st-star { color: var(--gold); font-size: .7em; vertical-align: .15em; }
 /* Market band: keep the label on one line */
-.market-band-inner { grid-template-columns: 1.4fr 2fr auto; }
+@media (min-width: 961px) { .market-band-inner { grid-template-columns: 1.4fr 2fr auto; } }
 /* Guide cards with icons */
 .tool-links a { position: relative; padding-top: 60px; }
 .tl-ic { position: absolute; left: 24px; top: 22px; width: 26px; height: 26px; fill: none; stroke: var(--gold-ink); stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
@@ -1124,3 +1124,9 @@ html, body { overflow-x: clip; }
   .stats.stack div { flex: 1; padding: 20px 0; }
   .stats.stack div + div { border-top: 0; border-left: 1px solid var(--line) !important; padding-left: 18px !important; }
 }
+
+/* Market band + monthly signup combined (home page) */
+.mb-sub { display: grid; grid-template-columns: 1fr 1.25fr; gap: 40px; align-items: center; margin-top: 44px; padding-top: 34px; border-top: 1px solid rgba(255,255,255,.12); }
+.mb-sub-t { margin: 0; color: #c9c2b5; font-size: .98rem; }
+.mb-sub-t strong { color: #fff; font-weight: 500; }
+@media (max-width: 900px) { .mb-sub { grid-template-columns: 1fr; gap: 16px; margin-top: 32px; padding-top: 26px; } .mb-sub .news-form { grid-template-columns: 1fr; } }
