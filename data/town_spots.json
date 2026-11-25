@@ -1,0 +1,92 @@
+{
+ "_note": "Hand-picked places for the 'Around town' section of each town page. Each spot: [category, name, English note, Spanish note]. Categories: out = parks & outdoors, eat = food & drink, life = shopping, community & events.",
+ "sioux-falls": [
+  ["out", "Falls Park", "The waterfalls on the Big Sioux River, right downtown. Free, with walking paths and an observation tower.", "Las cataratas del río Big Sioux, en el centro. Gratis, con senderos y una torre mirador."],
+  ["out", "Big Sioux River Greenway", "A paved bike and walking trail that loops around the city along the river.", "Un sendero pavimentado para bici y caminar que rodea la ciudad por el río."],
+  ["out", "Great Plains Zoo", "Zoo and Delbridge Museum of Natural History on the west side.", "Zoológico y museo de historia natural Delbridge, en el oeste de la ciudad."],
+  ["out", "Good Earth State Park", "Prairie trails and a visitor center on the southeast edge of the city.", "Senderos de pradera y centro de visitantes en el sureste de la ciudad."],
+  ["eat", "Downtown & Phillips Avenue", "Local restaurants, coffee shops and the outdoor SculptureWalk.", "Restaurantes locales, cafés y las esculturas al aire libre de SculptureWalk."],
+  ["life", "Washington Pavilion", "Science center, art museum and theater downtown.", "Centro de ciencias, museo de arte y teatro en el centro."],
+  ["life", "Denny Sanford Premier Center", "Concerts, Stampede hockey and big events.", "Conciertos, hockey de los Stampede y eventos grandes."],
+  ["life", "The Empire Mall & 41st Street", "The area's main shopping and restaurant strip.", "La zona principal de tiendas y restaurantes."]
+ ],
+ "southwest-sioux-falls": [
+  ["life", "The Empire Mall & 41st Street", "The area's main shopping and restaurant strip, close by.", "La zona principal de tiendas y restaurantes, muy cerca."],
+  ["out", "Butterfly House & Aquarium", "Tropical butterflies and an aquarium at Sertoma Park.", "Mariposas tropicales y acuario en Sertoma Park."],
+  ["out", "Great Plains Zoo", "Zoo and natural history museum a short drive north.", "Zoológico y museo de historia natural a pocos minutos al norte."],
+  ["out", "Big Sioux River Greenway", "Paved bike and walking trail that loops the city.", "Sendero pavimentado para bici y caminar que rodea la ciudad."],
+  ["out", "Falls Park", "The downtown waterfalls, about 15 minutes away.", "Las cataratas del centro, a unos 15 minutos."],
+  ["life", "Tea & Harrisburg", "Two growing towns just to the southwest and south.", "Dos pueblos que crecen rápido, al suroeste y al sur."]
+ ],
+ "southeast-sioux-falls": [
+  ["out", "Good Earth State Park", "Prairie trails and a visitor center on the southeast edge of town.", "Senderos de pradera y centro de visitantes en el borde sureste."],
+  ["out", "Tuthill Park", "Big neighborhood park with walking paths and open space.", "Parque grande con senderos y áreas verdes."],
+  ["out", "Big Sioux River Greenway", "Paved bike and walking trail that loops the city.", "Sendero pavimentado para bici y caminar que rodea la ciudad."],
+  ["out", "Falls Park", "The downtown waterfalls, about 15 minutes away.", "Las cataratas del centro, a unos 15 minutos."],
+  ["life", "East-side shopping", "Groceries, restaurants and stores on the east side, including Dawley Farm Village.", "Supermercados, restaurantes y tiendas en el este, incluido Dawley Farm Village."],
+  ["life", "Harrisburg & Brandon", "Two nearby towns, both about 10 minutes away.", "Dos pueblos cercanos, a unos 10 minutos."]
+ ],
+ "tea": [
+  ["out", "Tea City Park", "Pool with a waterslide, fishing pond with fountains, playground and a ¾-mile path.", "Alberca con tobogán, estanque para pescar, juegos y un sendero de ¾ de milla."],
+  ["out", "Tea Athletic Complex", "Softball and baseball fields, soccer space and a tennis/pickleball court.", "Campos de softbol y béisbol, espacio para fútbol y cancha de tenis/pickleball."],
+  ["out", "Prairie Trails Park", "Playground, shelter and open space for soccer on the south side.", "Juegos, techado y espacio para fútbol en el sur del pueblo."],
+  ["out", "Howling Ridge Park", "Tea's newest park, by the white water tower.", "El parque más nuevo de Tea, junto a la torre de agua blanca."],
+  ["eat", "Squealer's Smoke Shack", "Bar and grill with a rooftop patio.", "Bar y parrilla con terraza en el techo."],
+  ["life", "Teapot Days", "Tea's yearly town festival.", "La fiesta anual del pueblo."]
+ ],
+ "harrisburg": [
+  ["out", "Central Park", "The city's main park, with more planned as the town grows.", "El parque principal; la ciudad sigue agregando más."],
+  ["out", "Heartland Park", "Updated playground, picnic shelter, swings and a gaga ball pit.", "Juegos renovados, techado para picnic, columpios y cancha de gaga ball."],
+  ["out", "Hugh Robinson Park", "The oldest park, downtown next to City Hall.", "El parque más antiguo, en el centro junto a la alcaldía."],
+  ["out", "Rover Range dog park", "Off-leash space for dogs.", "Espacio para que los perros corran sin correa."],
+  ["out", "Lake Alvin Recreation Area", "Fishing, a swimming beach and trails a few minutes east.", "Pesca, playa y senderos a pocos minutos al este."],
+  ["life", "Harrisburg Days", "Yearly town celebration, including the Little Miss Harrisburg pageant.", "Fiesta anual del pueblo, con el concurso Little Miss Harrisburg."]
+ ],
+ "brandon": [
+  ["out", "Big Sioux Recreation Area", "State recreation area on the river with wooded trails, camping and an 18-hole disc golf course.", "Área estatal junto al río con senderos, campamento y disc golf de 18 hoyos."],
+  ["out", "Aspen Park", "55-acre sports complex on the south side of town.", "Complejo deportivo de 55 acres en el sur del pueblo."],
+  ["out", "McHardy Park", "Sledding hill plus ice skating and hockey in winter.", "Colina para trineo, patinaje y hockey en invierno."],
+  ["out", "Pioneer Park", "Park with a 9-hole disc golf course.", "Parque con disc golf de 9 hoyos."],
+  ["life", "Brandon Community Library", "Public library with programs for kids and adults.", "Biblioteca pública con actividades para niños y adultos."],
+  ["eat", "Holly Blvd & Splitrock Blvd", "Where most of Brandon's restaurants and shops are.", "Donde están la mayoría de restaurantes y tiendas."]
+ ],
+ "garretson": [
+  ["out", "Palisades State Park", "Pink quartzite cliffs along Split Rock Creek, with trails, camping and cabins.", "Acantilados de cuarcita rosa junto al arroyo Split Rock, con senderos, campamento y cabañas."],
+  ["out", "Devil's Gulch", "The footbridge over the chasm Jesse James is said to have jumped.", "El puente sobre el barranco que, dicen, saltó Jesse James."],
+  ["out", "Split Rock Park", "City park with camping, fishing and quartzite rock along the river.", "Parque con campamento, pesca y rocas de cuarcita junto al río."],
+  ["eat", "The Gulch", "Bar and restaurant on Main Street, known for wings and burgers.", "Bar y restaurante en Main Street, conocido por sus alitas y hamburguesas."],
+  ["eat", "Tucker's Walk Vineyard & Winery", "Local winery just outside town.", "Viñedo y bodega local a las afueras del pueblo."],
+  ["life", "Garretson Heritage Museum", "Local history from the area historical society.", "Historia local de la sociedad histórica del área."]
+ ],
+ "hartford": [
+  ["out", "Central Valley Golf Course", "18-hole golf course in town.", "Campo de golf de 18 hoyos en el pueblo."],
+  ["out", "City parks, pool & trails", "Swimming pool, walking trails, ball fields, skate park and a dog park.", "Alberca, senderos, campos de pelota, skate park y parque para perros."],
+  ["out", "Wall Lake", "Boating and fishing about 5 minutes away.", "Lancha y pesca a unos 5 minutos."],
+  ["life", "Downtown Hartford Market", "Outdoor market downtown, June through September.", "Mercado al aire libre en el centro, de junio a septiembre."],
+  ["life", "Jamboree Days", "Town celebration on Father's Day weekend.", "Fiesta del pueblo el fin de semana del Día del Padre."],
+  ["life", "Groceries & hardware", "Sunshine Foods, Hartford Building Center and Ace Hardware are all in town.", "Sunshine Foods, Hartford Building Center y Ace Hardware están en el pueblo."]
+ ],
+ "crooks": [
+  ["eat", "Critters", "Pizza, bar and grill on Main Street.", "Pizza, bar y parrilla en Main Street."],
+  ["eat", "Big Ern's Bar & Grill", "Local bar and grill on West Avenue.", "Bar y parrilla local en West Avenue."],
+  ["life", "Tri-Valley schools", "The elementary in Crooks and the Tri-Valley campus in Colton.", "La primaria en Crooks y el campus de Tri-Valley en Colton."],
+  ["out", "Falls Park", "The downtown Sioux Falls waterfalls, about 15 minutes away.", "Las cataratas de Sioux Falls, a unos 15 minutos."],
+  ["life", "North Sioux Falls", "Shopping, restaurants and the airport area are a short drive south.", "Tiendas, restaurantes y la zona del aeropuerto, a pocos minutos al sur."]
+ ],
+ "lennox": [
+  ["out", "West Evergreen Park", "Playground, picnic shelter and two sand volleyball courts.", "Juegos, techado para picnic y dos canchas de voleibol de arena."],
+  ["out", "Lennox City Pool", "Summer swimming in town.", "Alberca de verano en el pueblo."],
+  ["out", "Lenkota Country Club", "Golf course on SD Highway 44.", "Campo de golf en la carretera 44."],
+  ["eat", "Chuck's Drive-In", "A local favorite and town gathering spot.", "Un favorito del pueblo y lugar de reunión."],
+  ["life", "Lennox Municipal Band", "One of the state's oldest municipal bands, with summer concerts in the park.", "Una de las bandas municipales más antiguas del estado, con conciertos de verano en el parque."],
+  ["life", "Old Fashioned Fourth of July", "Lennox's big yearly celebration, with cruise night and a street dance.", "La gran fiesta anual de Lennox, con desfile de autos y baile en la calle."]
+ ],
+ "canton": [
+  ["out", "Newton Hills State Park", "Wooded hills a few miles south: trails, camping, horseback riding and a lake.", "Colinas con bosque a pocas millas al sur: senderos, campamento, caballos y un lago."],
+  ["out", "Lake Alvin & the Big Sioux River", "Lake Alvin to the north and the river along the east side of town.", "El lago Alvin al norte y el río Big Sioux al este del pueblo."],
+  ["out", "Golf course & city pool", "A 9-hole golf course, community pool and seven city parks.", "Golf de 9 hoyos, alberca y siete parques."],
+  ["eat", "Laurie's Cafe", "Local favorite for burgers and fries.", "Un favorito local para hamburguesas y papas."],
+  ["life", "Downtown Canton", "Historic buildings, antique shops and the restored train depot.", "Edificios históricos, tiendas de antigüedades y la estación de tren restaurada."],
+  ["life", "Celebrate Canton", "Summer town celebration in July, plus a Christmas parade in December.", "Fiesta del pueblo en julio y desfile de Navidad en diciembre."]
+ ]
+}

@@ -1044,3 +1044,10 @@ html, body { overflow-x: clip; }
   .tp-other-row { grid-template-columns: 1fr 1fr; gap: 24px 14px; }
   .tp-oname { font-size: 1.15rem; }
 }
+.tp-spots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 34px; }
+.tp-spot { background: #fff; border: 1px solid var(--line); padding: 22px 24px; display: flex; flex-direction: column; gap: 6px; }
+.tp-spot-c { display: inline-flex; align-items: center; gap: 8px; font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-ink); margin-bottom: 4px; }
+.tp-spot-c svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.tp-spot b { font-family: var(--serif); font-weight: 500; font-size: 1.35rem; color: var(--ink); line-height: 1.2; }
+.tp-spot p { margin: 0; font-size: .95rem; }
+@media (max-width: 900px) { .tp-spots { grid-template-columns: 1fr; gap: 12px; } .tp-spot { padding: 18px 20px; } }

@@ -64,6 +64,15 @@ def photo(slug, w):
     if p[0].startswith('/'): return p[0]
     return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + urllib.parse.quote(p[0]) + f'?width={w}'
 
+SPOTS = json.load(open(os.path.join(ROOT, 'data', 'town_spots.json')))
+# Spanish names for the spots whose names are descriptions rather than proper names
+SPOT_ES = {'Downtown & Phillips Avenue': 'Centro y Phillips Avenue', 'The Empire Mall & 41st Street': 'Empire Mall y la calle 41',
+ 'East-side shopping': 'Tiendas del este', 'Harrisburg & Brandon': 'Harrisburg y Brandon', 'Tea & Harrisburg': 'Tea y Harrisburg',
+ 'Rover Range dog park': 'Parque para perros Rover Range', 'Holly Blvd & Splitrock Blvd': 'Holly Blvd y Splitrock Blvd',
+ 'City parks, pool & trails': 'Parques, alberca y senderos', 'Groceries & hardware': 'Supermercado y ferretería',
+ 'Tri-Valley schools': 'Escuelas de Tri-Valley', 'North Sioux Falls': 'Norte de Sioux Falls', 'Lennox City Pool': 'Alberca de Lennox',
+ 'Lake Alvin & the Big Sioux River': 'Lago Alvin y el río Big Sioux', 'Golf course & city pool': 'Golf y alberca',
+ 'Downtown Canton': 'Centro de Canton', 'Garretson Heritage Museum': 'Museo histórico de Garretson'}
 SCHOOLS = json.load(open(os.path.join(ROOT, 'data', 'schools.json')))
 LEVEL = {'E': 0, 'M': 1, 'H': 2}
 
@@ -115,6 +124,14 @@ def schools_html(es, district):
         lis = ''.join(f'<li>{html.escape(n)} <small>{html.escape(gr)}</small></li>' for n, gr in sorted(items))
         cols.append(f'<div class="tp-school"><h3>{h} <span>({len(items)})</span></h3><ul>{lis}</ul></div>')
     return ''.join(cols)
+
+def spots_html(es, slug):
+    cats = {'out': T(es, 'Parks & outdoors', 'Parques y naturaleza'), 'eat': T(es, 'Food & drink', 'Comida y bebida'), 'life': T(es, 'Shopping, community & events', 'Tiendas, comunidad y eventos')}
+    icons = {'out': '<path d="M12 3l7 12H5z"/><path d="M12 15v6"/>', 'eat': '<path d="M7 3v8a2 2 0 0 0 4 0V3"/><path d="M9 11v10"/><path d="M16 3c-1.5 2-2 4-2 7h3v11"/>', 'life': '<path d="M4 7h16l-1.5 13h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/>'}
+    out = []
+    for c, name, en, sp in SPOTS.get(slug, []):
+        out.append(f'<div class="tp-spot"><span class="tp-spot-c"><svg viewBox="0 0 24 24" aria-hidden="true">{icons[c]}</svg>{cats[c]}</span><b>{html.escape(SPOT_ES.get(name, name) if es else name)}</b><p>{html.escape(sp if es else en)}</p></div>')
+    return ''.join(out)
 
 def faq_html(body):
     qa = re.findall(r'<h3>(.*?)</h3>\s*<p>(.*?)</p>', body, re.S)
@@ -214,9 +231,10 @@ def build(slug, es):
 
   <section class="tp-sec tp-around">
     <div class="wrap">
-      <div class="tp-head"><p class="eyebrow">{T(es, 'Around town', 'Alrededor')}</p><h2>{T(es, f'Around {name}', f'Alrededor de {name}')}</h2></div>
+      <div class="tp-head"><p class="eyebrow">{T(es, 'Around town', 'Alrededor')}</p><h2>{T(es, f'Around {name}', f'Alrededor de {name}')}</h2><p>{T(es, f'A few favorite spots in and around {name}: parks, places to eat and things to do.', f'Algunos lugares favoritos en {name} y sus alrededores: parques, dónde comer y qué hacer.')}</p></div>
+      <div class="tp-spots">{spots_html(es, slug)}</div>
       <div class="tp-map"><iframe title="{T(es, f'Map of {name}', f'Mapa de {name}')}" src="{mapsrc}" loading="lazy"></iframe></div>
-      <p class="tp-note"><a href="{maplink}" target="_blank" rel="noopener">{T(es, 'View larger map', 'Ver mapa más grande')}</a> · © OpenStreetMap contributors</p>
+      <p class="tp-note"><a href="{maplink}" target="_blank" rel="noopener">{T(es, 'View larger map', 'Ver mapa más grande')}</a> · © OpenStreetMap contributors · {T(es, 'Places can change, so check hours before you go.', 'Los lugares pueden cambiar; revise el horario antes de ir.')}</p>
     </div>
   </section>
 
