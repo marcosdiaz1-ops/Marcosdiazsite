@@ -49,7 +49,7 @@ PHOTOS = {
  'sioux-falls': ("Sioux_Falls_Skyline_and_Falls_Park_03-20-23_(cropped).jpg", "Maxpower2727", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0"),
  'southwest-sioux-falls': ("Falls_Park,_Sioux_Falls,_SD_-_53746880624.jpg", "w_lemay", "CC BY-SA 2.0", "https://creativecommons.org/licenses/by-sa/2.0"),
  'southeast-sioux-falls': ("Downtown_Sioux_Falls_in_the_evening.jpg", "Maxpower2727", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0"),
- 'tea': ("Tea_Area_High_School.jpg", "WavingDolphin", "CC0", ""),
+ 'tea': ('/images/towns/tea.jpg', '', '', ''),  # Marcos's own photo
  'harrisburg': ("DAIR_3024,_Harrisburg_-_Flickr_-_chief_huddleston.jpg", "Jerry Huddleston", "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0"),
  'brandon': ("Big_Sioux_River_at_Big_Sioux_Recreation_Area,_Brandon,_South_Dakota.jpg", "Votesmall", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0"),
  'garretson': ("Palisades_Along_Split_Rock_Creek_-_Garretson,_South_Dakota_(8-30-26).jpg", "ToxicFlame427", "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0"),
